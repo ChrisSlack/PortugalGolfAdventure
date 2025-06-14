@@ -3,6 +3,8 @@ import {
   type Player, type Team, type Round, type Score, type Fine, type Vote,
   type InsertPlayer, type InsertTeam, type InsertRound, type InsertScore, type InsertFine, type InsertVote
 } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // Players
@@ -231,4 +233,129 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  // Players
+  async getPlayers(): Promise<Player[]> {
+    return await db.select().from(players);
+  }
+
+  async createPlayer(insertPlayer: InsertPlayer): Promise<Player> {
+    const [player] = await db.insert(players).values(insertPlayer).returning();
+    return player;
+  }
+
+  async updatePlayer(id: number, updateData: Partial<InsertPlayer>): Promise<Player> {
+    const [player] = await db
+      .update(players)
+      .set(updateData)
+      .where(eq(players.id, id))
+      .returning();
+    return player;
+  }
+
+  async deletePlayer(id: number): Promise<void> {
+    await db.delete(players).where(eq(players.id, id));
+  }
+
+  async getPlayerById(id: number): Promise<Player | undefined> {
+    const [player] = await db.select().from(players).where(eq(players.id, id));
+    return player;
+  }
+
+  // Teams
+  async getTeams(): Promise<Team[]> {
+    return await db.select().from(teams);
+  }
+
+  async createTeam(insertTeam: InsertTeam): Promise<Team> {
+    const [team] = await db.insert(teams).values(insertTeam).returning();
+    return team;
+  }
+
+  async updateTeam(id: number, updateData: Partial<InsertTeam>): Promise<Team> {
+    const [team] = await db
+      .update(teams)
+      .set(updateData)
+      .where(eq(teams.id, id))
+      .returning();
+    return team;
+  }
+
+  async deleteTeam(id: number): Promise<void> {
+    await db.delete(teams).where(eq(teams.id, id));
+  }
+
+  async getTeamById(id: number): Promise<Team | undefined> {
+    const [team] = await db.select().from(teams).where(eq(teams.id, id));
+    return team;
+  }
+
+  async getTeamPlayers(teamId: number): Promise<Player[]> {
+    return await db.select().from(players).where(eq(players.teamId, teamId));
+  }
+
+  // Rounds
+  async getRounds(): Promise<Round[]> {
+    return await db.select().from(rounds);
+  }
+
+  async createRound(insertRound: InsertRound): Promise<Round> {
+    const [round] = await db.insert(rounds).values(insertRound).returning();
+    return round;
+  }
+
+  // Scores
+  async getScores(roundId: number): Promise<Score[]> {
+    return await db.select().from(scores).where(eq(scores.roundId, roundId));
+  }
+
+  async createScore(insertScore: InsertScore): Promise<Score> {
+    const [score] = await db.insert(scores).values(insertScore).returning();
+    return score;
+  }
+
+  async updateScore(id: number, scoreData: Partial<InsertScore>): Promise<Score> {
+    const [score] = await db
+      .update(scores)
+      .set(scoreData)
+      .where(eq(scores.id, id))
+      .returning();
+    return score;
+  }
+
+  // Fines
+  async getFines(): Promise<Fine[]> {
+    return await db.select().from(fines);
+  }
+
+  async createFine(insertFine: InsertFine): Promise<Fine> {
+    const [fine] = await db.insert(fines).values(insertFine).returning();
+    return fine;
+  }
+
+  // Votes
+  async getVotes(): Promise<Vote[]> {
+    return await db.select().from(votes);
+  }
+
+  async createVote(insertVote: InsertVote): Promise<Vote> {
+    const [vote] = await db.insert(votes).values(insertVote).returning();
+    return vote;
+  }
+
+  async updateVote(id: number, count: number): Promise<Vote> {
+    const [vote] = await db
+      .update(votes)
+      .set({ count })
+      .where(eq(votes.id, id))
+      .returning();
+    return vote;
+  }
+
+  async getVoteByActivity(activity: string): Promise<Vote | undefined> {
+    const [vote] = await db.select().from(votes).where(eq(votes.activity, activity));
+    return vote;
+  }
+}
+
+export const storage = new DatabaseStorage();

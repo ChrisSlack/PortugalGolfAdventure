@@ -123,6 +123,11 @@ This is a comprehensive golf trip management application built for the Portugal 
   - Enhanced scoring with 3-putt, picked up, water, and bunker tracking
   - Added team-based leaderboards alongside individual scoring
   - Created Players page for profile and team management
+- June 14, 2025: Integrated PostgreSQL database for persistent data storage
+  - Replaced in-memory storage with DatabaseStorage class
+  - Applied Drizzle schema migrations to PostgreSQL
+  - All data now persists across application restarts
+  - Maintained existing IStorage interface for seamless transition
 
 ## User Preferences
 
