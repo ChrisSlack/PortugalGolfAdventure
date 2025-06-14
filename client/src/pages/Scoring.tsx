@@ -410,6 +410,7 @@ export default function Scoring() {
                   scores={stringFormattedScores}
                   onScoreEdit={handleScoreEdit}
                   isEditable={!!currentRoundId}
+                  playerHandicaps={playerHandicaps}
                 />
               )}
             </TabsContent>

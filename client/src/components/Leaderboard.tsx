@@ -16,21 +16,49 @@ interface LeaderboardProps {
 
 export default function Leaderboard({ course, players, scores, onScoreEdit, isEditable = false, playerHandicaps = {} }: LeaderboardProps) {
   const [scoreMode, setScoreMode] = useState<'gross' | 'net'>('gross');
+  const calculateHandicapStrokes = (player: string, hole: number): number => {
+    const handicap = playerHandicaps[player] || 0;
+    const holeHandicap = course.holes.find(h => h.hole === hole)?.handicap || 18;
+    
+    if (handicap >= holeHandicap) {
+      return Math.floor(handicap / 18) + (handicap % 18 >= holeHandicap ? 1 : 0);
+    }
+    return 0;
+  };
+
   const calculatePlayerStats = (player: string) => {
     const playerScores = scores[player] || {};
-    const completedScores = Object.values(playerScores).filter(score => score && score > 0);
+    const completedHoles = Object.keys(playerScores).filter(hole => playerScores[parseInt(hole)] && playerScores[parseInt(hole)] > 0);
     
-    if (completedScores.length === 0) {
+    if (completedHoles.length === 0) {
       return { total: 0, toPar: 0, holesCompleted: 0, average: 0 };
     }
     
-    const total = completedScores.reduce((sum, score) => sum + score, 0);
-    const holesCompleted = completedScores.length;
-    const parForCompletedHoles = course.holes
-      .slice(0, holesCompleted)
-      .reduce((sum, hole) => sum + hole.par, 0);
+    let total = 0;
+    let parTotal = 0;
     
-    const toPar = total - parForCompletedHoles;
+    if (scoreMode === 'net') {
+      completedHoles.forEach(holeStr => {
+        const hole = parseInt(holeStr);
+        const grossScore = playerScores[hole];
+        const handicapStrokes = calculateHandicapStrokes(player, hole);
+        const netScore = grossScore - handicapStrokes;
+        total += netScore;
+        
+        const holeData = course.holes.find(h => h.hole === hole);
+        if (holeData) parTotal += holeData.par;
+      });
+    } else {
+      total = completedHoles.reduce((sum, holeStr) => sum + playerScores[parseInt(holeStr)], 0);
+      parTotal = completedHoles.reduce((sum, holeStr) => {
+        const hole = parseInt(holeStr);
+        const holeData = course.holes.find(h => h.hole === hole);
+        return sum + (holeData ? holeData.par : 0);
+      }, 0);
+    }
+    
+    const holesCompleted = completedHoles.length;
+    const toPar = total - parTotal;
     const average = total / holesCompleted;
     
     return { total, toPar, holesCompleted, average };
@@ -96,9 +124,29 @@ export default function Leaderboard({ course, players, scores, onScoreEdit, isEd
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <Trophy className="h-5 w-5 text-yellow-500" />
-          <span>Current Leaderboard</span>
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Trophy className="h-5 w-5 text-yellow-500" />
+            <span>Current Leaderboard</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant={scoreMode === 'gross' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setScoreMode('gross')}
+            >
+              <Trophy className="h-4 w-4 mr-1" />
+              Gross
+            </Button>
+            <Button
+              variant={scoreMode === 'net' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setScoreMode('net')}
+            >
+              <Calculator className="h-4 w-4 mr-1" />
+              Net
+            </Button>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent>
