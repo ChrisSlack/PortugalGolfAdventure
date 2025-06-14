@@ -156,6 +156,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/rounds/:id/clear", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.clearRoundScores(id);
+      res.json({ message: "Round scores cleared successfully" });
+    } catch (error) {
+      console.error("Error clearing round scores:", error);
+      res.status(500).json({ message: "Failed to clear round scores" });
+    }
+  });
+
   // Scores
   app.get("/api/scores/all", async (req, res) => {
     try {

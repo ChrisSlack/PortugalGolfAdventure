@@ -32,6 +32,7 @@ export interface IStorage {
   getAllScores(): Promise<Score[]>;
   createScore(score: InsertScore): Promise<Score>;
   updateScore(id: number, scoreData: Partial<InsertScore>): Promise<Score>;
+  clearRoundScores(roundId: number): Promise<void>;
   
   // Fines
   getFines(): Promise<Fine[]>;
@@ -202,6 +203,15 @@ export class MemStorage implements IStorage {
     };
     this.scores.set(id, updatedScore);
     return updatedScore;
+  }
+
+  async clearRoundScores(roundId: number): Promise<void> {
+    // Delete all scores for the given round
+    for (const [scoreId, score] of this.scores) {
+      if (score.roundId === roundId) {
+        this.scores.delete(scoreId);
+      }
+    }
   }
 
   // Fines
@@ -375,6 +385,12 @@ export class DatabaseStorage implements IStorage {
       .where(eq(scores.id, id))
       .returning();
     return score;
+  }
+
+  async clearRoundScores(roundId: number): Promise<void> {
+    console.log("Clearing all scores for round:", roundId);
+    await db.delete(scores).where(eq(scores.roundId, roundId));
+    console.log("Round scores cleared");
   }
 
   // Fines

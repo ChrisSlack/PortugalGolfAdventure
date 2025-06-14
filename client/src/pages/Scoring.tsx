@@ -71,6 +71,29 @@ export default function Scoring() {
     }
   });
 
+  // Clear scorecard mutation
+  const clearScorecardMutation = useMutation({
+    mutationFn: async (roundId: number) => {
+      const response = await apiRequest('POST', `/api/rounds/${roundId}/clear`);
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/scores/all'] });
+      queryClient.invalidateQueries({ queryKey: [`/api/scores/${currentRoundId}`] });
+      toast({
+        title: "Scorecard Cleared",
+        description: "All scores have been removed from this round",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to clear scorecard",
+        variant: "destructive",
+      });
+    }
+  });
+
   // Create score mutation
   const createScoreMutation = useMutation({
     mutationFn: async (scoreData: { roundId: number; playerId: number; hole: number; score: number; threePutt?: boolean; pickedUp?: boolean; inWater?: boolean; inBunker?: boolean }) => {
