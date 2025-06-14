@@ -40,14 +40,12 @@ export default function Players() {
 
   const createPlayerMutation = useMutation({
     mutationFn: async (data: any) => {
-      return await apiRequest("/api/players", {
-        method: "POST",
-        body: JSON.stringify({
-          ...data,
-          handicap: data.handicap ? parseFloat(data.handicap) : null,
-          teamId: data.teamId ? parseInt(data.teamId) : null
-        })
+      const response = await apiRequest("POST", "/api/players", {
+        ...data,
+        handicap: data.handicap ? parseFloat(data.handicap) : null,
+        teamId: data.teamId && data.teamId !== "none" ? parseInt(data.teamId) : null
       });
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
@@ -62,14 +60,12 @@ export default function Players() {
 
   const updatePlayerMutation = useMutation({
     mutationFn: async ({ id, ...data }: any) => {
-      return await apiRequest(`/api/players/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          ...data,
-          handicap: data.handicap ? parseFloat(data.handicap) : null,
-          teamId: data.teamId ? parseInt(data.teamId) : null
-        })
+      const response = await apiRequest("PATCH", `/api/players/${id}`, {
+        ...data,
+        handicap: data.handicap ? parseFloat(data.handicap) : null,
+        teamId: data.teamId && data.teamId !== "none" ? parseInt(data.teamId) : null
       });
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
@@ -84,7 +80,7 @@ export default function Players() {
 
   const deletePlayerMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/players/${id}`, { method: "DELETE" });
+      return await apiRequest("DELETE", `/api/players/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/players"] });
@@ -97,13 +93,11 @@ export default function Players() {
 
   const createTeamMutation = useMutation({
     mutationFn: async (data: any) => {
-      return await apiRequest("/api/teams", {
-        method: "POST",
-        body: JSON.stringify({
-          ...data,
-          captainId: data.captainId ? parseInt(data.captainId) : null
-        })
+      const response = await apiRequest("POST", "/api/teams", {
+        ...data,
+        captainId: data.captainId ? parseInt(data.captainId) : null
       });
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/teams"] });
@@ -280,7 +274,7 @@ export default function Players() {
                         <SelectValue placeholder="Select team..." />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">No Team</SelectItem>
+                        <SelectItem value="none">No Team</SelectItem>
                         {teams.map((team: Team) => (
                           <SelectItem key={team.id} value={team.id.toString()}>
                             {team.name}
