@@ -10,6 +10,7 @@ import Courses from "@/pages/Courses";
 import Scoring from "@/pages/Scoring";
 import Fines from "@/pages/Fines";
 import Activities from "@/pages/Activities";
+import Players from "@/pages/Players";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -23,6 +24,7 @@ function Router() {
         <Route path="/scoring" component={Scoring} />
         <Route path="/fines" component={Fines} />
         <Route path="/activities" component={Activities} />
+        <Route path="/players" component={Players} />
         <Route component={NotFound} />
       </Switch>
     </div>

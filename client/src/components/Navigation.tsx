@@ -10,7 +10,8 @@ const navItems = [
   { href: "/courses", label: "Courses", icon: "fas fa-flag" },
   { href: "/scoring", label: "Scoring", icon: "fas fa-chart-line" },
   { href: "/fines", label: "Fines", icon: "fas fa-coins" },
-  { href: "/activities", label: "Activities", icon: "fas fa-vote-yea" }
+  { href: "/activities", label: "Activities", icon: "fas fa-vote-yea" },
+  { href: "/players", label: "Players", icon: "fas fa-users" }
 ];
 
 export default function Navigation() {

@@ -3,15 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import PlayerManager from "@/components/PlayerManager";
-import Scorecard from "@/components/Scorecard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ScoreEntry from "@/components/ScoreEntry";
 import Leaderboard from "@/components/Leaderboard";
+import TeamLeaderboard from "@/components/TeamLeaderboard";
 import { courses } from "@/lib/courseData";
-import { storage } from "@/lib/storage";
 import { Course } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
-import { Play, Target } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { Play, Target, Users, Trophy } from "lucide-react";
+import type { Player, Team } from "@shared/schema";
 
 export default function Scoring() {
   const [players, setPlayers] = useState<string[]>([]);

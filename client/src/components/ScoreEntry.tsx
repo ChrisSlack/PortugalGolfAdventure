@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
 import { Course } from "@/lib/types";
 
 interface ScoreEntryProps {
@@ -13,7 +15,12 @@ interface ScoreEntryProps {
   players: string[];
   selectedPlayer?: string;
   selectedHole?: number;
-  onScoreSubmit: (player: string, hole: number, score: number) => void;
+  onScoreSubmit: (player: string, hole: number, score: number, options: {
+    threePutt: boolean;
+    pickedUp: boolean;
+    inWater: boolean;
+    inBunker: boolean;
+  }) => void;
 }
 
 export default function ScoreEntry({ 
@@ -28,12 +35,27 @@ export default function ScoreEntry({
   const [player, setPlayer] = useState(selectedPlayer || '');
   const [hole, setHole] = useState(selectedHole?.toString() || '');
   const [score, setScore] = useState<number | null>(null);
+  const [threePutt, setThreePutt] = useState(false);
+  const [pickedUp, setPickedUp] = useState(false);
+  const [inWater, setInWater] = useState(false);
+  const [inBunker, setInBunker] = useState(false);
 
   const handleSubmit = () => {
     if (!player || !hole || score === null) return;
     
-    onScoreSubmit(player, parseInt(hole), score);
+    onScoreSubmit(player, parseInt(hole), score, {
+      threePutt,
+      pickedUp,
+      inWater,
+      inBunker
+    });
+    
+    // Reset form
     setScore(null);
+    setThreePutt(false);
+    setPickedUp(false);
+    setInWater(false);
+    setInBunker(false);
     onOpenChange(false);
   };
 
@@ -128,6 +150,65 @@ export default function ScoreEntry({
                   {getScoreType(scoreDiff)}
                   {scoreDiff !== 0 && ` (${scoreDiff > 0 ? '+' : ''}${scoreDiff})`}
                 </span>
+              </div>
+            )}
+          </div>
+
+          <Separator />
+
+          <div>
+            <Label className="text-base font-medium mb-3 block">Additional Score Information</Label>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="three-putt"
+                  checked={threePutt}
+                  onCheckedChange={(checked) => setThreePutt(!!checked)}
+                />
+                <Label htmlFor="three-putt" className="text-sm font-normal cursor-pointer">
+                  3-Putt (Three putts on green)
+                </Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="picked-up"
+                  checked={pickedUp}
+                  onCheckedChange={(checked) => setPickedUp(!!checked)}
+                />
+                <Label htmlFor="picked-up" className="text-sm font-normal cursor-pointer">
+                  Picked Up (Ball not holed out)
+                </Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="in-water"
+                  checked={inWater}
+                  onCheckedChange={(checked) => setInWater(!!checked)}
+                />
+                <Label htmlFor="in-water" className="text-sm font-normal cursor-pointer">
+                  In Water (Ball went into water hazard)
+                </Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="in-bunker"
+                  checked={inBunker}
+                  onCheckedChange={(checked) => setInBunker(!!checked)}
+                />
+                <Label htmlFor="in-bunker" className="text-sm font-normal cursor-pointer">
+                  In Bunker (Ball landed in sand bunker)
+                </Label>
+              </div>
+            </div>
+            
+            {(threePutt || pickedUp || inWater || inBunker) && (
+              <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm text-yellow-700">
+                  Additional information recorded for this hole
+                </p>
               </div>
             )}
           </div>

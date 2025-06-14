@@ -116,8 +116,13 @@ This is a comprehensive golf trip management application built for the Portugal 
 
 ## Changelog
 
-Changelog:
-- June 14, 2025. Initial setup
+- June 14, 2025: Initial setup with basic golf management features
+- June 14, 2025: Enhanced scoring system with player profiles, teams, and advanced tracking
+  - Added player management with first/last name and handicaps
+  - Implemented team system with captains and 4-player limit
+  - Enhanced scoring with 3-putt, picked up, water, and bunker tracking
+  - Added team-based leaderboards alongside individual scoring
+  - Created Players page for profile and team management
 
 ## User Preferences
 
