@@ -6,6 +6,7 @@ export const courses: Course[] = [
     name: 'NAU Morgado Course',
     par: 73,
     description: 'Traditional Portuguese golf course with rolling hills and strategic bunkers.',
+    website: 'https://www.naumorgado.com/',
     holes: [
       { hole: 1, par: 4, yardage: 342, handicap: 10 },
       { hole: 2, par: 4, yardage: 373, handicap: 15 },
@@ -32,6 +33,7 @@ export const courses: Course[] = [
     name: 'Amendoeira Golf Resort (Faldo Course)',
     par: 72,
     description: 'The Faldo Course at Amendoeira Golf Resort is a par-72 championship design by Sir Nick Faldo, requiring strategic play and careful positioning. This course won Portugal\'s Best Golf Course title in 2016 from World Golf Awards.',
+    website: 'https://www.amendoeiraresort.com/golf/',
     holes: [
       { hole: 1, par: 4, yardage: 415, handicap: 7 },
       { hole: 2, par: 3, yardage: 174, handicap: 17 },

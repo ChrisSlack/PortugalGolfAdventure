@@ -86,7 +86,7 @@ export default function FinesTracker({ players, fines, onAddFine }: FinesTracker
         <Card>
           <CardContent className="p-6 text-center">
             <Coins className="text-golf-gold h-8 w-8 mx-auto mb-3" />
-            <h3 className="text-2xl font-bold text-golf-green">€{totalFines}</h3>
+            <h3 className="text-2xl font-bold text-golf-green">{totalFines}</h3>
             <p className="text-gray-600">Total Fines</p>
           </CardContent>
         </Card>
@@ -139,12 +139,12 @@ export default function FinesTracker({ players, fines, onAddFine }: FinesTracker
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {standardFines.filter(fine => fine.type !== 'ladies-tee').map(fine => (
+            {standardFines.filter(fine => fine.type !== 'ladies-tee' && fine.type !== 'custom').map(fine => (
               <div key={fine.type} className="border border-gray-200 rounded-lg p-4">
                 <div className="flex justify-between items-center mb-2">
                   <h4 className="font-bold text-golf-green">{fine.name}</h4>
                   <Badge className={`${fine.amount === 1 ? 'bg-yellow-500' : 'bg-red-500'} text-white`}>
-                    €{fine.amount}
+                    {fine.amount}
                   </Badge>
                 </div>
                 <p className="text-sm text-gray-600 mb-3">{fine.description}</p>
@@ -157,13 +157,52 @@ export default function FinesTracker({ players, fines, onAddFine }: FinesTracker
                 </Button>
               </div>
             ))}
+            
+            {/* Custom Fine Section */}
+            <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="font-bold text-blue-600">Custom Fine</h4>
+                <Badge className="bg-blue-600 text-white">Custom</Badge>
+              </div>
+              <p className="text-sm text-gray-600 mb-3">Create your own fine with custom amount</p>
+              <div className="space-y-2 mb-3">
+                <Input
+                  type="number"
+                  placeholder="Amount"
+                  value={customAmount}
+                  onChange={(e) => setCustomAmount(e.target.value)}
+                  className="w-full"
+                />
+                <Input
+                  type="text"
+                  placeholder="Description (e.g., Terrible joke)"
+                  value={customDescription}
+                  onChange={(e) => setCustomDescription(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              <Button 
+                onClick={() => {
+                  const amount = parseInt(customAmount);
+                  if (amount > 0 && customDescription.trim()) {
+                    handleAddFine('custom', amount, customDescription);
+                    setCustomAmount('');
+                    setCustomDescription('');
+                  }
+                }}
+                className="w-full bg-blue-600 text-white hover:bg-blue-700"
+                disabled={!selectedPlayer || !customAmount || !customDescription.trim() || parseInt(customAmount) <= 0}
+              >
+                Add Custom Fine
+              </Button>
+            </div>
           </div>
           
           {/* Special Fine */}
           <div className="mt-6 bg-red-50 border border-red-200 rounded-lg p-4">
             <div className="flex justify-between items-center mb-2">
               <h4 className="font-bold text-red-600">Not Clearing Ladies Tee</h4>
-              <Badge className="bg-red-600 text-white">€5</Badge>
+              <Badge className="bg-red-600 text-white">5</Badge>
             </div>
             <p className="text-sm text-gray-600 mb-3">Drive failing to pass ladies tee box</p>
             <Button 
@@ -207,7 +246,7 @@ export default function FinesTracker({ players, fines, onAddFine }: FinesTracker
                     </div>
                   </div>
                   <div className="text-golf-gold text-xl font-bold">
-                    €{amount}
+                    {amount}
                   </div>
                 </div>
               ))}
