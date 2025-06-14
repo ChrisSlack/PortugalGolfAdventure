@@ -143,7 +143,7 @@ export class MemStorage implements IStorage {
     const round: Round = {
       course: insertRound.course,
       date: insertRound.date,
-      players: insertRound.players,
+      players: insertRound.players as string[],
       id,
       createdAt: new Date()
     };
@@ -376,4 +376,4 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+export const storage = new MemStorage();
