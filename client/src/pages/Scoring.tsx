@@ -8,12 +8,13 @@ import ScoreEntry from "@/components/ScoreEntry";
 import Leaderboard from "@/components/Leaderboard";
 import TeamLeaderboard from "@/components/TeamLeaderboard";
 import Scorecard from "@/components/Scorecard";
+import RoundHistory from "@/components/RoundHistory";
 import { courses } from "@/lib/courseData";
 import { Course } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Play, Target, Users, Trophy, Loader2 } from "lucide-react";
+import { Play, Target, Users, Trophy, Loader2, History } from "lucide-react";
 import type { Player, Team, Round, Score } from "@shared/schema";
 
 export default function Scoring() {
@@ -156,10 +157,26 @@ export default function Scoring() {
 
   // Convert to string-based format for Leaderboard component
   const stringFormattedScores: { [playerName: string]: { [hole: number]: number } } = {};
+  const stringFormattedStatistics: { [playerName: string]: { [hole: number]: { threePutt: boolean; pickedUp: boolean; inWater: boolean; inBunker: boolean } } } = {};
+  
   Object.entries(formattedScores).forEach(([playerId, scoreData]) => {
     const player = players.find(p => p.id === parseInt(playerId));
     if (player) {
-      stringFormattedScores[`${player.firstName} ${player.lastName}`] = scoreData;
+      const playerName = `${player.firstName} ${player.lastName}`;
+      stringFormattedScores[playerName] = scoreData;
+      
+      // Initialize statistics for this player
+      stringFormattedStatistics[playerName] = {};
+      scores.forEach(score => {
+        if (score.playerId === parseInt(playerId)) {
+          stringFormattedStatistics[playerName][score.hole] = {
+            threePutt: score.threePutt || false,
+            pickedUp: score.pickedUp || false,
+            inWater: score.inWater || false,
+            inBunker: score.inBunker || false
+          };
+        }
+      });
     }
   });
 
@@ -321,7 +338,9 @@ export default function Scoring() {
                   course={currentCourse}
                   players={players.map(p => `${p.firstName} ${p.lastName}`)}
                   scores={stringFormattedScores}
+                  statistics={stringFormattedStatistics}
                   onScoreEdit={handleScoreEdit}
+                  isEditable={true}
                 />
               )}
             </TabsContent>
