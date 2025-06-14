@@ -31,6 +31,16 @@ export default function Fines() {
     const player = players.find(p => p.id === fine.playerId);
     const playerName = player ? `${player.firstName} ${player.lastName}`.trim() : 'Unknown Player';
     
+    // Handle createdAt as either Date object or string
+    let timestamp: string;
+    if (fine.createdAt) {
+      timestamp = fine.createdAt instanceof Date 
+        ? fine.createdAt.toISOString() 
+        : new Date(fine.createdAt).toISOString();
+    } else {
+      timestamp = new Date().toISOString();
+    }
+    
     return {
       id: fine.id.toString(),
       player: playerName,
@@ -38,7 +48,7 @@ export default function Fines() {
       amount: fine.amount,
       description: fine.description || '',
       golfDay: fine.golfDay || '2025-07-02',
-      timestamp: fine.createdAt ? fine.createdAt.toISOString() : new Date().toISOString()
+      timestamp: timestamp
     };
   });
 
