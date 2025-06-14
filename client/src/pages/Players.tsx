@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Users, UserPlus, Edit, Trash2, Trophy, Star } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -185,6 +185,9 @@ export default function Players() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Create New Team</DialogTitle>
+                  <DialogDescription>
+                    Create a new team and select a captain from the available players
+                  </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={(e) => {
                   e.preventDefault();
@@ -237,6 +240,9 @@ export default function Players() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>{editingPlayer ? "Edit Player" : "Create New Player"}</DialogTitle>
+                  <DialogDescription>
+                    {editingPlayer ? "Update player information and team assignment" : "Add a new player with their handicap and team"}
+                  </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
@@ -100,7 +100,12 @@ export default function ScoreEntry({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader className="flex flex-row items-center justify-between">
-          <DialogTitle>Enter Score</DialogTitle>
+          <div>
+            <DialogTitle>Enter Score</DialogTitle>
+            <DialogDescription>
+              Enter the score and additional statistics for the selected hole
+            </DialogDescription>
+          </div>
           <Button 
             variant="ghost" 
             size="sm" 
