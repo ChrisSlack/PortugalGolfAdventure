@@ -317,7 +317,7 @@ export default function Scoring() {
           </Card>
 
           <Tabs defaultValue="scorecard" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="scorecard" className="flex items-center space-x-2">
                 <Target className="h-4 w-4" />
                 <span>Scorecard</span>
@@ -329,6 +329,10 @@ export default function Scoring() {
               <TabsTrigger value="teams" className="flex items-center space-x-2">
                 <Users className="h-4 w-4" />
                 <span>Teams</span>
+              </TabsTrigger>
+              <TabsTrigger value="history" className="flex items-center space-x-2">
+                <History className="h-4 w-4" />
+                <span>History</span>
               </TabsTrigger>
             </TabsList>
 
@@ -364,6 +368,14 @@ export default function Scoring() {
                   scores={formattedScores}
                 />
               )}
+            </TabsContent>
+
+            <TabsContent value="history">
+              <RoundHistory 
+                rounds={rounds}
+                scores={scores}
+                players={players}
+              />
             </TabsContent>
           </Tabs>
         </div>
