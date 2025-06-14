@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Medal, Award, User, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Trophy, Medal, Award, User, TrendingUp, BarChart3, Calculator } from "lucide-react";
 import type { Player, Team, Round, Score } from "@shared/schema";
 
 interface CumulativeLeaderboardProps {
@@ -33,6 +35,8 @@ interface TeamStats {
 }
 
 export default function CumulativeLeaderboard({ players, teams, rounds, scores }: CumulativeLeaderboardProps) {
+  const [viewMode, setViewMode] = useState<'scores' | 'stats'>('scores');
+  const [scoreMode, setScoreMode] = useState<'gross' | 'net'>('gross');
   
   const calculatePlayerStats = (): PlayerStats[] => {
     const playerStats: PlayerStats[] = [];
@@ -42,17 +46,23 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
       const playerRounds = Array.from(new Set(playerScores.map(s => s.roundId)));
       
       if (playerScores.length > 0) {
-        const totalStrokes = playerScores.reduce((sum, score) => sum + score.score, 0);
+        let totalStrokes = playerScores.reduce((sum, score) => sum + score.score, 0);
         
         // Calculate total par for rounds played
         let totalPar = 0;
         playerRounds.forEach(roundId => {
           const round = rounds.find(r => r.id === roundId);
           if (round) {
-            // Assuming 18 holes per round with par 72 (we could make this more accurate by checking actual course par)
-            totalPar += 72;
+            totalPar += 72; // Standard par 72 per round
           }
         });
+        
+        // Apply handicap for net scoring
+        if (scoreMode === 'net') {
+          const handicap = parseFloat(player.handicap || '0') || 0;
+          const totalHandicapStrokes = playerRounds.length * handicap;
+          totalStrokes = Math.round(totalStrokes - totalHandicapStrokes);
+        }
         
         const toPar = totalStrokes - totalPar;
         const averageScore = totalStrokes / playerRounds.length;
@@ -194,10 +204,51 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
       {/* Individual Leaderboard */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Trophy className="h-5 w-5 text-yellow-500" />
-            <span>Overall Individual Leaderboard</span>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Trophy className="h-5 w-5 text-yellow-500" />
+              <span>Leaderboard</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant={viewMode === 'scores' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('scores')}
+              >
+                Scores
+              </Button>
+              <Button
+                variant={viewMode === 'stats' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('stats')}
+              >
+                <BarChart3 className="h-4 w-4 mr-1" />
+                Stats
+              </Button>
+            </div>
           </CardTitle>
+          
+          {viewMode === 'scores' && (
+            <div className="flex items-center space-x-2 mt-4">
+              <span className="text-sm text-gray-600 mr-2">Scoring Mode:</span>
+              <Button
+                variant={scoreMode === 'gross' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setScoreMode('gross')}
+              >
+                <Trophy className="h-4 w-4 mr-1" />
+                Gross
+              </Button>
+              <Button
+                variant={scoreMode === 'net' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setScoreMode('net')}
+              >
+                <Calculator className="h-4 w-4 mr-1" />
+                Net
+              </Button>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -259,10 +310,51 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
       {/* Team Leaderboard */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <TrendingUp className="h-5 w-5 text-golf-green" />
-            <span>Team Standings</span>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <TrendingUp className="h-5 w-5 text-golf-green" />
+              <span>Team Standings</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant={viewMode === 'scores' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('scores')}
+              >
+                Scores
+              </Button>
+              <Button
+                variant={viewMode === 'stats' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('stats')}
+              >
+                <BarChart3 className="h-4 w-4 mr-1" />
+                Stats
+              </Button>
+            </div>
           </CardTitle>
+          
+          {viewMode === 'scores' && (
+            <div className="flex items-center space-x-2 mt-4">
+              <span className="text-sm text-gray-600 mr-2">Scoring Mode:</span>
+              <Button
+                variant={scoreMode === 'gross' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setScoreMode('gross')}
+              >
+                <Trophy className="h-4 w-4 mr-1" />
+                Gross
+              </Button>
+              <Button
+                variant={scoreMode === 'net' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setScoreMode('net')}
+              >
+                <Calculator className="h-4 w-4 mr-1" />
+                Net
+              </Button>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <div className="space-y-3">

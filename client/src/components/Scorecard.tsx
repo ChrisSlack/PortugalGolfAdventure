@@ -135,23 +135,23 @@ export default function Scorecard({ course, players, scores, statistics, onScore
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
+                <tr className="bg-gray-100">
+                  <th className="px-2 py-1 text-left min-w-[80px] text-xs font-medium text-gray-600">Hole</th>
+                  {course.holes.map(hole => (
+                    <th key={hole.hole} className="px-1 py-1 text-center min-w-[32px] text-xs text-gray-600">
+                      {hole.hole}
+                    </th>
+                  ))}
+                  <th className="px-2 py-1 text-center min-w-[50px] text-xs text-gray-600">Total</th>
+                </tr>
                 <tr className="bg-golf-green text-white">
                   <th className="px-2 py-2 text-left min-w-[80px]">Player</th>
                   {course.holes.map(hole => (
                     <th key={hole.hole} className="px-1 py-2 text-center min-w-[32px] text-xs">
-                      {hole.hole}
+                      Par {hole.par}
                     </th>
                   ))}
                   <th className="px-2 py-2 text-center min-w-[50px] text-xs">Total</th>
-                </tr>
-                <tr className="bg-gray-50">
-                  <td className="px-2 py-1 text-xs font-medium text-gray-600">Par</td>
-                  {course.holes.map(hole => (
-                    <td key={hole.hole} className="px-1 py-1 text-center text-xs text-gray-600">
-                      {hole.par}
-                    </td>
-                  ))}
-                  <td className="px-2 py-1 text-center text-xs font-medium text-gray-600">{course.par}</td>
                 </tr>
               </thead>
               <tbody>
