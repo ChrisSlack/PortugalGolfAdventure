@@ -31,7 +31,7 @@ export const courses: Course[] = [
     id: 'amendoeira',
     name: 'Amendoeira Golf Resort (Faldo Course)',
     par: 72,
-    description: 'Championship course designed by Nick Faldo with water features and challenging layouts.',
+    description: 'The Faldo Course at Amendoeira Golf Resort is a par-72 championship design by Sir Nick Faldo, requiring strategic play and careful positioning. This course won Portugal\'s Best Golf Course title in 2016 from World Golf Awards.',
     holes: [
       { hole: 1, par: 4, yardage: 415, handicap: 7 },
       { hole: 2, par: 3, yardage: 174, handicap: 17 },

@@ -119,11 +119,11 @@ export default function Home() {
                   size="sm"
                   onClick={() => navigateDay('prev')}
                   disabled={currentDayIndex === 0}
-                  className="text-white border-white hover:bg-white hover:text-green-800"
+                  className="bg-white text-green-800 border-white hover:bg-green-100"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <span className="text-sm px-3">
+                <span className="text-sm px-3 bg-white text-green-800 rounded px-2 py-1">
                   Day {currentDayIndex + 1} of {scheduleData.length}
                 </span>
                 <Button 
@@ -131,7 +131,7 @@ export default function Home() {
                   size="sm"
                   onClick={() => navigateDay('next')}
                   disabled={currentDayIndex === scheduleData.length - 1}
-                  className="text-white border-white hover:bg-white hover:text-green-800"
+                  className="bg-white text-green-800 border-white hover:bg-green-100"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -153,7 +153,7 @@ export default function Home() {
                     variant="outline" 
                     size="sm"
                     onClick={() => window.open('https://maps.google.com/?q=Villa+Gale+Cerro+Alagoa+Albufeira+Portugal', '_blank')}
-                    className="text-white border-white hover:bg-white hover:text-blue-600"
+                    className="bg-white text-blue-600 border-white hover:bg-blue-50"
                   >
                     <MapPin className="h-4 w-4 mr-1" />
                     Maps
@@ -218,7 +218,7 @@ export default function Home() {
                         variant="outline" 
                         size="sm"
                         onClick={() => window.open(courseDetail.website, '_blank')}
-                        className="text-white border-white hover:bg-white hover:text-green-800"
+                        className="bg-white text-green-800 border-white hover:bg-green-50"
                       >
                         <ExternalLink className="h-4 w-4 mr-2" />
                         Course Website

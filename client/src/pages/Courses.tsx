@@ -4,6 +4,46 @@ import { Badge } from "@/components/ui/badge";
 import { courses } from "@/lib/courseData";
 import { MapPin, Flag, Award, Info } from "lucide-react";
 
+// Course data with comprehensive metrics
+const courseMetrics = {
+  "nau": {
+    totalLength: "6,399m",
+    longestHole: "535m (Par 5, Hole 3)",
+    shortestHole: "166m (Par 3, Hole 11)",
+    averageGreenSize: "600m²",
+    courseRating: "72.7",
+    slopeRating: "129",
+    totalBunkers: "85+ (Scottish-style)",
+    waterHazards: "4 lakes",
+    signatureHole: "18th (Par 4, elevated tee)",
+    yearOpened: "2003"
+  },
+  "amendoeira": {
+    totalLength: "6,598m",
+    longestHole: "613m (Par 5, Hole 9)",
+    shortestHole: "138m (Par 3, Hole 16)",
+    averageGreenSize: "550m²",
+    courseRating: "74.5",
+    slopeRating: "142",
+    totalBunkers: "70+ (Desert-style)",
+    waterHazards: "5 watercourses",
+    signatureHole: "18th (Par 5, dogleg)",
+    yearOpened: "2008"
+  },
+  "quinta": {
+    totalLength: "6,488m",
+    longestHole: "510m (Par 5, Hole 17)",
+    shortestHole: "171m (Par 3, Hole 4)",
+    averageGreenSize: "650m²",
+    courseRating: "73.7",
+    slopeRating: "139",
+    totalBunkers: "60+ (Strategic placement)",
+    waterHazards: "3 lakes (incl. Hole 15)",
+    signatureHole: "15th (Par 3 over lake)",
+    yearOpened: "1974"
+  }
+};
+
 export default function Courses() {
   const getHardestHole = (courseHoles: any[]) => {
     const hardest = courseHoles.reduce((prev, current) => 
@@ -23,6 +63,88 @@ export default function Courses() {
     <div className="py-8 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-golf-green mb-8 text-center">Golf Courses</h1>
+        
+        {/* Comprehensive Comparative Metrics */}
+        <Card className="mb-8 bg-white shadow-lg">
+          <CardContent className="p-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Comprehensive Comparative Metrics</h2>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b-2 border-gray-200">
+                    <th className="text-left p-3 font-semibold text-gray-900">Metric</th>
+                    <th className="text-left p-3 font-semibold text-green-800">NAU Morgado</th>
+                    <th className="text-left p-3 font-semibold text-blue-800">Amendoeira</th>
+                    <th className="text-left p-3 font-semibold text-yellow-800">Quinta do Lago South</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  <tr className="hover:bg-gray-50">
+                    <td className="p-3 font-medium text-gray-700">Total Length (White/Black Tees)</td>
+                    <td className="p-3 text-green-800 font-semibold">{courseMetrics.nau.totalLength}</td>
+                    <td className="p-3 text-blue-800 font-semibold">{courseMetrics.amendoeira.totalLength}</td>
+                    <td className="p-3 text-yellow-800 font-semibold">{courseMetrics.quinta.totalLength}</td>
+                  </tr>
+                  <tr className="hover:bg-gray-50">
+                    <td className="p-3 font-medium text-gray-700">Longest Hole</td>
+                    <td className="p-3 text-green-800">{courseMetrics.nau.longestHole}</td>
+                    <td className="p-3 text-blue-800">{courseMetrics.amendoeira.longestHole}</td>
+                    <td className="p-3 text-yellow-800">{courseMetrics.quinta.longestHole}</td>
+                  </tr>
+                  <tr className="hover:bg-gray-50">
+                    <td className="p-3 font-medium text-gray-700">Shortest Hole</td>
+                    <td className="p-3 text-green-800">{courseMetrics.nau.shortestHole}</td>
+                    <td className="p-3 text-blue-800">{courseMetrics.amendoeira.shortestHole}</td>
+                    <td className="p-3 text-yellow-800">{courseMetrics.quinta.shortestHole}</td>
+                  </tr>
+                  <tr className="hover:bg-gray-50">
+                    <td className="p-3 font-medium text-gray-700">Average Green Size</td>
+                    <td className="p-3 text-green-800">{courseMetrics.nau.averageGreenSize}</td>
+                    <td className="p-3 text-blue-800">{courseMetrics.amendoeira.averageGreenSize}</td>
+                    <td className="p-3 text-yellow-800">{courseMetrics.quinta.averageGreenSize}</td>
+                  </tr>
+                  <tr className="hover:bg-gray-50">
+                    <td className="p-3 font-medium text-gray-700">Course Rating (Black)</td>
+                    <td className="p-3 text-green-800">{courseMetrics.nau.courseRating}</td>
+                    <td className="p-3 text-blue-800">{courseMetrics.amendoeira.courseRating}</td>
+                    <td className="p-3 text-yellow-800">{courseMetrics.quinta.courseRating}</td>
+                  </tr>
+                  <tr className="hover:bg-gray-50">
+                    <td className="p-3 font-medium text-gray-700">Slope Rating (Black)</td>
+                    <td className="p-3 text-green-800">{courseMetrics.nau.slopeRating}</td>
+                    <td className="p-3 text-blue-800">{courseMetrics.amendoeira.slopeRating}</td>
+                    <td className="p-3 text-yellow-800">{courseMetrics.quinta.slopeRating}</td>
+                  </tr>
+                  <tr className="hover:bg-gray-50">
+                    <td className="p-3 font-medium text-gray-700">Total Bunkers</td>
+                    <td className="p-3 text-green-800">{courseMetrics.nau.totalBunkers}</td>
+                    <td className="p-3 text-blue-800">{courseMetrics.amendoeira.totalBunkers}</td>
+                    <td className="p-3 text-yellow-800">{courseMetrics.quinta.totalBunkers}</td>
+                  </tr>
+                  <tr className="hover:bg-gray-50">
+                    <td className="p-3 font-medium text-gray-700">Water Hazards</td>
+                    <td className="p-3 text-green-800">{courseMetrics.nau.waterHazards}</td>
+                    <td className="p-3 text-blue-800">{courseMetrics.amendoeira.waterHazards}</td>
+                    <td className="p-3 text-yellow-800">{courseMetrics.quinta.waterHazards}</td>
+                  </tr>
+                  <tr className="hover:bg-gray-50">
+                    <td className="p-3 font-medium text-gray-700">Signature Hole</td>
+                    <td className="p-3 text-green-800">{courseMetrics.nau.signatureHole}</td>
+                    <td className="p-3 text-blue-800">{courseMetrics.amendoeira.signatureHole}</td>
+                    <td className="p-3 text-yellow-800">{courseMetrics.quinta.signatureHole}</td>
+                  </tr>
+                  <tr className="hover:bg-gray-50">
+                    <td className="p-3 font-medium text-gray-700">Year Opened</td>
+                    <td className="p-3 text-green-800">{courseMetrics.nau.yearOpened}</td>
+                    <td className="p-3 text-blue-800">{courseMetrics.amendoeira.yearOpened}</td>
+                    <td className="p-3 text-yellow-800">{courseMetrics.quinta.yearOpened}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
         
         <div className="space-y-8">
           {courses.map((course, index) => {
