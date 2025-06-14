@@ -159,7 +159,7 @@ export default function Leaderboard({ course, players, scores, onScoreEdit, isEd
               <div 
                 key={item.player} 
                 className={`flex items-center justify-between p-3 rounded-lg border ${
-                  position === 1 ? 'bg-golf-green text-white border-golf-green' : 
+                  position === 1 ? 'bg-yellow-50 border-yellow-300' : 
                   position === 2 ? 'bg-gray-100 border-gray-200' :
                   position === 3 ? 'bg-amber-50 border-amber-200' :
                   'bg-white border-gray-200'
@@ -169,16 +169,16 @@ export default function Leaderboard({ course, players, scores, onScoreEdit, isEd
                   {getPositionIcon(position)}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center space-x-2">
-                      <span className={`font-semibold ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
+                      <span className={`font-semibold ${position === 1 ? 'text-yellow-800' : 'text-gray-900'}`}>
                         {getPositionText(position)}
                       </span>
-                      <span className={`font-medium truncate ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
+                      <span className={`font-medium truncate ${position === 1 ? 'text-yellow-900' : 'text-gray-900'}`}>
                         {item.player}
                       </span>
                       {item.holesCompleted < 18 && (
                         <Badge 
                           variant="outline" 
-                          className={`text-xs ${position === 1 ? 'border-white text-white' : 'border-gray-300'}`}
+                          className={`text-xs ${position === 1 ? 'border-yellow-600 text-yellow-800' : 'border-gray-300'}`}
                         >
                           {item.holesCompleted}/18
                         </Badge>
