@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trophy, Medal, Award, User, TrendingUp, BarChart3, Calculator } from "lucide-react";
 import type { Player, Team, Round, Score } from "@shared/schema";
+import { courses } from "@/lib/courseData";
 
 interface CumulativeLeaderboardProps {
   players: Player[];
@@ -57,11 +58,27 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
           }
         });
         
-        // Apply handicap for net scoring
+        // Apply handicap for net scoring (hole-by-hole calculation)
         if (scoreMode === 'net') {
           const handicap = parseFloat(player.handicap || '0') || 0;
-          const totalHandicapStrokes = playerRounds.length * handicap;
-          totalStrokes = Math.round(totalStrokes - totalHandicapStrokes);
+          let totalHandicapStrokes = 0;
+          
+          // Calculate handicap strokes for each hole played
+          playerScores.forEach(score => {
+            // Find the round to get the course
+            const round = rounds.find(r => r.id === score.roundId);
+            const course = round ? courses.find(c => c.id === round.course) : null;
+            
+            // Get the actual hole handicap from course data
+            const holeHandicap = course?.holes.find(h => h.hole === score.hole)?.handicap || 18;
+            
+            // Calculate strokes received based on handicap and hole handicap
+            if (handicap >= holeHandicap) {
+              totalHandicapStrokes += Math.floor(handicap / 18) + (handicap % 18 >= holeHandicap ? 1 : 0);
+            }
+          });
+          
+          totalStrokes = totalStrokes - totalHandicapStrokes;
         }
         
         const toPar = totalStrokes - totalPar;
@@ -124,14 +141,30 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
           totalPar += roundSet.size * 72; // Standard par 72 per round
         });
         
-        // Apply handicap for net scoring
+        // Apply handicap for net scoring (hole-by-hole calculation)
         if (scoreMode === 'net') {
-          teamPlayers.forEach(player => {
-            const handicap = parseFloat(player.handicap || '0') || 0;
-            const playerRounds = roundsPerPlayer.get(player.id)?.size || 0;
-            const totalHandicapStrokes = playerRounds * handicap;
-            totalStrokes = Math.round(totalStrokes - totalHandicapStrokes);
+          let totalTeamHandicapStrokes = 0;
+          
+          teamScores.forEach(score => {
+            const player = teamPlayers.find(p => p.id === score.playerId);
+            if (player) {
+              const handicap = parseFloat(player.handicap || '0') || 0;
+              
+              // Find the round to get the course
+              const round = rounds.find(r => r.id === score.roundId);
+              const course = round ? courses.find(c => c.id === round.course) : null;
+              
+              // Get the actual hole handicap from course data
+              const holeHandicap = course?.holes.find(h => h.hole === score.hole)?.handicap || 18;
+              
+              // Calculate strokes received based on handicap and hole handicap
+              if (handicap >= holeHandicap) {
+                totalTeamHandicapStrokes += Math.floor(handicap / 18) + (handicap % 18 >= holeHandicap ? 1 : 0);
+              }
+            }
           });
+          
+          totalStrokes = totalStrokes - totalTeamHandicapStrokes;
         }
         
         const toPar = totalStrokes - totalPar;
