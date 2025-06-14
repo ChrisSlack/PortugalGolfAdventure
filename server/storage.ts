@@ -4,7 +4,7 @@ import {
   type InsertPlayer, type InsertTeam, type InsertRound, type InsertScore, type InsertFine, type InsertVote
 } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export interface IStorage {
   // Players
@@ -360,6 +360,11 @@ export class DatabaseStorage implements IStorage {
   // Fines
   async getFines(): Promise<Fine[]> {
     return await db.select().from(fines);
+  }
+
+  async getFinesByPlayerAndDay(playerId: number, golfDay: string): Promise<Fine[]> {
+    const allFines = await db.select().from(fines).where(eq(fines.playerId, playerId));
+    return allFines.filter(fine => fine.golfDay === golfDay);
   }
 
   async createFine(insertFine: InsertFine): Promise<Fine> {

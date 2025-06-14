@@ -216,6 +216,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/fines/:playerId/:golfDay", async (req, res) => {
+    try {
+      const playerId = parseInt(req.params.playerId);
+      const golfDay = req.params.golfDay;
+      const fines = await storage.getFinesByPlayerAndDay(playerId, golfDay);
+      res.json(fines);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch player fines" });
+    }
+  });
+
   app.post("/api/fines", async (req, res) => {
     try {
       const validatedData = insertFineSchema.parse(req.body);

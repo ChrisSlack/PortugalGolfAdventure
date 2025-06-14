@@ -23,8 +23,15 @@ interface FinesTrackerProps {
   onAddFine: (fine: Omit<Fine, 'id' | 'timestamp'>) => void;
 }
 
+const golfDays = [
+  { value: '2025-07-02', label: 'July 2 - NAU Morgado' },
+  { value: '2025-07-03', label: 'July 3 - Amendoeira' },
+  { value: '2025-07-05', label: 'July 5 - Quinta do Lago' }
+];
+
 export default function FinesTracker({ players, fines, onAddFine }: FinesTrackerProps) {
   const [selectedPlayer, setSelectedPlayer] = useState<string>('');
+  const [selectedGolfDay, setSelectedGolfDay] = useState<string>('2025-07-02');
   const [customAmount, setCustomAmount] = useState<string>('');
   const [customDescription, setCustomDescription] = useState<string>('');
   const { toast } = useToast();
