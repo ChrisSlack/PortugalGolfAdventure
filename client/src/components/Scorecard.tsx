@@ -170,7 +170,7 @@ export default function Scorecard({ course, players, scores, statistics, onScore
                         return (
                           <td key={hole.hole} className="px-1 py-2 text-center">
                             {hasScore ? (
-                              <div className="relative">
+                              <div className="flex flex-col items-center space-y-1">
                                 <Button
                                   variant="ghost"
                                   size="sm"
@@ -182,10 +182,11 @@ export default function Scorecard({ course, players, scores, statistics, onScore
                                   {displayScore}
                                 </Button>
                                 {scoreMode === 'net' && handicapStrokes > 0 && (
-                                  <div className="text-xs text-gray-500 mt-1">
+                                  <div className="text-xs text-gray-600 bg-gray-100 rounded px-1">
                                     -{handicapStrokes}
                                   </div>
                                 )}
+
                               </div>
                             ) : (
                               <Button
@@ -203,12 +204,15 @@ export default function Scorecard({ course, players, scores, statistics, onScore
                       })}
                       
                       <td className="px-2 py-2 text-center font-medium">
-                        <div className="text-sm">{total || 0}</div>
+                        <div className="text-sm font-bold">{total || 0}</div>
                         {toPar !== 0 && (
-                          <div className={`text-xs ${toPar > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                          <div className={`text-xs font-medium ${toPar > 0 ? 'text-red-600' : 'text-green-600'}`}>
                             {toPar > 0 ? '+' : ''}{toPar}
                           </div>
                         )}
+                        <div className="text-xs text-gray-500 mt-1">
+                          {scoreMode === 'net' ? 'Net' : 'Gross'}
+                        </div>
                       </td>
                     </tr>
                   );
