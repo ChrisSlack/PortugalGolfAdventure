@@ -25,6 +25,7 @@ export interface IStorage {
   // Rounds
   getRounds(): Promise<Round[]>;
   createRound(round: InsertRound): Promise<Round>;
+  deleteRound(id: number): Promise<void>;
   
   // Scores
   getScores(roundId: number): Promise<Score[]>;
@@ -327,6 +328,15 @@ export class DatabaseStorage implements IStorage {
       console.error("Database round creation error:", error);
       throw error;
     }
+  }
+
+  async deleteRound(id: number): Promise<void> {
+    console.log("Deleting round:", id);
+    // Delete associated scores first
+    await db.delete(scores).where(eq(scores.roundId, id));
+    // Then delete the round
+    await db.delete(rounds).where(eq(rounds.id, id));
+    console.log("Round and associated scores deleted");
   }
 
   // Scores
