@@ -74,143 +74,156 @@ export default function Scorecard({ course, players, scores, statistics, onScore
       </CardHeader>
       <CardContent>
         {viewMode === 'scores' ? (
-          <div className="scorecard-grid">
-            {/* Scores View */}
-            <div className="sticky top-0 bg-white z-10 border-b pb-2 mb-4">
-              <div className="grid grid-cols-19 gap-1 text-xs font-medium text-gray-600">
-                <div className="col-span-2">Player</div>
-                {course.holes.map(hole => (
-                  <div key={hole.hole} className="text-center">
-                    {hole.hole}
-                  </div>
-                ))}
-                <div className="text-center">Total</div>
-              </div>
-              <div className="grid grid-cols-19 gap-1 text-xs text-gray-500 mt-1">
-                <div className="col-span-2">Par</div>
-                {course.holes.map(hole => (
-                  <div key={hole.hole} className="text-center">
-                    {hole.par}
-                  </div>
-                ))}
-                <div className="text-center">{course.par}</div>
-              </div>
-            </div>
-
-            {players.map(player => {
-              const { total, toPar } = calculatePlayerTotal(player);
-              return (
-                <div key={player} className="grid grid-cols-19 gap-1 items-center py-2 border-b">
-                  <div className="col-span-2 font-medium text-sm pr-2">
-                    {player}
-                  </div>
-                  
-                  {course.holes.map(hole => {
-                    const score = scores[player]?.[hole.hole];
-                    const hasScore = score !== undefined;
-                    
-                    return (
-                      <div key={hole.hole} className="text-center relative">
-                        {hasScore ? (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className={`h-8 w-8 p-0 text-xs ${getScoreClass(score, hole.par)} ${!isEditable ? 'cursor-default' : ''}`}
-                            onClick={() => isEditable && onScoreEdit(player, hole.hole)}
-                            disabled={!isEditable}
-                          >
-                            {isEditable && hasScore && <Edit className="h-3 w-3 absolute top-0 right-0" />}
-                            {score}
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 text-xs bg-gray-100 text-gray-400"
-                            onClick={() => isEditable && onScoreEdit(player, hole.hole)}
-                            disabled={!isEditable}
-                          >
-                            -
-                          </Button>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-golf-green text-white">
+                  <th className="px-2 py-2 text-left min-w-[80px]">Player</th>
+                  {course.holes.map(hole => (
+                    <th key={hole.hole} className="px-1 py-2 text-center min-w-[32px] text-xs">
+                      {hole.hole}
+                    </th>
+                  ))}
+                  <th className="px-2 py-2 text-center min-w-[50px] text-xs">Total</th>
+                </tr>
+                <tr className="bg-gray-50">
+                  <td className="px-2 py-1 text-xs font-medium text-gray-600">Par</td>
+                  {course.holes.map(hole => (
+                    <td key={hole.hole} className="px-1 py-1 text-center text-xs text-gray-600">
+                      {hole.par}
+                    </td>
+                  ))}
+                  <td className="px-2 py-1 text-center text-xs font-medium text-gray-600">{course.par}</td>
+                </tr>
+              </thead>
+              <tbody>
+                {players.map(player => {
+                  const { total, toPar } = calculatePlayerTotal(player);
+                  return (
+                    <tr key={player} className="border-b hover:bg-gray-50">
+                      <td className="px-2 py-2 font-medium text-sm">
+                        {player}
+                      </td>
+                      
+                      {course.holes.map(hole => {
+                        const score = scores[player]?.[hole.hole];
+                        const hasScore = score !== undefined;
+                        
+                        return (
+                          <td key={hole.hole} className="px-1 py-2 text-center">
+                            {hasScore ? (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className={`h-7 w-7 p-0 text-xs relative ${getScoreClass(score, hole.par)} ${!isEditable ? 'cursor-default' : ''}`}
+                                onClick={() => isEditable && onScoreEdit(player, hole.hole)}
+                                disabled={!isEditable}
+                              >
+                                {isEditable && hasScore && <Edit className="h-2 w-2 absolute top-0 right-0" />}
+                                {score}
+                              </Button>
+                            ) : (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 w-7 p-0 text-xs bg-gray-100 text-gray-400"
+                                onClick={() => isEditable && onScoreEdit(player, hole.hole)}
+                                disabled={!isEditable}
+                              >
+                                -
+                              </Button>
+                            )}
+                          </td>
+                        );
+                      })}
+                      
+                      <td className="px-2 py-2 text-center font-medium">
+                        <div className="text-sm">{total || 0}</div>
+                        {toPar !== 0 && (
+                          <div className={`text-xs ${toPar > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                            {toPar > 0 ? '+' : ''}{toPar}
+                          </div>
                         )}
-                      </div>
-                    );
-                  })}
-                  
-                  <div className="text-center font-medium">
-                    <div className="text-sm">{total || 0}</div>
-                    {toPar !== 0 && (
-                      <div className={`text-xs ${toPar > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                        {toPar > 0 ? '+' : ''}{toPar}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         ) : (
-          <div className="statistics-grid">
-            {/* Statistics View */}
-            <div className="sticky top-0 bg-white z-10 border-b pb-2 mb-4">
-              <div className="grid grid-cols-19 gap-1 text-xs font-medium text-gray-600">
-                <div className="col-span-2">Player</div>
-                {course.holes.map(hole => (
-                  <div key={hole.hole} className="text-center">
-                    {hole.hole}
-                  </div>
-                ))}
-                <div className="text-center">Stats</div>
-              </div>
-            </div>
-
-            {players.map(player => {
-              return (
-                <div key={player} className="grid grid-cols-19 gap-1 items-center py-2 border-b">
-                  <div className="col-span-2 font-medium text-sm pr-2">
-                    {player}
-                  </div>
-                  
-                  {course.holes.map(hole => {
-                    const badges = getStatisticsBadges(player, hole.hole);
-                    
-                    return (
-                      <div key={hole.hole} className="text-center">
-                        <div className="flex flex-col space-y-1">
-                          {badges.map((badge, idx) => (
-                            <Badge
-                              key={idx}
-                              className={`text-xs px-1 py-0 ${badge.color} text-white`}
-                            >
-                              {badge.text}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-golf-green text-white">
+                  <th className="px-2 py-2 text-left min-w-[80px]">Player</th>
+                  {course.holes.map(hole => (
+                    <th key={hole.hole} className="px-1 py-2 text-center min-w-[32px] text-xs">
+                      {hole.hole}
+                    </th>
+                  ))}
+                  <th className="px-2 py-2 text-center min-w-[50px] text-xs">Totals</th>
+                </tr>
+              </thead>
+              <tbody>
+                {players.map(player => {
+                  return (
+                    <tr key={player} className="border-b hover:bg-gray-50">
+                      <td className="px-2 py-2 font-medium text-sm">
+                        {player}
+                      </td>
+                      
+                      {course.holes.map(hole => {
+                        const badges = getStatisticsBadges(player, hole.hole);
+                        
+                        return (
+                          <td key={hole.hole} className="px-1 py-2 text-center">
+                            <div className="flex flex-wrap gap-1 justify-center">
+                              {badges.map((badge, idx) => (
+                                <Badge
+                                  key={idx}
+                                  className={`text-xs px-1 py-0 ${badge.color} text-white`}
+                                >
+                                  {badge.text}
+                                </Badge>
+                              ))}
+                              {badges.length === 0 && (
+                                <span className="text-gray-400 text-xs">-</span>
+                              )}
+                            </div>
+                          </td>
+                        );
+                      })}
+                      
+                      <td className="px-2 py-2 text-center">
+                        <div className="flex flex-wrap gap-1 justify-center">
+                          {statistics && Object.values(statistics[player] || {}).some(stat => stat.threePutt) && (
+                            <Badge className="bg-yellow-500 text-white text-xs">
+                              3P: {Object.values(statistics[player] || {}).filter(stat => stat.threePutt).length}
                             </Badge>
-                          ))}
-                          {badges.length === 0 && (
-                            <span className="text-gray-400 text-xs">-</span>
+                          )}
+                          {statistics && Object.values(statistics[player] || {}).some(stat => stat.inWater) && (
+                            <Badge className="bg-blue-500 text-white text-xs">
+                              W: {Object.values(statistics[player] || {}).filter(stat => stat.inWater).length}
+                            </Badge>
+                          )}
+                          {statistics && Object.values(statistics[player] || {}).some(stat => stat.inBunker) && (
+                            <Badge className="bg-amber-600 text-white text-xs">
+                              B: {Object.values(statistics[player] || {}).filter(stat => stat.inBunker).length}
+                            </Badge>
+                          )}
+                          {statistics && Object.values(statistics[player] || {}).some(stat => stat.pickedUp) && (
+                            <Badge className="bg-orange-500 text-white text-xs">
+                              PU: {Object.values(statistics[player] || {}).filter(stat => stat.pickedUp).length}
+                            </Badge>
                           )}
                         </div>
-                      </div>
-                    );
-                  })}
-                  
-                  <div className="text-center text-xs">
-                    {/* Total statistics for player */}
-                    <div className="space-y-1">
-                      {statistics && Object.values(statistics[player] || {}).some(stat => stat.threePutt) && (
-                        <Badge className="bg-yellow-500 text-white text-xs">
-                          3P: {Object.values(statistics[player] || {}).filter(stat => stat.threePutt).length}
-                        </Badge>
-                      )}
-                      {statistics && Object.values(statistics[player] || {}).some(stat => stat.inWater) && (
-                        <Badge className="bg-blue-500 text-white text-xs">
-                          W: {Object.values(statistics[player] || {}).filter(stat => stat.inWater).length}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </CardContent>

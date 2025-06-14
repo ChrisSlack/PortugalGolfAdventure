@@ -145,6 +145,9 @@ export default function Scoring() {
 
   const currentCourse = courses.find(c => c.id === selectedCourse);
   const currentRound = rounds.find(r => r.id === currentRoundId);
+  
+  // Check if a round already exists for the selected date and course
+  const existingRound = rounds.find(r => r.date === selectedDate && r.course === selectedCourse);
 
   // Convert scores to the format expected by components
   const formattedScores: { [playerId: number]: { [hole: number]: number } } = {};
@@ -355,6 +358,8 @@ export default function Scoring() {
                   course={currentCourse}
                   players={players.map(p => `${p.firstName} ${p.lastName}`)}
                   scores={stringFormattedScores}
+                  onScoreEdit={handleScoreEdit}
+                  isEditable={!!currentRoundId}
                 />
               )}
             </TabsContent>

@@ -1,15 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Medal, Award, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Trophy, Medal, Award, User, Plus } from "lucide-react";
 import { Course } from "@/lib/types";
 
 interface LeaderboardProps {
   course: Course;
   players: string[];
   scores: { [player: string]: { [hole: number]: number } };
+  onScoreEdit?: (player: string, hole: number) => void;
+  isEditable?: boolean;
 }
 
-export default function Leaderboard({ course, players, scores }: LeaderboardProps) {
+export default function Leaderboard({ course, players, scores, onScoreEdit, isEditable = false }: LeaderboardProps) {
   const calculatePlayerStats = (player: string) => {
     const playerScores = scores[player] || {};
     const completedScores = Object.values(playerScores).filter(score => score && score > 0);
@@ -129,12 +132,29 @@ export default function Leaderboard({ course, players, scores }: LeaderboardProp
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  {item.holesCompleted > 0 && (
-                    <div className={`text-2xl font-bold ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
-                      {item.toPar === 0 ? 'E' : toPar}
-                    </div>
+                <div className="flex items-center space-x-3">
+                  {isEditable && onScoreEdit && (
+                    <Button
+                      variant={position === 1 ? "outline" : "default"}
+                      size="sm"
+                      onClick={() => {
+                        // Find next hole to score for this player
+                        const nextHole = course.holes.find(hole => !scores[item.player]?.[hole.hole])?.hole || 1;
+                        onScoreEdit(item.player, nextHole);
+                      }}
+                      className={position === 1 ? 'border-white text-white hover:bg-white hover:text-golf-green' : ''}
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Quick Entry
+                    </Button>
                   )}
+                  <div className="text-right">
+                    {item.holesCompleted > 0 && (
+                      <div className={`text-2xl font-bold ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
+                        {item.toPar === 0 ? 'E' : toPar}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             );
