@@ -72,37 +72,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Trip Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6 text-center">
-              <Calendar className="text-golf-green h-8 w-8 mx-auto mb-3" />
-              <h3 className="font-bold text-lg mb-2">5 Days</h3>
-              <p className="text-gray-600">Epic Golf Adventure</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <Club className="text-golf-green h-8 w-8 mx-auto mb-3" />
-              <h3 className="font-bold text-lg mb-2">3 Courses</h3>
-              <p className="text-gray-600">Premium Portuguese Golf</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <Users className="text-golf-green h-8 w-8 mx-auto mb-3" />
-              <h3 className="font-bold text-lg mb-2">Group Fun</h3>
-              <p className="text-gray-600">Banter & Competition</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <Smartphone className="text-golf-green h-8 w-8 mx-auto mb-3" />
-              <h3 className="font-bold text-lg mb-2">Live Scoring</h3>
-              <p className="text-gray-600">Real-time Tracking</p>
-            </CardContent>
-          </Card>
-        </div>
+
 
         {/* Enhanced Schedule with Navigation */}
         <Card className="golf-green text-white mb-8">

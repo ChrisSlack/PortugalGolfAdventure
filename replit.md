@@ -128,6 +128,12 @@ This is a comprehensive golf trip management application built for the Portugal 
   - Applied Drizzle schema migrations to PostgreSQL
   - All data now persists across application restarts
   - Maintained existing IStorage interface for seamless transition
+- June 14, 2025: Enhanced home page layout and fines system improvements
+  - Repositioned navigation cards below daily schedule section
+  - Removed "5 Days" overview card as requested
+  - Updated fines system with golf day tracking (July 2, 3, 5)
+  - Implemented per-player per-day fines functionality with database integration
+  - Fixed JSX syntax errors and improved component structure
 
 ## User Preferences
 
