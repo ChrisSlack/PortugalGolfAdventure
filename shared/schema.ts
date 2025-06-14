@@ -22,7 +22,7 @@ export const rounds = pgTable("rounds", {
   id: serial("id").primaryKey(),
   course: text("course").notNull(),
   date: text("date").notNull(),
-  players: json("players").$type<string[]>().notNull(),
+  players: text("players").array().notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
