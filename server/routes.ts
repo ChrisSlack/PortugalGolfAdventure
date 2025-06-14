@@ -134,11 +134,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/rounds", async (req, res) => {
     try {
+      console.log("Round creation request body:", req.body);
       const validatedData = insertRoundSchema.parse(req.body);
+      console.log("Validated round data:", validatedData);
       const round = await storage.createRound(validatedData);
       res.json(round);
-    } catch (error) {
-      res.status(400).json({ message: "Invalid round data" });
+    } catch (error: any) {
+      console.error("Round creation error:", error);
+      res.status(400).json({ message: "Invalid round data", error: error.message || String(error) });
     }
   });
 

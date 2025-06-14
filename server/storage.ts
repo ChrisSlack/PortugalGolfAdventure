@@ -141,7 +141,9 @@ export class MemStorage implements IStorage {
   async createRound(insertRound: InsertRound): Promise<Round> {
     const id = this.currentId++;
     const round: Round = {
-      ...insertRound,
+      course: insertRound.course,
+      date: insertRound.date,
+      players: insertRound.players,
       id,
       createdAt: new Date()
     };
@@ -301,9 +303,18 @@ export class DatabaseStorage implements IStorage {
 
   async createRound(insertRound: InsertRound): Promise<Round> {
     console.log("Creating round with data:", insertRound);
-    const [round] = await db.insert(rounds).values(insertRound).returning();
-    console.log("Round created:", round);
-    return round;
+    try {
+      const [round] = await db.insert(rounds).values({
+        course: insertRound.course,
+        date: insertRound.date,
+        players: insertRound.players as string[]
+      }).returning();
+      console.log("Round created:", round);
+      return round;
+    } catch (error) {
+      console.error("Database round creation error:", error);
+      throw error;
+    }
   }
 
   // Scores
