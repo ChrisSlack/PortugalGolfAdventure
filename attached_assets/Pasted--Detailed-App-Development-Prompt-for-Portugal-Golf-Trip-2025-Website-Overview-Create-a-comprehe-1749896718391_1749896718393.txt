@@ -1,0 +1,196 @@
+# Detailed App Development Prompt for Portugal Golf Trip 2025 Website
+
+## Overview
+Create a comprehensive web application for a Portugal golf trip taking place July 1-6, 2025, featuring interactive scheduling, golf course information, scorecard tracking, and group activity management.
+
+## Core Application Requirements
+
+### Primary Features
+- **Interactive trip schedule** with detailed daily itineraries
+- **Golf course information pages** with tips and strategic advice
+- **Interactive scorecard system** for score tracking during rounds
+- **Banter and fines tracking database** for group entertainment
+- **Friday activity suggestions** with voting functionality
+- **Mobile-responsive design** optimized for smartphone use on golf courses
+
+## Detailed Schedule Data to Include
+
+### Trip Schedule Table
+```
+| Date | Golf Course | Departure Time | Travel Time (mins) | Pre-Tee Off Time (hrs) | Tee Time | Golf & Drinks (hrs) | Pick Up Time |
+|------|-------------|----------------|-------------------|------------------------|----------|---------------------|--------------|
+| Tuesday July 1, 2025 | Travel from Faro Airport to Vila Gale Cerro Alagoa | Upon Arrival | 45 | N/A | N/A | N/A | N/A |
+| Wednesday July 2, 2025 | NAU Morgado Course | 08:30 | 35 | 1.12 | 10:12 | 6.80 | 17:00 |
+| Thursday July 3, 2025 | Amendoeira Golf Resort | 08:30 | 25 | 1.25 | 10:10 | 6.83 | 17:00 |
+| Friday July 4, 2025 | Free Day | N/A | N/A | N/A | N/A | N/A | N/A |
+| Saturday July 5, 2025 | Quinta do Lago South Course | 08:30 | 38 | 1.27 | 10:24 | 6.60 | 17:00 |
+| Sunday July 6, 2025 | Travel from Vila Gale Cerro Alagoa to Faro Airport | TBC (based on flight) | 45 | N/A | N/A | N/A | N/A |
+```
+
+## Golf Course Scorecard Data
+
+### NAU Morgado Course (Par 73)
+```javascript
+const nauMorgadoScorecard = {
+  name: "NAU Morgado Course",
+  par: 73,
+  totalLength: {
+    white: 6399,
+    yellow: 5957,
+    red: 4624
+  },
+  holes: [
+    {hole: 1, white: 342, yellow: 305, red: 250, par: 4, handicap: 10},
+    {hole: 2, white: 373, yellow: 343, red: 273, par: 4, handicap: 15},
+    {hole: 3, white: 535, yellow: 499, red: 428, par: 5, handicap: 1},
+    // ... continue for all 18 holes
+  ],
+  strokeIndex: {
+    hardest: "Hole 3 (Par 5, 535m)",
+    easiest: "Hole 12 (Par 4, 302m)"
+  }
+}
+```
+
+### Amendoeira Golf Resort - Faldo Course (Par 72)
+```javascript
+const amendoeiraScorecard = {
+  name: "Amendoeira Golf Resort (Faldo Course)",
+  par: 72,
+  totalLength: {
+    black: 6598,
+    white: 5858,
+    blue: 6296,
+    red: 4702
+  },
+  holes: [
+    {hole: 1, black: 415, white: 388, blue: 410, red: 320, par: 4, handicap: 7},
+    {hole: 2, black: 174, white: 147, blue: 169, red: 96, par: 3, handicap: 17},
+    // ... continue for all 18 holes
+  ],
+  strokeIndex: {
+    hardest: "Hole 8 (Par 4, 396m)",
+    easiest: "Hole 16 (Par 3, 135m)"
+  }
+}
+```
+
+### Quinta do Lago South Course (Par 71)
+```javascript
+const quintaDoLagoScorecard = {
+  name: "Quinta do Lago South Course",
+  par: 71,
+  totalLength: {
+    white: 6488,
+    yellow: 5870,
+    red: 5192
+  },
+  holes: [
+    {hole: 1, white: 390, yellow: 345, red: 320, par: 4, handicap: 11},
+    {hole: 2, white: 500, yellow: 470, red: 415, par: 5, handicap: 15},
+    // ... continue for all 18 holes
+  ],
+  strokeIndex: {
+    hardest: "Hole 5 (Par 5, 505m)",
+    easiest: "Hole 16 (Par 4, 372m)"
+  },
+  signatureHole: "15th Hole (Par 3) - 200m shot over a lake"
+}
+```
+
+## Interactive Features Specifications
+
+### Scorecard System
+- **Player Management**: Add unlimited group members with persistent storage
+- **Score Entry**: Hole-by-hole input with visual indicators (Eagle=Gold, Birdie=Green, Par=White, Bogey=Yellow, Double Bogey+=Red)
+- **Automatic Calculations**: Running totals, over/under par tracking, front/back nine subtotals
+- **Real-time Leaderboards**: Live updates as scores are entered
+- **Round History**: Store all rounds using local browser storage
+
+### Fines Tracking System
+Include these standard golf trip fines:
+```javascript
+const standardFines = [
+  {name: "3 Putt", amount: 1, description: "Taking three putts on any green"},
+  {name: "Woody", amount: 1, description: "Hitting any tree during play"},
+  {name: "Wetty", amount: 1, description: "Ball landing in water hazard"},
+  {name: "Sandy", amount: 1, description: "Ball landing in bunker"},
+  {name: "Lost Ball", amount: 2, description: "Losing a ball during play"},
+  {name: "Air Shot", amount: 2, description: "Completely missing the ball"},
+  {name: "Not clearing ladies tee", amount: 5, description: "Drive failing to pass ladies tee box"}
+]
+```
+
+### Friday Activity Suggestions
+Create voting system for these activity categories:
+- **Beach Options**: Praia dos Pescadores, Praia da Oura, Praia dos Alemães
+- **Water Activities**: Dolphin watching tours, Sea cave exploration, Jet skiing
+- **Cultural Experiences**: Silves Castle, Old Town Albufeira, Local winery tours
+- **Adventure Activities**: Jeep safari, Go-kart racing, Zoomarine theme park
+
+## Technical Requirements
+
+### Technology Stack
+- **Frontend**: HTML5, CSS3, JavaScript (vanilla or framework of choice)
+- **Responsive Design**: Mobile-first approach with touch-friendly interfaces
+- **Data Storage**: Local Storage API for offline functionality
+- **No Backend Required**: Client-side only application
+
+### Key Functionality
+- **Navigation**: Clean menu system linking all major sections
+- **Data Persistence**: All scores, fines, and votes saved locally
+- **Offline Capability**: Full functionality without internet connection
+- **Touch Optimization**: Large input areas suitable for golf glove use
+
+## Design Guidelines
+
+### Visual Theme
+- **Golf-inspired color scheme**: Greens, whites, and gold accents
+- **Clean, professional layout**: Easy navigation and readability
+- **Mobile optimization**: Primarily designed for smartphone use
+- **Fast loading**: Minimal graphics for reliable course-side access
+
+### User Experience
+- **Intuitive navigation**: Clear sections for Schedule, Courses, Scoring, Fines, Activities
+- **Error handling**: Allow score corrections and data modifications
+- **Progress tracking**: Visual indicators of completion status
+- **Group interaction**: Real-time updates visible to all members
+
+## Page Structure
+
+### Homepage
+- Welcome message and trip overview (July 1-6, 2025)
+- Quick navigation to all major sections
+- Current day's schedule highlight
+
+### Schedule Page
+- Complete itinerary table with all timing details
+- Daily breakdown with departure, travel, and pickup times
+- Links to individual golf course pages
+
+### Golf Course Pages (3 separate pages)
+- Full scorecard with hole-by-hole details
+- Course tips and strategic advice
+- Comparative metrics and difficulty ratings
+- Links to official course websites
+
+### Scoring System
+- Player registration and management
+- Course selection for each round
+- Interactive scorecard with real-time calculations
+- Leaderboard displays and round history
+
+### Fines Tracker
+- Standard fine categories with amounts
+- Real-time fine entry by player
+- Running totals and "most fined" leaderboards
+- Banter and comment sections
+
+### Friday Activities
+- Categorized activity suggestions
+- Voting system with real-time tallies
+- Activity details and logistics information
+
+This comprehensive prompt provides all necessary data, functionality requirements, and technical specifications to create a fully functional golf trip management web application.
+
+Sources
