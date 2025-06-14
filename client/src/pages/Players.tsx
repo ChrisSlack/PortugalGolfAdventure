@@ -16,6 +16,7 @@ export default function Players() {
   const [newPlayerOpen, setNewPlayerOpen] = useState(false);
   const [newTeamOpen, setNewTeamOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+  const [editingTeam, setEditingTeam] = useState<Team | null>(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -112,6 +113,41 @@ export default function Players() {
     }
   });
 
+  const updateTeamMutation = useMutation({
+    mutationFn: async ({ id, ...data }: any) => {
+      const response = await apiRequest("PATCH", `/api/teams/${id}`, {
+        name: data.name,
+        captainId: data.captainId ? parseInt(data.captainId) : null
+      });
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/teams"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+      setEditingTeam(null);
+      setNewTeamOpen(false);
+      setTeamData({ name: "", captainId: "" });
+      toast({ title: "Success", description: "Team updated successfully" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to update team", variant: "destructive" });
+    }
+  });
+
+  const deleteTeamMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest("DELETE", `/api/teams/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/teams"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/players"] });
+      toast({ title: "Success", description: "Team deleted successfully" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to delete team", variant: "destructive" });
+    }
+  });
+
   const resetForm = () => {
     setFormData({ firstName: "", lastName: "", handicap: "", teamId: "none" });
   };
@@ -134,6 +170,29 @@ export default function Players() {
       teamId: player.teamId?.toString() || "none"
     });
     setNewPlayerOpen(true);
+  };
+
+  const handleTeamEdit = (team: Team) => {
+    setEditingTeam(team);
+    setTeamData({
+      name: team.name,
+      captainId: team.captainId?.toString() || ""
+    });
+    setNewTeamOpen(true);
+  };
+
+  const handleTeamSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingTeam) {
+      updateTeamMutation.mutate({ id: editingTeam.id, ...teamData });
+    } else {
+      createTeamMutation.mutate(teamData);
+    }
+  };
+
+  const resetTeamForm = () => {
+    setTeamData({ name: "", captainId: "" });
+    setEditingTeam(null);
   };
 
   const getTeamName = (teamId: number | null) => {
@@ -175,7 +234,12 @@ export default function Players() {
             <h1 className="text-3xl font-bold text-golf-green">Players & Teams</h1>
           </div>
           <div className="space-x-2">
-            <Dialog open={newTeamOpen} onOpenChange={setNewTeamOpen}>
+            <Dialog open={newTeamOpen} onOpenChange={(open) => {
+              setNewTeamOpen(open);
+              if (!open) {
+                resetTeamForm();
+              }
+            }}>
               <DialogTrigger asChild>
                 <Button className="golf-green text-white">
                   <Trophy className="h-4 w-4 mr-2" />
@@ -184,15 +248,12 @@ export default function Players() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Create New Team</DialogTitle>
+                  <DialogTitle>{editingTeam ? "Edit Team" : "Create New Team"}</DialogTitle>
                   <DialogDescription>
-                    Create a new team and select a captain from the available players
+                    {editingTeam ? "Update team details and captain" : "Create a new team and select a captain from the available players"}
                   </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={(e) => {
-                  e.preventDefault();
-                  createTeamMutation.mutate(teamData);
-                }} className="space-y-4">
+                <form onSubmit={handleTeamSubmit} className="space-y-4">
                   <div>
                     <Label>Team Name</Label>
                     <Input
@@ -218,7 +279,7 @@ export default function Players() {
                     </Select>
                   </div>
                   <Button type="submit" className="w-full golf-green text-white">
-                    Create Team
+                    {editingTeam ? "Update Team" : "Create Team"}
                   </Button>
                 </form>
               </DialogContent>
@@ -308,8 +369,27 @@ export default function Players() {
               <Card key={team.id} className="border-golf-green">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
-                    <span>{team.name}</span>
-                    {team.captainId && <Star className="h-4 w-4 text-golf-gold" />}
+                    <div className="flex items-center space-x-2">
+                      <span>{team.name}</span>
+                      {team.captainId && <Star className="h-4 w-4 text-golf-gold" />}
+                    </div>
+                    <div className="flex space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleTeamEdit(team)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteTeamMutation.mutate(team.id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
