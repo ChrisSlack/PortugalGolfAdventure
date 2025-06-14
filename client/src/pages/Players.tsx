@@ -41,8 +41,9 @@ export default function Players() {
   const createPlayerMutation = useMutation({
     mutationFn: async (data: any) => {
       const response = await apiRequest("POST", "/api/players", {
-        ...data,
-        handicap: data.handicap ? parseFloat(data.handicap) : null,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        handicap: data.handicap || null,
         teamId: data.teamId && data.teamId !== "none" ? parseInt(data.teamId) : null
       });
       return await response.json();
@@ -61,8 +62,9 @@ export default function Players() {
   const updatePlayerMutation = useMutation({
     mutationFn: async ({ id, ...data }: any) => {
       const response = await apiRequest("PATCH", `/api/players/${id}`, {
-        ...data,
-        handicap: data.handicap ? parseFloat(data.handicap) : null,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        handicap: data.handicap || null,
         teamId: data.teamId && data.teamId !== "none" ? parseInt(data.teamId) : null
       });
       return await response.json();

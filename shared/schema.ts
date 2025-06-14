@@ -55,7 +55,10 @@ export const votes = pgTable("votes", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertPlayerSchema = createInsertSchema(players).omit({ id: true, createdAt: true });
+export const insertPlayerSchema = createInsertSchema(players).omit({ id: true, createdAt: true }).extend({
+  handicap: z.string().optional().transform((val) => val && val !== "" ? val : null),
+  teamId: z.number().nullable().optional()
+});
 export const insertTeamSchema = createInsertSchema(teams).omit({ id: true, createdAt: true });
 export const insertRoundSchema = createInsertSchema(rounds).omit({ id: true, createdAt: true });
 export const insertScoreSchema = createInsertSchema(scores).omit({ id: true, createdAt: true });

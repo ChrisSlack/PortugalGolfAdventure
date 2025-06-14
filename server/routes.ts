@@ -28,11 +28,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/players", async (req, res) => {
     try {
+      console.log("Received player data:", req.body);
       const validatedData = insertPlayerSchema.parse(req.body);
+      console.log("Validated player data:", validatedData);
       const player = await storage.createPlayer(validatedData);
       res.json(player);
     } catch (error) {
-      res.status(400).json({ message: "Invalid player data" });
+      console.error("Player creation error:", error);
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(400).json({ message: "Invalid player data" });
+      }
     }
   });
 
