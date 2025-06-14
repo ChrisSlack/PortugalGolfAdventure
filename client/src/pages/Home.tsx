@@ -2,10 +2,31 @@ import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, Club, Users, Smartphone, CalendarDays, Flag, TrendingUp, Coins, Vote, Sun } from "lucide-react";
 import { scheduleData } from "@/lib/courseData";
+import CumulativeLeaderboard from "@/components/CumulativeLeaderboard";
+import { useQuery } from "@tanstack/react-query";
+import type { Player, Team, Round, Score } from "@shared/schema";
 
 export default function Home() {
   const today = new Date().toISOString().split('T')[0];
   const todaySchedule = scheduleData.find(item => item.date === today) || scheduleData[1]; // Default to July 2nd
+
+  // Fetch data for cumulative leaderboards
+  const { data: players = [] } = useQuery<Player[]>({
+    queryKey: ['/api/players']
+  });
+
+  const { data: teams = [] } = useQuery<Team[]>({
+    queryKey: ['/api/teams']
+  });
+
+  const { data: rounds = [] } = useQuery<Round[]>({
+    queryKey: ['/api/rounds']
+  });
+
+  const { data: allScores = [] } = useQuery<Score[]>({
+    queryKey: ['/api/scores/all'],
+    queryFn: () => fetch('/api/scores/all').then(res => res.json())
+  });
 
   return (
     <div className="py-8">

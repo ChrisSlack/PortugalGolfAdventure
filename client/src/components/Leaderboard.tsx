@@ -107,54 +107,64 @@ export default function Leaderboard({ course, players, scores, onScoreEdit, isEd
             return (
               <div 
                 key={item.player} 
-                className={`flex items-center justify-between p-4 rounded-lg ${
-                  position === 1 ? 'golf-light text-white' : 'bg-gray-50'
+                className={`flex items-center justify-between p-3 rounded-lg border ${
+                  position === 1 ? 'bg-golf-green text-white border-golf-green' : 
+                  position === 2 ? 'bg-gray-100 border-gray-200' :
+                  position === 3 ? 'bg-amber-50 border-amber-200' :
+                  'bg-white border-gray-200'
                 }`}
               >
                 <div className="flex items-center space-x-3">
                   {getPositionIcon(position)}
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center space-x-2">
-                      <span className={`font-bold text-lg ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
-                        {getPositionText(position)} - {item.player}
+                      <span className={`font-semibold ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
+                        {getPositionText(position)}
+                      </span>
+                      <span className={`font-medium truncate ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
+                        {item.player}
                       </span>
                       {item.holesCompleted < 18 && (
-                        <Badge variant="outline" className={position === 1 ? 'border-white text-white' : ''}>
+                        <Badge 
+                          variant="outline" 
+                          className={`text-xs ${position === 1 ? 'border-white text-white' : 'border-gray-300'}`}
+                        >
                           {item.holesCompleted}/18
                         </Badge>
                       )}
                     </div>
-                    <p className={`text-sm ${position === 1 ? 'text-white opacity-90' : 'text-gray-600'}`}>
+                    <p className={`text-sm ${position === 1 ? 'text-white/90' : 'text-gray-600'}`}>
                       {item.holesCompleted > 0 
-                        ? `${item.total} strokes (${item.toPar === 0 ? 'Even' : toPar})`
+                        ? `${item.total} strokes ${item.toPar === 0 ? '(Even)' : `(${toPar})`}`
                         : 'No scores yet'
                       }
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
+                
+                <div className="flex items-center space-x-2">
                   {isEditable && onScoreEdit && (
                     <Button
                       variant={position === 1 ? "outline" : "default"}
                       size="sm"
                       onClick={() => {
-                        // Find next hole to score for this player
                         const nextHole = course.holes.find(hole => !scores[item.player]?.[hole.hole])?.hole || 1;
                         onScoreEdit(item.player, nextHole);
                       }}
-                      className={position === 1 ? 'border-white text-white hover:bg-white hover:text-golf-green' : ''}
+                      className={`text-xs ${position === 1 ? 'border-white text-white hover:bg-white hover:text-golf-green' : ''}`}
                     >
-                      <Plus className="h-4 w-4 mr-1" />
+                      <Plus className="h-3 w-3 mr-1" />
                       Quick Entry
                     </Button>
                   )}
-                  <div className="text-right">
-                    {item.holesCompleted > 0 && (
-                      <div className={`text-2xl font-bold ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
+                  
+                  {item.holesCompleted > 0 && (
+                    <div className="text-right">
+                      <div className={`text-xl font-bold ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
                         {item.toPar === 0 ? 'E' : toPar}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             );

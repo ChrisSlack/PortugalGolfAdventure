@@ -28,6 +28,7 @@ export interface IStorage {
   
   // Scores
   getScores(roundId: number): Promise<Score[]>;
+  getAllScores(): Promise<Score[]>;
   createScore(score: InsertScore): Promise<Score>;
   updateScore(id: number, scoreData: Partial<InsertScore>): Promise<Score>;
   
@@ -154,6 +155,10 @@ export class MemStorage implements IStorage {
   // Scores
   async getScores(roundId: number): Promise<Score[]> {
     return Array.from(this.scores.values()).filter(score => score.roundId === roundId);
+  }
+
+  async getAllScores(): Promise<Score[]> {
+    return Array.from(this.scores.values());
   }
 
   async createScore(insertScore: InsertScore): Promise<Score> {
