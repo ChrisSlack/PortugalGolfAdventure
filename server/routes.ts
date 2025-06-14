@@ -145,6 +145,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/rounds/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteRound(id);
+      res.json({ message: "Round deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting round:", error);
+      res.status(500).json({ message: "Failed to delete round" });
+    }
+  });
+
   // Scores
   app.get("/api/scores/all", async (req, res) => {
     try {

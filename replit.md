@@ -146,6 +146,13 @@ This is a comprehensive golf trip management application built for the Portugal 
   - Added net scoring calculations with handicap adjustments for both individual and team standings
   - Unified interface design across scoring page and home page leaderboards
   - Improved scorecard table structure with clearer column headers
+- June 14, 2025: Fixed leaderboard data consistency and added round management
+  - Resolved data inconsistency between scorecard and home page leaderboard calculations
+  - Cleaned up duplicate rounds in database that were causing calculation errors
+  - Switched from memory storage to database storage for proper data persistence
+  - Added round management functionality with ability to select and delete scorecards
+  - Implemented proper hole-by-hole handicap calculations using actual course data
+  - Added DELETE /api/rounds/:id endpoint and RoundSelector component for scorecard management
 
 ## User Preferences
 
