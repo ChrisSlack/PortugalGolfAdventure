@@ -154,6 +154,16 @@ export class MemStorage implements IStorage {
     return round;
   }
 
+  async deleteRound(id: number): Promise<void> {
+    this.rounds.delete(id);
+    // Also delete associated scores
+    for (const [scoreId, score] of this.scores) {
+      if (score.roundId === id) {
+        this.scores.delete(scoreId);
+      }
+    }
+  }
+
   // Scores
   async getScores(roundId: number): Promise<Score[]> {
     return Array.from(this.scores.values()).filter(score => score.roundId === roundId);
