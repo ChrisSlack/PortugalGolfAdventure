@@ -29,11 +29,13 @@ export default function Navigation() {
       : "";
 
     return (
-      <Link href={href}>
-        <a className={`${baseClasses} ${activeClasses}`} onClick={() => mobile && setMobileOpen(false)}>
-          <i className={`${icon} ${mobile ? "text-lg" : ""}`}></i>
-          <span className={mobile ? "" : "hidden md:inline"}>{label}</span>
-        </a>
+      <Link 
+        href={href} 
+        className={`${baseClasses} ${activeClasses}`} 
+        onClick={() => mobile && setMobileOpen(false)}
+      >
+        <i className={`${icon} ${mobile ? "text-lg" : ""}`}></i>
+        <span className={mobile ? "" : "hidden md:inline"}>{label}</span>
       </Link>
     );
   };
