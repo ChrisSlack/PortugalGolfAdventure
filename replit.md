@@ -140,6 +140,12 @@ This is a comprehensive golf trip management application built for the Portugal 
   - Added accessibility DialogDescription components to fix console warnings
   - Improved scorecard layout with clearer scoring mode indicators
   - Enhanced visual hierarchy for better user experience
+- June 14, 2025: Enhanced scorecard and leaderboard functionality
+  - Added hole numbers (1-18) in header row above par values for better navigation
+  - Implemented matching Score/Stats and Gross/Net filters on home page leaderboards
+  - Added net scoring calculations with handicap adjustments for both individual and team standings
+  - Unified interface design across scoring page and home page leaderboards
+  - Improved scorecard table structure with clearer column headers
 
 ## User Preferences
 

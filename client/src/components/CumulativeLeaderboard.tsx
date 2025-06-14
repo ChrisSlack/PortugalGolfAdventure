@@ -105,7 +105,7 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
       const teamScores = scores.filter(s => teamPlayerIds.includes(s.playerId));
       
       if (teamScores.length > 0) {
-        const totalStrokes = teamScores.reduce((sum, score) => sum + score.score, 0);
+        let totalStrokes = teamScores.reduce((sum, score) => sum + score.score, 0);
         const roundsPerPlayer = new Map<number, Set<number>>();
         
         // Count rounds per player
@@ -121,8 +121,18 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
         let totalRoundsPlayed = 0;
         roundsPerPlayer.forEach((roundSet) => {
           totalRoundsPlayed += roundSet.size;
-          totalPar += roundSet.size * 72; // Assuming par 72 per round
+          totalPar += roundSet.size * 72; // Standard par 72 per round
         });
+        
+        // Apply handicap for net scoring
+        if (scoreMode === 'net') {
+          teamPlayers.forEach(player => {
+            const handicap = parseFloat(player.handicap || '0') || 0;
+            const playerRounds = roundsPerPlayer.get(player.id)?.size || 0;
+            const totalHandicapStrokes = playerRounds * handicap;
+            totalStrokes = Math.round(totalStrokes - totalHandicapStrokes);
+          });
+        }
         
         const toPar = totalStrokes - totalPar;
         const averageScore = totalRoundsPlayed > 0 ? totalStrokes / totalRoundsPlayed : 0;
@@ -252,57 +262,66 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {playerStats.slice(0, 5).map((player, index) => {
-              const position = index + 1;
-              const toPar = player.toPar > 0 ? `+${player.toPar}` : player.toPar.toString();
-              
-              return (
-                <div 
-                  key={player.playerId} 
-                  className={`flex items-center justify-between p-3 rounded-lg border ${
-                    position === 1 ? 'bg-yellow-50 border-yellow-300' : 
-                    position === 2 ? 'bg-gray-100 border-gray-200' :
-                    position === 3 ? 'bg-amber-50 border-amber-200' :
-                    'bg-white border-gray-200'
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    {getPositionIcon(position)}
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center space-x-2">
-                        <span className={`font-semibold ${position === 1 ? 'text-yellow-800' : 'text-gray-900'}`}>
-                          {getPositionText(position)}
-                        </span>
-                        <span className={`font-medium truncate ${position === 1 ? 'text-yellow-900' : 'text-gray-900'}`}>
-                          {player.name}
-                        </span>
-                        {player.team && (
-                          <Badge 
-                            variant="outline" 
-                            className={`text-xs ${position === 1 ? 'border-yellow-600 text-yellow-800' : 'border-gray-300'}`}
-                          >
-                            {player.team.name}
-                          </Badge>
-                        )}
+            {viewMode === 'scores' ? (
+              playerStats.slice(0, 5).map((player, index) => {
+                const position = index + 1;
+                const toPar = player.toPar > 0 ? `+${player.toPar}` : player.toPar.toString();
+                
+                return (
+                  <div 
+                    key={player.playerId} 
+                    className={`flex items-center justify-between p-3 rounded-lg border ${
+                      position === 1 ? 'bg-yellow-50 border-yellow-300' : 
+                      position === 2 ? 'bg-gray-100 border-gray-200' :
+                      position === 3 ? 'bg-amber-50 border-amber-200' :
+                      'bg-white border-gray-200'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      {getPositionIcon(position)}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center space-x-2">
+                          <span className={`font-semibold ${position === 1 ? 'text-yellow-800' : 'text-gray-900'}`}>
+                            {getPositionText(position)}
+                          </span>
+                          <span className={`font-medium truncate ${position === 1 ? 'text-yellow-900' : 'text-gray-900'}`}>
+                            {player.name}
+                          </span>
+                          {player.team && (
+                            <Badge 
+                              variant="outline" 
+                              className={`text-xs ${position === 1 ? 'border-yellow-600 text-yellow-800' : 'border-gray-300'}`}
+                            >
+                              {player.team.name}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className={`text-sm ${position === 1 ? 'text-yellow-700' : 'text-gray-600'}`}>
+                          {player.roundsPlayed} rounds • Avg: {player.averageScore.toFixed(1)}
+                          {player.bestRound && ` • Best: ${player.bestRound}`}
+                        </p>
                       </div>
-                      <p className={`text-sm ${position === 1 ? 'text-yellow-700' : 'text-gray-600'}`}>
-                        {player.roundsPlayed} rounds • Avg: {player.averageScore.toFixed(1)}
-                        {player.bestRound && ` • Best: ${player.bestRound}`}
-                      </p>
+                    </div>
+                    
+                    <div className="text-right">
+                      <div className={`text-xl font-bold ${position === 1 ? 'text-yellow-900' : 'text-gray-900'}`}>
+                        {player.toPar === 0 ? 'E' : toPar}
+                      </div>
+                      <div className={`text-xs ${position === 1 ? 'text-yellow-700' : 'text-gray-500'}`}>
+                        {player.totalStrokes} total
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="text-right">
-                    <div className={`text-xl font-bold ${position === 1 ? 'text-yellow-900' : 'text-gray-900'}`}>
-                      {player.toPar === 0 ? 'E' : toPar}
-                    </div>
-                    <div className={`text-xs ${position === 1 ? 'text-yellow-700' : 'text-gray-500'}`}>
-                      {player.totalStrokes} total
-                    </div>
-                  </div>
+                );
+              })
+            ) : (
+              <div className="space-y-4">
+                <div className="text-center text-gray-600">
+                  <BarChart3 className="h-8 w-8 mx-auto mb-2" />
+                  <p className="text-sm">Player statistics and analysis coming soon</p>
                 </div>
-              );
-            })}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -358,54 +377,63 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {teamStats.map((teamStat, index) => {
-              const position = index + 1;
-              const toPar = teamStat.toPar > 0 ? `+${teamStat.toPar}` : teamStat.toPar.toString();
-              
-              return (
-                <div 
-                  key={teamStat.team.id} 
-                  className={`flex items-center justify-between p-3 rounded-lg border ${
-                    position === 1 ? 'bg-yellow-50 border-yellow-300' : 
-                    position === 2 ? 'bg-gray-100 border-gray-200' :
-                    position === 3 ? 'bg-amber-50 border-amber-200' :
-                    'bg-white border-gray-200'
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    {getPositionIcon(position)}
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center space-x-2">
-                        <span className={`font-semibold ${position === 1 ? 'text-yellow-800' : 'text-gray-900'}`}>
-                          {getPositionText(position)}
-                        </span>
-                        <span className={`font-medium truncate ${position === 1 ? 'text-yellow-900' : 'text-gray-900'}`}>
-                          Team {teamStat.team.name}
-                        </span>
-                        <Badge 
-                          variant="outline" 
-                          className={`text-xs ${position === 1 ? 'border-yellow-600 text-yellow-800' : 'border-gray-300'}`}
-                        >
-                          {teamStat.playersCount} players
-                        </Badge>
+            {viewMode === 'scores' ? (
+              teamStats.map((teamStat, index) => {
+                const position = index + 1;
+                const toPar = teamStat.toPar > 0 ? `+${teamStat.toPar}` : teamStat.toPar.toString();
+                
+                return (
+                  <div 
+                    key={teamStat.team.id} 
+                    className={`flex items-center justify-between p-3 rounded-lg border ${
+                      position === 1 ? 'bg-yellow-50 border-yellow-300' : 
+                      position === 2 ? 'bg-gray-100 border-gray-200' :
+                      position === 3 ? 'bg-amber-50 border-amber-200' :
+                      'bg-white border-gray-200'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      {getPositionIcon(position)}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center space-x-2">
+                          <span className={`font-semibold ${position === 1 ? 'text-yellow-800' : 'text-gray-900'}`}>
+                            {getPositionText(position)}
+                          </span>
+                          <span className={`font-medium truncate ${position === 1 ? 'text-yellow-900' : 'text-gray-900'}`}>
+                            Team {teamStat.team.name}
+                          </span>
+                          <Badge 
+                            variant="outline" 
+                            className={`text-xs ${position === 1 ? 'border-yellow-600 text-yellow-800' : 'border-gray-300'}`}
+                          >
+                            {teamStat.playersCount} players
+                          </Badge>
+                        </div>
+                        <p className={`text-sm ${position === 1 ? 'text-yellow-700' : 'text-gray-600'}`}>
+                          {teamStat.roundsPlayed} total rounds • Avg: {teamStat.averageScore.toFixed(1)}
+                        </p>
                       </div>
-                      <p className={`text-sm ${position === 1 ? 'text-yellow-700' : 'text-gray-600'}`}>
-                        {teamStat.roundsPlayed} total rounds • Avg: {teamStat.averageScore.toFixed(1)}
-                      </p>
+                    </div>
+                    
+                    <div className="text-right">
+                      <div className={`text-xl font-bold ${position === 1 ? 'text-yellow-900' : 'text-gray-900'}`}>
+                        {teamStat.toPar === 0 ? 'E' : toPar}
+                      </div>
+                      <div className={`text-xs ${position === 1 ? 'text-yellow-700' : 'text-gray-500'}`}>
+                        {teamStat.totalStrokes} total
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="text-right">
-                    <div className={`text-xl font-bold ${position === 1 ? 'text-yellow-900' : 'text-gray-900'}`}>
-                      {teamStat.toPar === 0 ? 'E' : toPar}
-                    </div>
-                    <div className={`text-xs ${position === 1 ? 'text-yellow-700' : 'text-gray-500'}`}>
-                      {teamStat.totalStrokes} total
-                    </div>
-                  </div>
+                );
+              })
+            ) : (
+              <div className="space-y-4">
+                <div className="text-center text-gray-600">
+                  <BarChart3 className="h-8 w-8 mx-auto mb-2" />
+                  <p className="text-sm">Team statistics and analysis coming soon</p>
                 </div>
-              );
-            })}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
