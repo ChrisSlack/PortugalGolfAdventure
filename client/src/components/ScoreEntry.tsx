@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import { ChevronLeft, ChevronRight, Save } from "lucide-react";
 import { Course } from "@/lib/types";
 
 interface ScoreEntryProps {
@@ -33,8 +34,18 @@ export default function ScoreEntry({
   onScoreSubmit 
 }: ScoreEntryProps) {
   const [player, setPlayer] = useState(selectedPlayer || '');
-  const [hole, setHole] = useState(selectedHole?.toString() || '');
+  const [hole, setHole] = useState(selectedHole || 1);
   const [score, setScore] = useState<number | null>(null);
+
+  // Update hole when selectedHole prop changes
+  useEffect(() => {
+    if (selectedHole) {
+      setHole(selectedHole);
+    }
+    if (selectedPlayer) {
+      setPlayer(selectedPlayer);
+    }
+  }, [selectedHole, selectedPlayer]);
   const [threePutt, setThreePutt] = useState(false);
   const [pickedUp, setPickedUp] = useState(false);
   const [inWater, setInWater] = useState(false);
@@ -43,7 +54,7 @@ export default function ScoreEntry({
   const handleSubmit = () => {
     if (!player || !hole || score === null) return;
     
-    onScoreSubmit(player, parseInt(hole), score, {
+    onScoreSubmit(player, hole, score, {
       threePutt,
       pickedUp,
       inWater,
@@ -59,7 +70,14 @@ export default function ScoreEntry({
     onOpenChange(false);
   };
 
-  const selectedHoleData = course.holes.find(h => h.hole === parseInt(hole));
+  const navigateHole = (direction: 'prev' | 'next') => {
+    const newHole = direction === 'prev' ? hole - 1 : hole + 1;
+    if (newHole >= 1 && newHole <= 18) {
+      setHole(newHole);
+    }
+  };
+
+  const selectedHoleData = course.holes.find(h => h.hole === hole);
   const scoreDiff = score && selectedHoleData ? score - selectedHoleData.par : 0;
   
   const getScoreType = (diff: number): string => {
@@ -87,19 +105,35 @@ export default function ScoreEntry({
         
         <div className="space-y-4">
           <div>
-            <Label htmlFor="hole-select">Select Hole</Label>
-            <Select value={hole} onValueChange={setHole}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose hole..." />
-              </SelectTrigger>
-              <SelectContent>
-                {course.holes.map(holeData => (
-                  <SelectItem key={holeData.hole} value={holeData.hole.toString()}>
-                    Hole {holeData.hole} (Par {holeData.par})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label>Select Hole</Label>
+            <div className="flex items-center justify-between border rounded-lg p-2">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigateHole('prev')}
+                disabled={hole <= 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              
+              <div className="text-center">
+                <div className="text-lg font-semibold">Hole {hole}</div>
+                {selectedHoleData && (
+                  <div className="text-sm text-gray-500">
+                    Par {selectedHoleData.par} • Distance: {selectedHoleData.yardage}m • Handicap: {selectedHoleData.handicap}
+                  </div>
+                )}
+              </div>
+              
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigateHole('next')}
+                disabled={hole >= 18}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
           
           <div>
@@ -217,8 +251,9 @@ export default function ScoreEntry({
             <Button 
               onClick={handleSubmit} 
               disabled={!player || !hole || score === null}
-              className="flex-1 golf-green text-white hover:golf-light"
+              className="flex-1 bg-green-600 text-white hover:bg-green-700"
             >
+              <Save className="h-4 w-4 mr-2" />
               Save Score
             </Button>
             <Button 
