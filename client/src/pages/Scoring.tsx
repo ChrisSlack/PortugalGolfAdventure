@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ScoreEntry from "@/components/ScoreEntry";
 import Leaderboard from "@/components/Leaderboard";
 import TeamLeaderboard from "@/components/TeamLeaderboard";
+import Scorecard from "@/components/Scorecard";
 import { courses } from "@/lib/courseData";
 import { Course } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
@@ -297,8 +298,12 @@ export default function Scoring() {
             </CardContent>
           </Card>
 
-          <Tabs defaultValue="leaderboard" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+          <Tabs defaultValue="scorecard" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="scorecard" className="flex items-center space-x-2">
+                <Target className="h-4 w-4" />
+                <span>Scorecard</span>
+              </TabsTrigger>
               <TabsTrigger value="leaderboard" className="flex items-center space-x-2">
                 <Trophy className="h-4 w-4" />
                 <span>Individual</span>
@@ -308,6 +313,17 @@ export default function Scoring() {
                 <span>Teams</span>
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="scorecard">
+              {currentCourse && (
+                <Scorecard 
+                  course={currentCourse}
+                  players={players.map(p => `${p.firstName} ${p.lastName}`)}
+                  scores={stringFormattedScores}
+                  onScoreEdit={handleScoreEdit}
+                />
+              )}
+            </TabsContent>
 
             <TabsContent value="leaderboard">
               {currentCourse && (
