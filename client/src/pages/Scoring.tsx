@@ -114,6 +114,16 @@ export default function Scoring() {
     });
   };
 
+  const editExistingRound = () => {
+    if (existingRound) {
+      setCurrentRoundId(existingRound.id);
+      toast({
+        title: "Round Loaded",
+        description: "You can now continue scoring this round"
+      });
+    }
+  };
+
   const handleScoreEdit = (playerName: string, hole: number) => {
     const player = players.find(p => `${p.firstName} ${p.lastName}` === playerName);
     if (player) {
@@ -260,23 +270,40 @@ export default function Scoring() {
               <p className="text-sm text-gray-600 mb-4">
                 {players.length} players ready to play
               </p>
-              <Button 
-                onClick={startNewRound} 
-                className="w-full golf-button"
-                disabled={!selectedCourse || players.length === 0 || createRoundMutation.isPending}
-              >
-                {createRoundMutation.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Starting Round...
-                  </>
-                ) : (
-                  <>
-                    <Play className="mr-2 h-4 w-4" />
-                    Start Round
-                  </>
-                )}
-              </Button>
+              
+              {existingRound ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-amber-600 bg-amber-50 p-2 rounded">
+                    A round already exists for this date and course.
+                  </p>
+                  <Button 
+                    onClick={editExistingRound} 
+                    className="w-full golf-button"
+                    disabled={!selectedCourse || players.length === 0}
+                  >
+                    <Target className="mr-2 h-4 w-4" />
+                    Edit Existing Round
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  onClick={startNewRound} 
+                  className="w-full golf-button"
+                  disabled={!selectedCourse || players.length === 0 || createRoundMutation.isPending}
+                >
+                  {createRoundMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Starting Round...
+                    </>
+                  ) : (
+                    <>
+                      <Play className="mr-2 h-4 w-4" />
+                      Start Round
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
