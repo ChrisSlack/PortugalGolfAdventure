@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -7,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Coins, AlertTriangle, User, TrendingUp } from "lucide-react";
 import { standardFines } from "@/lib/courseData";
 import { useToast } from "@/hooks/use-toast";
+import { Player, Fine } from "@shared/schema";
+import PlayerFinesDetail from "./PlayerFinesDetail";
 
 interface Fine {
   id: string;
@@ -14,6 +17,7 @@ interface Fine {
   type: string;
   amount: number;
   description: string;
+  golfDay: string;
   timestamp: string;
 }
 
@@ -73,12 +77,14 @@ export default function FinesTracker({ players, fines, onAddFine }: FinesTracker
       player: selectedPlayer,
       type: fineType,
       amount,
-      description
+      description,
+      golfDay: selectedGolfDay
     });
 
+    const selectedDay = golfDays.find(day => day.value === selectedGolfDay);
     toast({
       title: "Fine Added",
-      description: `${selectedPlayer} fined ${amount} for ${fineData.name}`
+      description: `${selectedPlayer} fined ${amount} for ${fineData.name} on ${selectedDay?.label}`
     });
   };
 
@@ -121,20 +127,37 @@ export default function FinesTracker({ players, fines, onAddFine }: FinesTracker
           <CardTitle>Add Fine</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Select Player</label>
-            <Select value={selectedPlayer} onValueChange={setSelectedPlayer}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose player..." />
-              </SelectTrigger>
-              <SelectContent>
-                {players.map(player => (
-                  <SelectItem key={player} value={player}>
-                    {player}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Select Player</label>
+              <Select value={selectedPlayer} onValueChange={setSelectedPlayer}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose player..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {players.map(player => (
+                    <SelectItem key={player} value={player}>
+                      {player}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Golf Day</label>
+              <Select value={selectedGolfDay} onValueChange={setSelectedGolfDay}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {golfDays.map(day => (
+                    <SelectItem key={day.value} value={day.value}>
+                      {day.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -192,7 +215,20 @@ export default function FinesTracker({ players, fines, onAddFine }: FinesTracker
                 onClick={() => {
                   const amount = parseInt(customAmount);
                   if (amount > 0 && customDescription.trim()) {
-                    handleAddFine('custom', amount, customDescription);
+                    onAddFine({
+                      player: selectedPlayer,
+                      type: 'custom',
+                      amount,
+                      description: customDescription,
+                      golfDay: selectedGolfDay
+                    });
+                    
+                    const selectedDay = golfDays.find(day => day.value === selectedGolfDay);
+                    toast({
+                      title: "Custom Fine Added",
+                      description: `${selectedPlayer} fined ${amount} for ${customDescription} on ${selectedDay?.label}`
+                    });
+                    
                     setCustomAmount('');
                     setCustomDescription('');
                   }
