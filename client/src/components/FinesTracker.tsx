@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Coins, AlertTriangle, User, TrendingUp } from "lucide-react";
 import { standardFines } from "@/lib/courseData";
 import { useToast } from "@/hooks/use-toast";
-import { Player, Fine } from "@shared/schema";
+import { Player, Fine as DBFine } from "@shared/schema";
 import PlayerFinesDetail from "./PlayerFinesDetail";
 
 interface Fine {
@@ -38,7 +38,12 @@ export default function FinesTracker({ players, fines, onAddFine }: FinesTracker
   const [selectedGolfDay, setSelectedGolfDay] = useState<string>('2025-07-02');
   const [customAmount, setCustomAmount] = useState<string>('');
   const [customDescription, setCustomDescription] = useState<string>('');
+  const [viewingPlayerDetail, setViewingPlayerDetail] = useState<{ id: number; name: string } | null>(null);
   const { toast } = useToast();
+
+  const { data: dbPlayers = [] } = useQuery<Player[]>({
+    queryKey: ['/api/players']
+  });
 
   const totalFines = fines.reduce((sum, fine) => sum + fine.amount, 0);
   
@@ -91,6 +96,16 @@ export default function FinesTracker({ players, fines, onAddFine }: FinesTracker
   const sortedPlayerFines = Object.entries(playerFines)
     .sort((a, b) => b[1] - a[1])
     .filter(([_, amount]) => amount > 0);
+
+  if (viewingPlayerDetail) {
+    return (
+      <PlayerFinesDetail
+        playerId={viewingPlayerDetail.id}
+        playerName={viewingPlayerDetail.name}
+        onBack={() => setViewingPlayerDetail(null)}
+      />
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -275,24 +290,38 @@ export default function FinesTracker({ players, fines, onAddFine }: FinesTracker
             </div>
           ) : (
             <div className="space-y-3">
-              {sortedPlayerFines.map(([player, amount], index) => (
-                <div key={player} className="flex justify-between items-center bg-gray-50 p-4 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-golf-green text-white rounded-full flex items-center justify-center font-bold text-sm">
-                      {index + 1}
+              {sortedPlayerFines.map(([player, amount], index) => {
+                const dbPlayer = dbPlayers.find(p => `${p.firstName} ${p.lastName}`.trim() === player);
+                return (
+                  <div 
+                    key={player} 
+                    className="flex justify-between items-center bg-gray-50 p-4 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
+                    onClick={() => {
+                      if (dbPlayer) {
+                        setViewingPlayerDetail({
+                          id: dbPlayer.id,
+                          name: player
+                        });
+                      }
+                    }}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-golf-green text-white rounded-full flex items-center justify-center font-bold text-sm">
+                        {index + 1}
+                      </div>
+                      <div>
+                        <span className="font-bold text-lg text-golf-green hover:text-golf-light">{player}</span>
+                        <p className="text-sm text-gray-600">
+                          {fines.filter(f => f.player === player).length} fines - Click for details
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <span className="font-bold text-lg">{player}</span>
-                      <p className="text-sm text-gray-600">
-                        {fines.filter(f => f.player === player).length} fines
-                      </p>
+                    <div className="text-golf-gold text-xl font-bold">
+                      {amount}
                     </div>
                   </div>
-                  <div className="text-golf-gold text-xl font-bold">
-                    {amount}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
