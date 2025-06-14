@@ -191,12 +191,14 @@ export default function Scoring() {
   // Convert to string-based format for Leaderboard component
   const stringFormattedScores: { [playerName: string]: { [hole: number]: number } } = {};
   const stringFormattedStatistics: { [playerName: string]: { [hole: number]: { threePutt: boolean; pickedUp: boolean; inWater: boolean; inBunker: boolean } } } = {};
+  const playerHandicaps: { [playerName: string]: number } = {};
   
   Object.entries(formattedScores).forEach(([playerId, scoreData]) => {
     const player = players.find(p => p.id === parseInt(playerId));
     if (player) {
       const playerName = `${player.firstName} ${player.lastName}`;
       stringFormattedScores[playerName] = scoreData;
+      playerHandicaps[playerName] = parseFloat(player.handicap || '0') || 0;
       
       // Initialize statistics for this player
       stringFormattedStatistics[playerName] = {};
@@ -395,6 +397,7 @@ export default function Scoring() {
                   statistics={stringFormattedStatistics}
                   onScoreEdit={handleScoreEdit}
                   isEditable={true}
+                  playerHandicaps={playerHandicaps}
                 />
               )}
             </TabsContent>

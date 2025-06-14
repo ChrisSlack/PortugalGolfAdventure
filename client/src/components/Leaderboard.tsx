@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trophy, Medal, Award, User, Plus } from "lucide-react";
+import { Trophy, Medal, Award, User, Plus, Calculator } from "lucide-react";
 import { Course } from "@/lib/types";
 
 interface LeaderboardProps {
@@ -10,9 +11,11 @@ interface LeaderboardProps {
   scores: { [player: string]: { [hole: number]: number } };
   onScoreEdit?: (player: string, hole: number) => void;
   isEditable?: boolean;
+  playerHandicaps?: { [player: string]: number };
 }
 
-export default function Leaderboard({ course, players, scores, onScoreEdit, isEditable = false }: LeaderboardProps) {
+export default function Leaderboard({ course, players, scores, onScoreEdit, isEditable = false, playerHandicaps = {} }: LeaderboardProps) {
+  const [scoreMode, setScoreMode] = useState<'gross' | 'net'>('gross');
   const calculatePlayerStats = (player: string) => {
     const playerScores = scores[player] || {};
     const completedScores = Object.values(playerScores).filter(score => score && score > 0);

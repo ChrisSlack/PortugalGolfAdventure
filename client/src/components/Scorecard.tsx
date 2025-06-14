@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit, BarChart3 } from "lucide-react";
+import { Edit, BarChart3, Calculator, Trophy } from "lucide-react";
 import { Course } from "@/lib/types";
 
 interface ScorecardProps {
@@ -12,10 +12,12 @@ interface ScorecardProps {
   statistics?: { [player: string]: { [hole: number]: { threePutt: boolean; pickedUp: boolean; inWater: boolean; inBunker: boolean } } };
   onScoreEdit: (player: string, hole: number) => void;
   isEditable?: boolean;
+  playerHandicaps?: { [player: string]: number };
 }
 
-export default function Scorecard({ course, players, scores, statistics, onScoreEdit, isEditable = true }: ScorecardProps) {
+export default function Scorecard({ course, players, scores, statistics, onScoreEdit, isEditable = true, playerHandicaps = {} }: ScorecardProps) {
   const [viewMode, setViewMode] = useState<'scores' | 'stats'>('scores');
+  const [scoreMode, setScoreMode] = useState<'gross' | 'net'>('gross');
 
   const getScoreClass = (score: number | undefined, par: number): string => {
     if (!score) return 'bg-gray-100 text-gray-400';
@@ -28,11 +30,45 @@ export default function Scorecard({ course, players, scores, statistics, onScore
     return 'score-worse'; // Triple bogey or worse
   };
 
+  const calculateHandicapStrokes = (player: string, hole: number): number => {
+    const handicap = playerHandicaps[player] || 0;
+    const holeHandicap = course.holes.find(h => h.hole === hole)?.handicap || 18;
+    
+    // Calculate strokes received based on handicap and hole handicap
+    if (handicap >= holeHandicap) {
+      return Math.floor(handicap / 18) + (handicap % 18 >= holeHandicap ? 1 : 0);
+    }
+    return 0;
+  };
+
+  const getDisplayScore = (player: string, hole: number): number | undefined => {
+    const grossScore = scores[player]?.[hole];
+    if (!grossScore) return undefined;
+    
+    if (scoreMode === 'net') {
+      const handicapStrokes = calculateHandicapStrokes(player, hole);
+      return grossScore - handicapStrokes;
+    }
+    return grossScore;
+  };
+
   const calculatePlayerTotal = (player: string) => {
     const playerScores = Object.values(scores[player] || {});
-    const total = playerScores.reduce((sum, score) => sum + score, 0);
-    const toPar = total - course.par;
-    return { total, toPar };
+    const grossTotal = playerScores.reduce((sum, score) => sum + score, 0);
+    
+    if (scoreMode === 'net') {
+      const netTotal = course.holes.reduce((sum, hole) => {
+        const grossScore = scores[player]?.[hole.hole];
+        if (!grossScore) return sum;
+        const handicapStrokes = calculateHandicapStrokes(player, hole.hole);
+        return sum + (grossScore - handicapStrokes);
+      }, 0);
+      const toPar = netTotal - course.par;
+      return { total: netTotal, toPar };
+    }
+    
+    const toPar = grossTotal - course.par;
+    return { total: grossTotal, toPar };
   };
 
   const getStatisticsBadges = (player: string, hole: number) => {
@@ -54,6 +90,26 @@ export default function Scorecard({ course, players, scores, statistics, onScore
         <CardTitle className="flex items-center justify-between">
           <span>Scorecard</span>
           <div className="flex items-center space-x-2">
+            {viewMode === 'scores' && (
+              <>
+                <Button
+                  variant={scoreMode === 'gross' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setScoreMode('gross')}
+                >
+                  <Trophy className="h-4 w-4 mr-1" />
+                  Gross
+                </Button>
+                <Button
+                  variant={scoreMode === 'net' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setScoreMode('net')}
+                >
+                  <Calculator className="h-4 w-4 mr-1" />
+                  Net
+                </Button>
+              </>
+            )}
             <Button
               variant={viewMode === 'scores' ? 'default' : 'outline'}
               size="sm"
@@ -106,22 +162,31 @@ export default function Scorecard({ course, players, scores, statistics, onScore
                       </td>
                       
                       {course.holes.map(hole => {
-                        const score = scores[player]?.[hole.hole];
-                        const hasScore = score !== undefined;
+                        const grossScore = scores[player]?.[hole.hole];
+                        const displayScore = getDisplayScore(player, hole.hole);
+                        const hasScore = grossScore !== undefined;
+                        const handicapStrokes = calculateHandicapStrokes(player, hole.hole);
                         
                         return (
                           <td key={hole.hole} className="px-1 py-2 text-center">
                             {hasScore ? (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className={`h-7 w-7 p-0 text-xs relative ${getScoreClass(score, hole.par)} ${!isEditable ? 'cursor-default' : ''}`}
-                                onClick={() => isEditable && onScoreEdit(player, hole.hole)}
-                                disabled={!isEditable}
-                              >
-                                {isEditable && hasScore && <Edit className="h-2 w-2 absolute top-0 right-0" />}
-                                {score}
-                              </Button>
+                              <div className="relative">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className={`h-7 w-7 p-0 text-xs relative ${getScoreClass(displayScore!, hole.par)} ${!isEditable ? 'cursor-default' : ''}`}
+                                  onClick={() => isEditable && onScoreEdit(player, hole.hole)}
+                                  disabled={!isEditable}
+                                >
+                                  {isEditable && hasScore && <Edit className="h-2 w-2 absolute top-0 right-0" />}
+                                  {displayScore}
+                                </Button>
+                                {scoreMode === 'net' && handicapStrokes > 0 && (
+                                  <div className="text-xs text-gray-500 mt-1">
+                                    -{handicapStrokes}
+                                  </div>
+                                )}
+                              </div>
                             ) : (
                               <Button
                                 variant="ghost"
