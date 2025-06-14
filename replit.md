@@ -153,6 +153,7 @@ This is a comprehensive golf trip management application built for the Portugal 
   - Added round management functionality with ability to select and delete scorecards
   - Implemented proper hole-by-hole handicap calculations using actual course data
   - Added DELETE /api/rounds/:id endpoint and RoundSelector component for scorecard management
+  - Added "Clear Scorecard" functionality with POST /api/rounds/:id/clear endpoint to remove all scores while keeping round structure
 
 ## User Preferences
 

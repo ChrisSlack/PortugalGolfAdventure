@@ -361,16 +361,36 @@ export default function Scoring() {
                   <Target className="h-5 w-5 text-golf-green" />
                   <span>Current Round</span>
                 </div>
-                <Button 
-                  variant="outline" 
-                  onClick={() => {
-                    setCurrentRoundId(null);
-                    setSelectedCourse('');
-                    setSelectedDate('');
-                  }}
-                >
-                  End Round
-                </Button>
+                <div className="flex space-x-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => clearScorecardMutation.mutate(currentRoundId!)}
+                    disabled={clearScorecardMutation.isPending}
+                    className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                  >
+                    {clearScorecardMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Clearing...
+                      </>
+                    ) : (
+                      <>
+                        <Target className="mr-2 h-4 w-4" />
+                        Clear Scorecard
+                      </>
+                    )}
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setCurrentRoundId(null);
+                      setSelectedCourse('');
+                      setSelectedDate('');
+                    }}
+                  >
+                    End Round
+                  </Button>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent>
