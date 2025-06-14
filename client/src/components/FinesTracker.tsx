@@ -75,21 +75,18 @@ export default function FinesTracker({ players, fines, onAddFine }: FinesTracker
       return;
     }
 
-    const fineData = standardFines.find(f => f.type === fineType);
-    if (!fineData) return;
-
     onAddFine({
       player: selectedPlayer,
       type: fineType,
-      amount,
-      description,
+      amount: amount,
+      description: description,
       golfDay: selectedGolfDay
     });
 
     const selectedDay = golfDays.find(day => day.value === selectedGolfDay);
     toast({
       title: "Fine Added",
-      description: `${selectedPlayer} fined ${amount} for ${fineData.name} on ${selectedDay?.label}`
+      description: `${selectedPlayer} fined ${amount} for ${fineType} on ${selectedDay?.label}`
     });
   };
 

@@ -1,38 +1,81 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Coins } from "lucide-react";
 import FinesTracker from "@/components/FinesTracker";
-import { storage } from "@/lib/storage";
+import { Player, Fine } from "@shared/schema";
+import { apiRequest } from "@/lib/queryClient";
 
-interface Fine {
+interface FineWithPlayerName {
   id: string;
   player: string;
   type: string;
   amount: number;
   description: string;
+  golfDay: string;
   timestamp: string;
 }
 
 export default function Fines() {
-  const [players, setPlayers] = useState<string[]>([]);
-  const [fines, setFines] = useState<Fine[]>([]);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const savedPlayers = storage.getPlayers();
-    const savedFines = storage.getFines();
-    setPlayers(savedPlayers);
-    setFines(savedFines);
-  }, []);
+  const { data: players = [] } = useQuery<Player[]>({
+    queryKey: ['/api/players']
+  });
 
-  const handleAddFine = (fineData: Omit<Fine, 'id' | 'timestamp'>) => {
-    const newFine: Fine = {
-      ...fineData,
-      id: Date.now().toString(),
-      timestamp: new Date().toISOString()
-    };
+  const { data: dbFines = [] } = useQuery<Fine[]>({
+    queryKey: ['/api/fines']
+  });
+
+  // Convert database fines to component format
+  const fines: FineWithPlayerName[] = dbFines.map(fine => {
+    const player = players.find(p => p.id === fine.playerId);
+    const playerName = player ? `${player.firstName} ${player.lastName}`.trim() : 'Unknown Player';
     
-    const updatedFines = [...fines, newFine];
-    setFines(updatedFines);
-    storage.setFines(updatedFines);
+    return {
+      id: fine.id.toString(),
+      player: playerName,
+      type: fine.type,
+      amount: fine.amount,
+      description: fine.description || '',
+      golfDay: fine.golfDay || '2025-07-02',
+      timestamp: fine.createdAt ? fine.createdAt.toISOString() : new Date().toISOString()
+    };
+  });
+
+  const playerNames = players.map(p => `${p.firstName} ${p.lastName}`.trim());
+
+  const addFineMutation = useMutation({
+    mutationFn: async (fineData: { player: string; type: string; amount: number; description: string; golfDay: string }) => {
+      const player = players.find(p => `${p.firstName} ${p.lastName}`.trim() === fineData.player);
+      if (!player) throw new Error('Player not found');
+
+      const response = await fetch('/api/fines', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          playerId: player.id,
+          type: fineData.type,
+          amount: fineData.amount,
+          description: fineData.description,
+          golfDay: fineData.golfDay
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add fine');
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/fines'] });
+    }
+  });
+
+  const handleAddFine = (fineData: Omit<FineWithPlayerName, 'id' | 'timestamp'>) => {
+    addFineMutation.mutate(fineData);
   };
 
   return (
@@ -44,7 +87,7 @@ export default function Fines() {
         </div>
         
         <FinesTracker
-          players={players}
+          players={playerNames}
           fines={fines}
           onAddFine={handleAddFine}
         />
