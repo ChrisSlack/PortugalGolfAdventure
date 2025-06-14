@@ -15,7 +15,7 @@ const courseDetails = {
     website: "https://www.nauhotels.com/en/nau-morgado-golf-country-club",
     navigationTime: "35 minutes"
   },
-  "Amendoeira Golf Resort (Faldo Course)": {
+  "Amendoeira Golf Resort": {
     description: "The Faldo Course at Amendoeira Golf Resort is a par-72 championship design by Sir Nick Faldo, requiring strategic play and careful positioning. This course won Portugal's Best Golf Course title in 2016 from World Golf Awards.",
     website: "https://www.amendoeiraresort.com",
     navigationTime: "25 minutes"

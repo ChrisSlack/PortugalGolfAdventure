@@ -61,6 +61,7 @@ export const courses: Course[] = [
     par: 71,
     description: 'Premium championship course with stunning lake views and signature holes.',
     signatureHole: '15th Hole (Par 3) - 200m shot over a lake',
+    website: 'https://www.quintadolago.com/golf/',
     holes: [
       { hole: 1, par: 4, yardage: 390, handicap: 11 },
       { hole: 2, par: 5, yardage: 500, handicap: 15 },

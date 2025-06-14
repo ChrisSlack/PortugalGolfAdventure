@@ -12,6 +12,7 @@ export interface Course {
   holes: CourseHole[];
   description?: string;
   signatureHole?: string;
+  website?: string;
 }
 
 export interface PlayerScore {
