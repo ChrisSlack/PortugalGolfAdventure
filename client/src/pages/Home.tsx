@@ -211,18 +211,38 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Course Website Link */}
+                  {/* Course Links */}
                   {courseDetail && (
                     <div className="mt-3 pt-3 border-t border-green-600">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => window.open(courseDetail.website, '_blank')}
-                        className="bg-white text-green-800 border-white hover:bg-green-50"
-                      >
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Course Website
-                      </Button>
+                      <div className="flex flex-wrap gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => window.open(courseDetail.website, '_blank')}
+                          className="bg-white text-green-800 border-white hover:bg-green-50"
+                        >
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Course Website
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => window.open(`https://maps.google.com/?q=${currentSchedule.course} Portugal`, '_blank')}
+                          className="bg-white text-green-800 border-white hover:bg-green-50"
+                        >
+                          <MapPin className="h-4 w-4 mr-2" />
+                          Course Maps
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => window.open('https://maps.google.com/?q=Villa+Gale+Cerro+Alagoa+Albufeira+Portugal', '_blank')}
+                          className="bg-white text-blue-600 border-white hover:bg-blue-50"
+                        >
+                          <MapPin className="h-4 w-4 mr-2" />
+                          Back to Hotel
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </>

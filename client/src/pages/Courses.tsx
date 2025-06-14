@@ -204,19 +204,40 @@ export default function Courses() {
                       )}
                     </div>
                     
-                    <Button 
-                      className="w-full golf-green text-white hover:golf-light"
-                      onClick={() => {
-                        // Scroll to scorecard section or open modal
-                        const scorecardSection = document.getElementById(`scorecard-${course.id}`);
-                        if (scorecardSection) {
-                          scorecardSection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }}
-                    >
-                      <Award className="h-4 w-4 mr-2" />
-                      View Full Scorecard
-                    </Button>
+                    <div className="flex flex-col gap-2">
+                      <Button 
+                        className="w-full golf-green text-white hover:golf-light"
+                        onClick={() => {
+                          // Scroll to scorecard section or open modal
+                          const scorecardSection = document.getElementById(`scorecard-${course.id}`);
+                          if (scorecardSection) {
+                            scorecardSection.scrollIntoView({ behavior: 'smooth' });
+                          }
+                        }}
+                      >
+                        <Award className="h-4 w-4 mr-2" />
+                        View Full Scorecard
+                      </Button>
+                      
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline"
+                          className="flex-1"
+                          onClick={() => window.open(`https://maps.google.com/?q=${course.name} Portugal`, '_blank')}
+                        >
+                          <MapPin className="h-4 w-4 mr-2" />
+                          Course Maps
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          className="flex-1"
+                          onClick={() => window.open('https://maps.google.com/?q=Villa+Gale+Cerro+Alagoa+Albufeira+Portugal', '_blank')}
+                        >
+                          <MapPin className="h-4 w-4 mr-2" />
+                          Back to Hotel
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                   
                   <div className={`${index % 2 === 1 ? 'order-1 lg:order-2' : 'order-2 lg:order-1'} h-64 lg:h-auto`}>

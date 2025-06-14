@@ -183,6 +183,12 @@ export const standardFines = [
     name: 'Not Clearing Ladies Tee',
     amount: 5,
     description: 'Drive failing to pass ladies tee box'
+  },
+  {
+    type: 'custom',
+    name: 'Custom Fine',
+    amount: 0,
+    description: 'Add a custom fine with your own amount'
   }
 ];
 

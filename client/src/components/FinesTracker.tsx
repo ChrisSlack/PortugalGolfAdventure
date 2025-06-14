@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Coins, AlertTriangle, User, TrendingUp } from "lucide-react";
 import { standardFines } from "@/lib/courseData";
@@ -24,6 +25,8 @@ interface FinesTrackerProps {
 
 export default function FinesTracker({ players, fines, onAddFine }: FinesTrackerProps) {
   const [selectedPlayer, setSelectedPlayer] = useState<string>('');
+  const [customAmount, setCustomAmount] = useState<string>('');
+  const [customDescription, setCustomDescription] = useState<string>('');
   const { toast } = useToast();
 
   const totalFines = fines.reduce((sum, fine) => sum + fine.amount, 0);
@@ -68,7 +71,7 @@ export default function FinesTracker({ players, fines, onAddFine }: FinesTracker
 
     toast({
       title: "Fine Added",
-      description: `${selectedPlayer} fined €${amount} for ${fineData.name}`
+      description: `${selectedPlayer} fined ${amount} for ${fineData.name}`
     });
   };
 
