@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { ChevronLeft, ChevronRight, Save } from "lucide-react";
+import { ChevronLeft, ChevronRight, Save, X } from "lucide-react";
 import { Course } from "@/lib/types";
 
 interface ScoreEntryProps {
@@ -98,9 +98,17 @@ export default function ScoreEntry({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle>Enter Score</DialogTitle>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => onOpenChange(false)}
+            className="h-6 w-6 p-0"
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </DialogHeader>
         
         <div className="space-y-4">
@@ -247,22 +255,24 @@ export default function ScoreEntry({
             )}
           </div>
           
-          <div className="flex space-x-4 pt-4">
-            <Button 
-              onClick={handleSubmit} 
-              disabled={!player || !hole || score === null}
-              className="flex-1 bg-green-600 text-white hover:bg-green-700"
-            >
-              <Save className="h-4 w-4 mr-2" />
-              Save Score
-            </Button>
-            <Button 
-              onClick={() => onOpenChange(false)} 
-              variant="outline"
-              className="flex-1"
-            >
-              Cancel
-            </Button>
+          <div className="sticky bottom-0 bg-white pt-4 pb-2 border-t mt-6">
+            <div className="flex space-x-3">
+              <Button 
+                onClick={handleSubmit} 
+                disabled={!player || !hole || score === null}
+                className="flex-1 bg-green-600 text-white hover:bg-green-700 h-12"
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save Score
+              </Button>
+              <Button 
+                onClick={() => onOpenChange(false)} 
+                variant="outline"
+                className="px-6 h-12"
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>
