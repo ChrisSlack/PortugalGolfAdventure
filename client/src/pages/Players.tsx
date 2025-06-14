@@ -30,11 +30,11 @@ export default function Players() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: players = [], isLoading: playersLoading } = useQuery({
+  const { data: players = [], isLoading: playersLoading } = useQuery<Player[]>({
     queryKey: ["/api/players"]
   });
 
-  const { data: teams = [] } = useQuery({
+  const { data: teams = [] } = useQuery<Team[]>({
     queryKey: ["/api/teams"]
   });
 
@@ -111,7 +111,7 @@ export default function Players() {
   });
 
   const resetForm = () => {
-    setFormData({ firstName: "", lastName: "", handicap: "", teamId: "" });
+    setFormData({ firstName: "", lastName: "", handicap: "", teamId: "none" });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -129,7 +129,7 @@ export default function Players() {
       firstName: player.firstName,
       lastName: player.lastName,
       handicap: player.handicap?.toString() || "",
-      teamId: player.teamId?.toString() || ""
+      teamId: player.teamId?.toString() || "none"
     });
     setNewPlayerOpen(true);
   };
@@ -149,7 +149,7 @@ export default function Players() {
   const teamStats = teams.map((team: Team) => {
     const teamPlayers = players.filter((p: Player) => p.teamId === team.id);
     const avgHandicap = teamPlayers.length > 0 
-      ? teamPlayers.reduce((sum, p) => sum + (parseFloat(p.handicap) || 0), 0) / teamPlayers.length
+      ? teamPlayers.reduce((sum: number, p: Player) => sum + (parseFloat(p.handicap ?? "0") || 0), 0) / teamPlayers.length
       : 0;
     
     return {
