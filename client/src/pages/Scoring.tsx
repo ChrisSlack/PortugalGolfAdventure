@@ -150,6 +150,26 @@ export default function Scoring() {
       hole,
       score,
       ...options
+    }, {
+      onSuccess: () => {
+        // Auto-advance to next hole if not at hole 18
+        if (hole < 18 && currentCourse) {
+          const nextHole = hole + 1;
+          setSelectedHole(nextHole);
+          toast({
+            title: "Score Saved",
+            description: `Moving to hole ${nextHole}`,
+            duration: 2000
+          });
+        } else if (hole === 18) {
+          setScoreEntryOpen(false);
+          toast({
+            title: "Round Complete!",
+            description: "All holes finished for this player",
+            duration: 3000
+          });
+        }
+      }
     });
   };
 
