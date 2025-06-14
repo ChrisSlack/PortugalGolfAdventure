@@ -262,7 +262,7 @@ export default function Home() {
           </CardContent>
         </Card>
 
-        {/* Quick Navigation Cards */}
+        {/* Quick Navigation Cards - Below Schedule */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link href="/courses">
             <Card className="hover:shadow-xl transition-shadow cursor-pointer">
