@@ -34,6 +34,7 @@ export interface IStorage {
   
   // Fines
   getFines(): Promise<Fine[]>;
+  getFinesByPlayerAndDay(playerId: number, golfDay: string): Promise<Fine[]>;
   createFine(fine: InsertFine): Promise<Fine>;
   
   // Votes
@@ -195,6 +196,12 @@ export class MemStorage implements IStorage {
   // Fines
   async getFines(): Promise<Fine[]> {
     return Array.from(this.fines.values());
+  }
+
+  async getFinesByPlayerAndDay(playerId: number, golfDay: string): Promise<Fine[]> {
+    return Array.from(this.fines.values()).filter(fine => 
+      fine.playerId === playerId && fine.golfDay === golfDay
+    );
   }
 
   async createFine(insertFine: InsertFine): Promise<Fine> {

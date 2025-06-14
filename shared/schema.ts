@@ -45,6 +45,7 @@ export const fines = pgTable("fines", {
   type: text("type").notNull(),
   amount: integer("amount").notNull(),
   description: text("description"),
+  golfDay: text("golf_day").notNull(), // Which golf day (July 2, July 3, July 5)
   createdAt: timestamp("created_at").defaultNow(),
 });
 

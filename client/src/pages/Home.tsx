@@ -262,24 +262,24 @@ export default function Home() {
           </CardContent>
         </Card>
 
-        {/* Quick Navigation */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <Link href="/schedule">
-            <Card className="hover:shadow-xl transition-shadow cursor-pointer">
-              <CardContent className="p-6 text-center">
-                <CalendarDays className="text-golf-green h-8 w-8 mx-auto mb-3" />
-                <h3 className="font-bold text-lg">Full Schedule</h3>
-                <p className="text-gray-600 text-sm">Trip Itinerary</p>
-              </CardContent>
-            </Card>
-          </Link>
-          
+        {/* Quick Navigation Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link href="/courses">
             <Card className="hover:shadow-xl transition-shadow cursor-pointer">
               <CardContent className="p-6 text-center">
                 <Flag className="text-golf-green h-8 w-8 mx-auto mb-3" />
-                <h3 className="font-bold text-lg">Golf Courses</h3>
-                <p className="text-gray-600 text-sm">Course Info & Tips</p>
+                <h3 className="font-bold text-lg">3 Courses</h3>
+                <p className="text-gray-600 text-sm">Premium Portuguese Golf</p>
+              </CardContent>
+            </Card>
+          </Link>
+          
+          <Link href="/fines">
+            <Card className="hover:shadow-xl transition-shadow cursor-pointer">
+              <CardContent className="p-6 text-center">
+                <Users className="text-golf-green h-8 w-8 mx-auto mb-3" />
+                <h3 className="font-bold text-lg">Group Fun</h3>
+                <p className="text-gray-600 text-sm">Banter & Competition</p>
               </CardContent>
             </Card>
           </Link>
@@ -293,34 +293,6 @@ export default function Home() {
               </CardContent>
             </Card>
           </Link>
-          
-          <Link href="/fines">
-            <Card className="hover:shadow-xl transition-shadow cursor-pointer">
-              <CardContent className="p-6 text-center">
-                <Coins className="text-golf-gold h-8 w-8 mx-auto mb-3" />
-                <h3 className="font-bold text-lg">Fines Tracker</h3>
-                <p className="text-gray-600 text-sm">Banter & Penalties</p>
-              </CardContent>
-            </Card>
-          </Link>
-          
-          <Link href="/activities">
-            <Card className="hover:shadow-xl transition-shadow cursor-pointer">
-              <CardContent className="p-6 text-center">
-                <Vote className="text-golf-green h-8 w-8 mx-auto mb-3" />
-                <h3 className="font-bold text-lg">Friday Activities</h3>
-                <p className="text-gray-600 text-sm">Vote for Fun</p>
-              </CardContent>
-            </Card>
-          </Link>
-          
-          <Card className="hover:shadow-xl transition-shadow">
-            <CardContent className="p-6 text-center">
-              <Sun className="text-golf-amber h-8 w-8 mx-auto mb-3" />
-              <h3 className="font-bold text-lg">Weather</h3>
-              <p className="text-gray-600 text-sm">Course Conditions</p>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Cumulative Leaderboards */}
