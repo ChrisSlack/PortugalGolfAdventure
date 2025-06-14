@@ -300,17 +300,24 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createRound(insertRound: InsertRound): Promise<Round> {
+    console.log("Creating round with data:", insertRound);
     const [round] = await db.insert(rounds).values(insertRound).returning();
+    console.log("Round created:", round);
     return round;
   }
 
   // Scores
   async getScores(roundId: number): Promise<Score[]> {
-    return await db.select().from(scores).where(eq(scores.roundId, roundId));
+    console.log("Fetching scores for round:", roundId);
+    const result = await db.select().from(scores).where(eq(scores.roundId, roundId));
+    console.log("Found scores:", result);
+    return result;
   }
 
   async createScore(insertScore: InsertScore): Promise<Score> {
+    console.log("Creating score in database with data:", insertScore);
     const [score] = await db.insert(scores).values(insertScore).returning();
+    console.log("Score created in database:", score);
     return score;
   }
 

@@ -145,19 +145,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Scores
   app.get("/api/scores/:roundId", async (req, res) => {
     try {
-      const scores = await storage.getScores(parseInt(req.params.roundId));
+      const roundId = parseInt(req.params.roundId);
+      const scores = await storage.getScores(roundId);
       res.json(scores);
     } catch (error) {
+      console.error("Error fetching scores for round:", req.params.roundId, error);
+      res.status(500).json({ message: "Failed to fetch scores" });
+    }
+  });
+
+  // Fallback scores endpoint for query parameters
+  app.get("/api/scores", async (req, res) => {
+    try {
+      const roundId = req.query.roundId;
+      if (!roundId) {
+        res.json([]);
+        return;
+      }
+      const scores = await storage.getScores(parseInt(roundId as string));
+      res.json(scores);
+    } catch (error) {
+      console.error("Error fetching scores:", error);
       res.status(500).json({ message: "Failed to fetch scores" });
     }
   });
 
   app.post("/api/scores", async (req, res) => {
     try {
+      console.log("Creating score with data:", req.body);
       const validatedData = insertScoreSchema.parse(req.body);
       const score = await storage.createScore(validatedData);
+      console.log("Score created successfully:", score);
       res.json(score);
     } catch (error) {
+      console.error("Error creating score:", error);
       res.status(400).json({ message: "Invalid score data" });
     }
   });

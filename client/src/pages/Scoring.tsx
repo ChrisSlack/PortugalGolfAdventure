@@ -43,6 +43,7 @@ export default function Scoring() {
   // Fetch scores for current round
   const { data: scores = [] } = useQuery<Score[]>({
     queryKey: ['/api/scores', currentRoundId],
+    queryFn: () => fetch(`/api/scores/${currentRoundId}`).then(res => res.json()),
     enabled: !!currentRoundId
   });
 
