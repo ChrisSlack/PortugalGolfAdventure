@@ -209,7 +209,7 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
                 <div 
                   key={player.playerId} 
                   className={`flex items-center justify-between p-3 rounded-lg border ${
-                    position === 1 ? 'bg-golf-green text-white border-golf-green' : 
+                    position === 1 ? 'bg-yellow-50 border-yellow-300' : 
                     position === 2 ? 'bg-gray-100 border-gray-200' :
                     position === 3 ? 'bg-amber-50 border-amber-200' :
                     'bg-white border-gray-200'
@@ -219,22 +219,22 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
                     {getPositionIcon(position)}
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center space-x-2">
-                        <span className={`font-semibold ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
+                        <span className={`font-semibold ${position === 1 ? 'text-yellow-800' : 'text-gray-900'}`}>
                           {getPositionText(position)}
                         </span>
-                        <span className={`font-medium truncate ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
+                        <span className={`font-medium truncate ${position === 1 ? 'text-yellow-900' : 'text-gray-900'}`}>
                           {player.name}
                         </span>
                         {player.team && (
                           <Badge 
                             variant="outline" 
-                            className={`text-xs ${position === 1 ? 'border-white text-white' : 'border-gray-300'}`}
+                            className={`text-xs ${position === 1 ? 'border-yellow-600 text-yellow-800' : 'border-gray-300'}`}
                           >
                             {player.team.name}
                           </Badge>
                         )}
                       </div>
-                      <p className={`text-sm ${position === 1 ? 'text-white/90' : 'text-gray-600'}`}>
+                      <p className={`text-sm ${position === 1 ? 'text-yellow-700' : 'text-gray-600'}`}>
                         {player.roundsPlayed} rounds • Avg: {player.averageScore.toFixed(1)}
                         {player.bestRound && ` • Best: ${player.bestRound}`}
                       </p>
@@ -242,10 +242,10 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
                   </div>
                   
                   <div className="text-right">
-                    <div className={`text-xl font-bold ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
+                    <div className={`text-xl font-bold ${position === 1 ? 'text-yellow-900' : 'text-gray-900'}`}>
                       {player.toPar === 0 ? 'E' : toPar}
                     </div>
-                    <div className={`text-xs ${position === 1 ? 'text-white/90' : 'text-gray-500'}`}>
+                    <div className={`text-xs ${position === 1 ? 'text-yellow-700' : 'text-gray-500'}`}>
                       {player.totalStrokes} total
                     </div>
                   </div>
@@ -274,7 +274,7 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
                 <div 
                   key={teamStat.team.id} 
                   className={`flex items-center justify-between p-3 rounded-lg border ${
-                    position === 1 ? 'bg-golf-green text-white border-golf-green' : 
+                    position === 1 ? 'bg-yellow-50 border-yellow-300' : 
                     position === 2 ? 'bg-gray-100 border-gray-200' :
                     position === 3 ? 'bg-amber-50 border-amber-200' :
                     'bg-white border-gray-200'
@@ -284,30 +284,30 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
                     {getPositionIcon(position)}
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center space-x-2">
-                        <span className={`font-semibold ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
+                        <span className={`font-semibold ${position === 1 ? 'text-yellow-800' : 'text-gray-900'}`}>
                           {getPositionText(position)}
                         </span>
-                        <span className={`font-medium truncate ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
+                        <span className={`font-medium truncate ${position === 1 ? 'text-yellow-900' : 'text-gray-900'}`}>
                           Team {teamStat.team.name}
                         </span>
                         <Badge 
                           variant="outline" 
-                          className={`text-xs ${position === 1 ? 'border-white text-white' : 'border-gray-300'}`}
+                          className={`text-xs ${position === 1 ? 'border-yellow-600 text-yellow-800' : 'border-gray-300'}`}
                         >
                           {teamStat.playersCount} players
                         </Badge>
                       </div>
-                      <p className={`text-sm ${position === 1 ? 'text-white/90' : 'text-gray-600'}`}>
+                      <p className={`text-sm ${position === 1 ? 'text-yellow-700' : 'text-gray-600'}`}>
                         {teamStat.roundsPlayed} total rounds • Avg: {teamStat.averageScore.toFixed(1)}
                       </p>
                     </div>
                   </div>
                   
                   <div className="text-right">
-                    <div className={`text-xl font-bold ${position === 1 ? 'text-white' : 'text-gray-900'}`}>
+                    <div className={`text-xl font-bold ${position === 1 ? 'text-yellow-900' : 'text-gray-900'}`}>
                       {teamStat.toPar === 0 ? 'E' : toPar}
                     </div>
-                    <div className={`text-xs ${position === 1 ? 'text-white/90' : 'text-gray-500'}`}>
+                    <div className={`text-xs ${position === 1 ? 'text-yellow-700' : 'text-gray-500'}`}>
                       {teamStat.totalStrokes} total
                     </div>
                   </div>

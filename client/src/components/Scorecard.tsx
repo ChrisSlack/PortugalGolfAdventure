@@ -90,26 +90,6 @@ export default function Scorecard({ course, players, scores, statistics, onScore
         <CardTitle className="flex items-center justify-between">
           <span>Scorecard</span>
           <div className="flex items-center space-x-2">
-            {viewMode === 'scores' && (
-              <>
-                <Button
-                  variant={scoreMode === 'gross' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setScoreMode('gross')}
-                >
-                  <Trophy className="h-4 w-4 mr-1" />
-                  Gross
-                </Button>
-                <Button
-                  variant={scoreMode === 'net' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setScoreMode('net')}
-                >
-                  <Calculator className="h-4 w-4 mr-1" />
-                  Net
-                </Button>
-              </>
-            )}
             <Button
               variant={viewMode === 'scores' ? 'default' : 'outline'}
               size="sm"
@@ -127,6 +107,28 @@ export default function Scorecard({ course, players, scores, statistics, onScore
             </Button>
           </div>
         </CardTitle>
+        
+        {viewMode === 'scores' && (
+          <div className="flex items-center space-x-2 mt-4">
+            <span className="text-sm text-gray-600 mr-2">Scoring Mode:</span>
+            <Button
+              variant={scoreMode === 'gross' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setScoreMode('gross')}
+            >
+              <Trophy className="h-4 w-4 mr-1" />
+              Gross
+            </Button>
+            <Button
+              variant={scoreMode === 'net' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setScoreMode('net')}
+            >
+              <Calculator className="h-4 w-4 mr-1" />
+              Net
+            </Button>
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         {viewMode === 'scores' ? (

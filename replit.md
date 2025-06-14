@@ -134,6 +134,12 @@ This is a comprehensive golf trip management application built for the Portugal 
   - Updated fines system with golf day tracking (July 2, 3, 5)
   - Implemented per-player per-day fines functionality with database integration
   - Fixed JSX syntax errors and improved component structure
+- June 14, 2025: Fixed UI formatting and accessibility issues
+  - Resolved first place leaderboard visibility with yellow background instead of dark green
+  - Repositioned scorecard Gross/Net toggle below Score/Stats section as requested
+  - Added accessibility DialogDescription components to fix console warnings
+  - Improved scorecard layout with clearer scoring mode indicators
+  - Enhanced visual hierarchy for better user experience
 
 ## User Preferences
 
