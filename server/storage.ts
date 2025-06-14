@@ -330,6 +330,10 @@ export class DatabaseStorage implements IStorage {
     return result;
   }
 
+  async getAllScores(): Promise<Score[]> {
+    return await db.select().from(scores);
+  }
+
   async createScore(insertScore: InsertScore): Promise<Score> {
     console.log("Creating score in database with data:", insertScore);
     const [score] = await db.insert(scores).values(insertScore).returning();

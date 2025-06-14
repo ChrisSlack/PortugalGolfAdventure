@@ -146,6 +146,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Scores
+  app.get("/api/scores/all", async (req, res) => {
+    try {
+      const allScores = await storage.getAllScores();
+      res.json(allScores);
+    } catch (error) {
+      console.error("Error fetching all scores:", error);
+      res.status(500).json({ message: "Failed to fetch all scores" });
+    }
+  });
+
   app.get("/api/scores/:roundId", async (req, res) => {
     try {
       const roundId = parseInt(req.params.roundId);
