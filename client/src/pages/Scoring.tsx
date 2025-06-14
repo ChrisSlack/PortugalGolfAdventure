@@ -78,8 +78,17 @@ export default function Scoring() {
       return await response.json();
     },
     onSuccess: () => {
+      // Clear all score-related cache entries
       queryClient.invalidateQueries({ queryKey: ['/api/scores/all'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/scores', currentRoundId] });
       queryClient.invalidateQueries({ queryKey: [`/api/scores/${currentRoundId}`] });
+      
+      // Force immediate refetch of scores
+      queryClient.refetchQueries({ queryKey: ['/api/scores/all'] });
+      if (currentRoundId) {
+        queryClient.refetchQueries({ queryKey: ['/api/scores', currentRoundId] });
+      }
+      
       toast({
         title: "Scorecard Cleared",
         description: "All scores have been removed from this round",
