@@ -361,6 +361,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/stableford-scores/:id", async (req, res) => {
+    try {
+      const validatedData = insertStablefordScoreSchema.partial().parse(req.body);
+      const score = await storage.updateStablefordScore(parseInt(req.params.id), validatedData);
+      res.json(score);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to update Stableford score" });
+    }
+  });
+
   // Hole results
   app.get("/api/hole-results/:matchId", async (req, res) => {
     try {

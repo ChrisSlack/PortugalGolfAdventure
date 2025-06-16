@@ -377,7 +377,9 @@ export class DatabaseStorage implements IStorage {
       const [round] = await db.insert(rounds).values({
         course: insertRound.course,
         date: insertRound.date,
-        players: insertRound.players as string[]
+        players: insertRound.players as string[],
+        format: insertRound.format || "stroke",
+        day: insertRound.day || null
       }).returning();
       console.log("Round created:", round);
       return round;

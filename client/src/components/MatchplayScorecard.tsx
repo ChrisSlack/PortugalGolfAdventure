@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trophy, Users, Target, Crown } from "lucide-react";
+import { Trophy, Users, Target, Crown, Plus, Edit } from "lucide-react";
+import StablefordScoreEntry from "./StablefordScoreEntry";
 import type { Course, CourseHole } from "@/lib/types";
 import type { Player, Team, Match, StablefordScore } from "@shared/schema";
 
@@ -70,6 +71,8 @@ export default function MatchplayScorecard({
   onScoreUpdate 
 }: MatchplayScorecardProps) {
   const [selectedHole, setSelectedHole] = useState<number>(1);
+  const [scoreEntryOpen, setScoreEntryOpen] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<number>();
   
   // Get players for each pair
   const pairAPlayers = [
@@ -221,20 +224,48 @@ export default function MatchplayScorecard({
                       <td className="text-center p-2">{hole.par}</td>
                       <td className="text-center p-2">{hole.handicap}</td>
                       <td className="text-center p-2">
-                        <Badge 
-                          variant="outline" 
-                          className={result?.winner === 'teamA' ? 'bg-blue-100 text-blue-800' : ''}
-                        >
-                          {Math.max(...(result?.pairAPoints || [0]))}
-                        </Badge>
+                        <div className="flex items-center justify-center space-x-1">
+                          <Badge 
+                            variant="outline" 
+                            className={result?.winner === 'teamA' ? 'bg-blue-100 text-blue-800' : ''}
+                          >
+                            {Math.max(...(result?.pairAPoints || [0]))}
+                          </Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedPlayer(match.pairAPlayer1);
+                              setSelectedHole(hole.hole);
+                              setScoreEntryOpen(true);
+                            }}
+                            className="h-6 w-6 p-0"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </div>
                       </td>
                       <td className="text-center p-2">
-                        <Badge 
-                          variant="outline"
-                          className={result?.winner === 'teamB' ? 'bg-red-100 text-red-800' : ''}
-                        >
-                          {Math.max(...(result?.pairBPoints || [0]))}
-                        </Badge>
+                        <div className="flex items-center justify-center space-x-1">
+                          <Badge 
+                            variant="outline"
+                            className={result?.winner === 'teamB' ? 'bg-red-100 text-red-800' : ''}
+                          >
+                            {Math.max(...(result?.pairBPoints || [0]))}
+                          </Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedPlayer(match.pairBPlayer1);
+                              setSelectedHole(hole.hole);
+                              setScoreEntryOpen(true);
+                            }}
+                            className="h-6 w-6 p-0"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </div>
                       </td>
                       <td className="text-center p-2">
                         {result?.winner === 'teamA' && <div className="w-3 h-3 bg-blue-500 rounded-full mx-auto"></div>}
@@ -301,6 +332,18 @@ export default function MatchplayScorecard({
           </div>
         </CardContent>
       </Card>
+
+      {/* Score Entry Dialog */}
+      <StablefordScoreEntry
+        open={scoreEntryOpen}
+        onOpenChange={setScoreEntryOpen}
+        course={course}
+        match={match}
+        players={players}
+        selectedHole={selectedHole}
+        selectedPlayer={selectedPlayer}
+        existingScores={stablefordScores}
+      />
     </div>
   );
 }
