@@ -37,10 +37,7 @@ export default function Matchplay() {
     enabled: !!selectedRound && selectedDay === 3
   });
 
-  const { data: stablefordScores = [] } = useQuery<StablefordScore[]>({
-    queryKey: ["/api/stableford-scores", selectedRound],
-    enabled: !!selectedRound
-  });
+
 
   const matchplayRounds = rounds.filter(r => r.format === "betterball" && r.day === selectedDay);
   const dayRounds = rounds.filter(r => r.day === selectedDay);
