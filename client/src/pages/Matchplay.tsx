@@ -165,23 +165,56 @@ export default function Matchplay() {
                           ))}
                         </div>
                       ) : (
-                        <div className="space-y-2">
-                          <label className="block text-sm font-medium">Select Round</label>
-                          <Select value={selectedRound?.toString()} onValueChange={(value) => setSelectedRound(parseInt(value))}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Choose a round..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {matchplayRounds.map((round) => {
-                                const roundCourse = courses.find(c => c.id === round.course);
-                                return (
-                                  <SelectItem key={round.id} value={round.id.toString()}>
-                                    {roundCourse?.name} - {round.date}
-                                  </SelectItem>
-                                );
-                              })}
-                            </SelectContent>
-                          </Select>
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="block text-sm font-medium">Select Round</label>
+                            <Select value={selectedRound?.toString()} onValueChange={(value) => setSelectedRound(parseInt(value))}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Choose a round..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {matchplayRounds.map((round) => {
+                                  const roundCourse = courses.find(c => c.id === round.course);
+                                  return (
+                                    <SelectItem key={round.id} value={round.id.toString()}>
+                                      {roundCourse?.name} - {round.date}
+                                    </SelectItem>
+                                  );
+                                })}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          {/* Show current round details */}
+                          {selectedRoundData && (
+                            <div className="p-3 bg-golf-green/10 rounded-lg">
+                              <div className="flex items-center justify-between mb-2">
+                                <h4 className="font-medium text-golf-green">Current Setup</h4>
+                                <Badge variant="outline" className="text-golf-green border-golf-green">
+                                  {matches.length} Fourball{matches.length !== 1 ? 's' : ''}
+                                </Badge>
+                              </div>
+                              <div className="text-sm text-gray-600">
+                                <div>{course?.name}</div>
+                                <div>{selectedRoundData.date}</div>
+                                <div className="mt-1">Format: Betterball Stableford</div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Add new round option */}
+                          <div className="pt-2 border-t">
+                            <p className="text-sm text-gray-500 mb-2">Add another round:</p>
+                            {courses.map(course => (
+                              <div key={course.id} className="mb-2">
+                                <MatchplaySetup
+                                  course={course}
+                                  golfDay={selectedDay}
+                                  onMatchCreated={(roundId) => setSelectedRound(roundId)}
+                                />
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </CardContent>

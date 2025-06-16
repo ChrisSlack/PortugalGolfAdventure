@@ -53,24 +53,69 @@ export default function MatchplayLeaderboard({ players, teams }: MatchplayLeader
 
   const matchplayRounds = rounds.filter(r => r.format === "betterball");
   
-  const getMatchplayData = (day: 1 | 2 | 3) => {
-    const dayRounds = matchplayRounds.filter(r => r.day === day);
+  // Get all match data for each day
+  const day1Data = (() => {
+    const dayRounds = matchplayRounds.filter(r => r.day === 1);
     if (dayRounds.length === 0) return null;
-
     const roundId = dayRounds[0].id;
     
     const { data: matches = [] } = useQuery<Match[]>({
-      queryKey: ["/api/matches", roundId]
+      queryKey: ["/api/matches", roundId],
+      enabled: !!roundId
     });
 
     const { data: stablefordScores = [] } = useQuery<StablefordScore[]>({
-      queryKey: ["/api/stableford-scores", roundId]
+      queryKey: ["/api/stableford-scores", roundId],
+      enabled: !!roundId
     });
 
     const course = courses.find(c => c.id === dayRounds[0].course);
-    if (!course || matches.length === 0) return null;
-
     return { matches, stablefordScores, course, round: dayRounds[0] };
+  })();
+
+  const day2Data = (() => {
+    const dayRounds = matchplayRounds.filter(r => r.day === 2);
+    if (dayRounds.length === 0) return null;
+    const roundId = dayRounds[0].id;
+    
+    const { data: matches = [] } = useQuery<Match[]>({
+      queryKey: ["/api/matches", roundId],
+      enabled: !!roundId
+    });
+
+    const { data: stablefordScores = [] } = useQuery<StablefordScore[]>({
+      queryKey: ["/api/stableford-scores", roundId],
+      enabled: !!roundId
+    });
+
+    const course = courses.find(c => c.id === dayRounds[0].course);
+    return { matches, stablefordScores, course, round: dayRounds[0] };
+  })();
+
+  const day3Data = (() => {
+    const dayRounds = matchplayRounds.filter(r => r.day === 3);
+    if (dayRounds.length === 0) return null;
+    const roundId = dayRounds[0].id;
+    
+    const { data: matches = [] } = useQuery<Match[]>({
+      queryKey: ["/api/matches", roundId],
+      enabled: !!roundId
+    });
+
+    const { data: stablefordScores = [] } = useQuery<StablefordScore[]>({
+      queryKey: ["/api/stableford-scores", roundId],
+      enabled: !!roundId
+    });
+
+    const course = courses.find(c => c.id === dayRounds[0].course);
+    return { matches, stablefordScores, course, round: dayRounds[0] };
+  })();
+
+  const getMatchplayData = (day: 1 | 2 | 3) => {
+    if (day === 1) return day1Data;
+    if (day === 2) return day2Data;
+    if (day === 3) return day3Data;
+    return null;
   };
 
   const MatchDayResults = ({ day }: { day: 1 | 2 | 3 }) => {

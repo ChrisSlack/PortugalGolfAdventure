@@ -197,8 +197,26 @@ export default function MatchplaySetup({ course, golfDay, onMatchCreated }: Matc
         }
       }
 
+      toast({
+        title: "Matchplay Created",
+        description: `Day ${golfDay} matchplay round created with ${fourballPairings.length} fourball matches`,
+      });
+
+      // Reset form and close
+      setFourballPairings([]);
+      setIndividualPairings([]);
+      setSelectedTeamA(undefined);
+      setSelectedTeamB(undefined);
+      setSetupOpen(false);
+      onMatchCreated(round.id);
+
     } catch (error) {
       console.error("Failed to create matchplay round:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create matchplay round",
+        variant: "destructive",
+      });
     }
   };
 
