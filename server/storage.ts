@@ -1,7 +1,7 @@
 import { 
-  players, teams, rounds, scores, fines, votes,
-  type Player, type Team, type Round, type Score, type Fine, type Vote,
-  type InsertPlayer, type InsertTeam, type InsertRound, type InsertScore, type InsertFine, type InsertVote
+  players, teams, rounds, scores, fines, votes, matches, individualMatches, stablefordScores, holeResults,
+  type Player, type Team, type Round, type Score, type Fine, type Vote, type Match, type IndividualMatch, type StablefordScore, type HoleResult,
+  type InsertPlayer, type InsertTeam, type InsertRound, type InsertScore, type InsertFine, type InsertVote, type InsertMatch, type InsertIndividualMatch, type InsertStablefordScore, type InsertHoleResult
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and } from "drizzle-orm";
@@ -44,6 +44,28 @@ export interface IStorage {
   createVote(vote: InsertVote): Promise<Vote>;
   updateVote(id: number, count: number): Promise<Vote>;
   getVoteByActivity(activity: string): Promise<Vote | undefined>;
+  
+  // Matchplay functionality
+  // Matches
+  getMatches(roundId: number): Promise<Match[]>;
+  createMatch(match: InsertMatch): Promise<Match>;
+  updateMatch(id: number, match: Partial<InsertMatch>): Promise<Match>;
+  deleteMatch(id: number): Promise<void>;
+  
+  // Individual matches
+  getIndividualMatches(roundId: number): Promise<IndividualMatch[]>;
+  createIndividualMatch(match: InsertIndividualMatch): Promise<IndividualMatch>;
+  updateIndividualMatch(id: number, match: Partial<InsertIndividualMatch>): Promise<IndividualMatch>;
+  
+  // Stableford scores
+  getStablefordScores(roundId: number): Promise<StablefordScore[]>;
+  createStablefordScore(score: InsertStablefordScore): Promise<StablefordScore>;
+  updateStablefordScore(id: number, score: Partial<InsertStablefordScore>): Promise<StablefordScore>;
+  
+  // Hole results
+  getHoleResults(matchId: number): Promise<HoleResult[]>;
+  createHoleResult(result: InsertHoleResult): Promise<HoleResult>;
+  updateHoleResult(id: number, result: Partial<InsertHoleResult>): Promise<HoleResult>;
 }
 
 export class MemStorage implements IStorage {
