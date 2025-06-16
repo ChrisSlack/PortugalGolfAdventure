@@ -17,7 +17,7 @@ interface ScorecardProps {
 
 export default function Scorecard({ course, players, scores, statistics, onScoreEdit, isEditable = true, playerHandicaps = {} }: ScorecardProps) {
   const [viewMode, setViewMode] = useState<'scores' | 'stats'>('scores');
-  const [scoreMode, setScoreMode] = useState<'gross' | 'net'>('gross');
+  const [scoreMode, setScoreMode] = useState<'gross' | 'net' | 'stableford'>('gross');
 
   const getScoreClass = (score: number | undefined, par: number): string => {
     if (!score) return 'bg-gray-100 text-gray-400';
@@ -35,10 +35,29 @@ export default function Scorecard({ course, players, scores, statistics, onScore
     const holeHandicap = course.holes.find(h => h.hole === hole)?.handicap || 18;
     
     // Calculate strokes received based on handicap and hole handicap
-    if (handicap >= holeHandicap) {
-      return Math.floor(handicap / 18) + (handicap % 18 >= holeHandicap ? 1 : 0);
-    }
-    return 0;
+    const strokesReceived = Math.floor(handicap / 18) + (handicap % 18 >= holeHandicap ? 1 : 0);
+    return strokesReceived;
+  };
+
+  const calculateStablefordPoints = (player: string, hole: number): number => {
+    const grossScore = scores[player]?.[hole];
+    if (!grossScore) return 0;
+    
+    const holeData = course.holes.find(h => h.hole === hole);
+    if (!holeData) return 0;
+    
+    const par = holeData.par;
+    const handicapStrokes = calculateHandicapStrokes(player, hole);
+    const netScore = grossScore - handicapStrokes;
+    const scoreToPar = netScore - par;
+    
+    // Stableford scoring: Eagle or better = 4+ points, Birdie = 3, Par = 2, Bogey = 1, Double+ = 0
+    if (scoreToPar <= -3) return 5; // Albatross or better
+    if (scoreToPar === -2) return 4; // Eagle
+    if (scoreToPar === -1) return 3; // Birdie
+    if (scoreToPar === 0) return 2;  // Par
+    if (scoreToPar === 1) return 1;  // Bogey
+    return 0; // Double bogey or worse
   };
 
   const getDisplayScore = (player: string, hole: number): number | undefined => {
@@ -48,6 +67,8 @@ export default function Scorecard({ course, players, scores, statistics, onScore
     if (scoreMode === 'net') {
       const handicapStrokes = calculateHandicapStrokes(player, hole);
       return grossScore - handicapStrokes;
+    } else if (scoreMode === 'stableford') {
+      return calculateStablefordPoints(player, hole);
     }
     return grossScore;
   };
@@ -65,6 +86,11 @@ export default function Scorecard({ course, players, scores, statistics, onScore
       }, 0);
       const toPar = netTotal - course.par;
       return { total: netTotal, toPar };
+    } else if (scoreMode === 'stableford') {
+      const stablefordTotal = course.holes.reduce((sum, hole) => {
+        return sum + calculateStablefordPoints(player, hole.hole);
+      }, 0);
+      return { total: stablefordTotal, toPar: null }; // Stableford doesn't use toPar
     }
     
     const toPar = grossTotal - course.par;
@@ -126,6 +152,14 @@ export default function Scorecard({ course, players, scores, statistics, onScore
             >
               <Calculator className="h-4 w-4 mr-1" />
               Net
+            </Button>
+            <Button
+              variant={scoreMode === 'stableford' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setScoreMode('stableford')}
+            >
+              <Trophy className="h-4 w-4 mr-1" />
+              Stableford
             </Button>
           </div>
         )}
