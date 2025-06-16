@@ -311,6 +311,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/matches/:id", async (req, res) => {
+    try {
+      await storage.deleteMatch(parseInt(req.params.id));
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete match" });
+    }
+  });
+
   app.patch("/api/matches/:id", async (req, res) => {
     try {
       const validatedData = insertMatchSchema.partial().parse(req.body);

@@ -231,7 +231,7 @@ export default function MatchplaySetup({ course, golfDay, onMatchCreated, existi
       if (golfDay === 3 && individualPairings.length > 0) {
         for (const pairing of individualPairings) {
           await createIndividualMatchMutation.mutateAsync({
-            roundId: round.id,
+            roundId: roundId!,
             player1: pairing.player1,
             player2: pairing.player2
           });
@@ -239,23 +239,27 @@ export default function MatchplaySetup({ course, golfDay, onMatchCreated, existi
       }
 
       toast({
-        title: "Matchplay Created",
-        description: `Day ${golfDay} matchplay round created with ${fourballPairings.length} fourball matches`,
+        title: isEditing ? "Fourballs Updated" : "Matchplay Created",
+        description: isEditing 
+          ? `Day ${golfDay} fourballs updated successfully`
+          : `Day ${golfDay} matchplay round created with ${fourballPairings.length} fourball matches`,
       });
 
       // Reset form and close
-      setFourballPairings([]);
-      setIndividualPairings([]);
-      setSelectedTeamA(undefined);
-      setSelectedTeamB(undefined);
+      if (!isEditing) {
+        setFourballPairings([]);
+        setIndividualPairings([]);
+        setSelectedTeamA(undefined);
+        setSelectedTeamB(undefined);
+      }
       setSetupOpen(false);
-      onMatchCreated(round.id);
+      onMatchCreated(roundId!);
 
     } catch (error) {
       console.error("Failed to create matchplay round:", error);
       toast({
         title: "Error",
-        description: "Failed to create matchplay round",
+        description: isEditing ? "Failed to update fourballs" : "Failed to create matchplay round",
         variant: "destructive",
       });
     }

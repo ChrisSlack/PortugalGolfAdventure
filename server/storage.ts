@@ -195,7 +195,7 @@ export class MemStorage implements IStorage {
   }
 
   async getAllScores(): Promise<Score[]> {
-    return Array.from(this.scores.values());
+    return [...this.scores.values()];
   }
 
   async createScore(insertScore: InsertScore): Promise<Score> {
