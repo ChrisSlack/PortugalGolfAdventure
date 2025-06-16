@@ -9,6 +9,7 @@ const navItems = [
   { href: "/schedule", label: "Schedule", icon: "fas fa-calendar-week" },
   { href: "/courses", label: "Courses", icon: "fas fa-flag" },
   { href: "/scoring", label: "Scoring", icon: "fas fa-chart-line" },
+  { href: "/matchplay", label: "Matchplay", icon: "fas fa-trophy" },
   { href: "/fines", label: "Fines", icon: "fas fa-coins" },
   { href: "/activities", label: "Activities", icon: "fas fa-vote-yea" },
   { href: "/players", label: "Players", icon: "fas fa-users" }

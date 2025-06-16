@@ -159,6 +159,15 @@ This is a comprehensive golf trip management application built for the Portugal 
   - Added team deletion with proper player reassignment handling
   - Enhanced Players page with edit/delete buttons for each team card
   - Updated team dialog to handle both create and edit operations with dynamic titles
+- June 15, 2025: Implemented comprehensive matchplay system for Portugal 2025 format
+  - Added database schema for matches, individual matches, Stableford scores, and hole results
+  - Created API endpoints for all matchplay functionality with proper validation
+  - Built MatchplaySetup component for team pairing and round creation
+  - Developed MatchplayScorecard component with Stableford scoring calculations
+  - Added Matchplay page with Day 1-3 tabs and format-specific features
+  - Integrated betterball Stableford format (Days 1-2) and individual matchplay (Day 3)
+  - Implemented match status tracking (1UP, 2&1, AS) and live hole-by-hole scoring
+  - Added navigation link and complete workflow for tournament-style play
 
 ## User Preferences
 
