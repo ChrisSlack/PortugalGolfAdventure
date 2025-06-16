@@ -58,36 +58,41 @@ export default function MatchplayLeaderboard({ players, teams }: MatchplayLeader
   const day2Round = matchplayRounds.find(r => r.day === 2);
   const day3Round = matchplayRounds.find(r => r.day === 3);
 
-  // Query data for all days (hooks must be called unconditionally)
-  const { data: day1Matches = [] } = useQuery<Match[]>({
-    queryKey: ["/api/matches", day1Round?.id],
-    enabled: !!day1Round?.id
+  // Query data for all days - get all matches and filter by day
+  const { data: allMatches = [] } = useQuery<Match[]>({
+    queryKey: ["/api/matches"]
   });
 
-  const { data: day1Scores = [] } = useQuery<StablefordScore[]>({
-    queryKey: ["/api/stableford-scores", day1Round?.id],
-    enabled: !!day1Round?.id
+  const { data: allStablefordScores = [] } = useQuery<StablefordScore[]>({
+    queryKey: ["/api/stableford-scores"]
   });
 
-  const { data: day2Matches = [] } = useQuery<Match[]>({
-    queryKey: ["/api/matches", day2Round?.id],
-    enabled: !!day2Round?.id
-  });
+  // Filter matches by day based on round association
+  const day1Rounds = matchplayRounds.filter(r => r.day === 1);
+  const day1Matches = allMatches.filter(match => 
+    day1Rounds.some(round => round.id === match.roundId)
+  );
+  
+  const day1Scores = allStablefordScores.filter(score =>
+    day1Rounds.some(round => round.id === score.roundId)
+  );
 
-  const { data: day2Scores = [] } = useQuery<StablefordScore[]>({
-    queryKey: ["/api/stableford-scores", day2Round?.id],
-    enabled: !!day2Round?.id
-  });
+  // Filter Day 2 and Day 3 data
+  const day2Rounds = matchplayRounds.filter(r => r.day === 2);
+  const day2Matches = allMatches.filter(match => 
+    day2Rounds.some(round => round.id === match.roundId)
+  );
+  const day2Scores = allStablefordScores.filter(score =>
+    day2Rounds.some(round => round.id === score.roundId)
+  );
 
-  const { data: day3Matches = [] } = useQuery<Match[]>({
-    queryKey: ["/api/matches", day3Round?.id],
-    enabled: !!day3Round?.id
-  });
-
-  const { data: day3Scores = [] } = useQuery<StablefordScore[]>({
-    queryKey: ["/api/stableford-scores", day3Round?.id],
-    enabled: !!day3Round?.id
-  });
+  const day3Rounds = matchplayRounds.filter(r => r.day === 3);
+  const day3Matches = allMatches.filter(match => 
+    day3Rounds.some(round => round.id === match.roundId)
+  );
+  const day3Scores = allStablefordScores.filter(score =>
+    day3Rounds.some(round => round.id === score.roundId)
+  );
 
   const getMatchplayData = (day: 1 | 2 | 3) => {
     let round, matches, stablefordScores;

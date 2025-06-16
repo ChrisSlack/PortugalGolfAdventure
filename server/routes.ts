@@ -292,6 +292,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Matchplay API routes
   // Matches
+  app.get("/api/matches", async (req, res) => {
+    try {
+      const roundId = req.query.roundId ? parseInt(req.query.roundId as string) : undefined;
+      if (roundId) {
+        const matches = await storage.getMatches(roundId);
+        res.json(matches);
+      } else {
+        // Get all matches for leaderboard
+        const allRounds = await storage.getRounds();
+        const allMatches = [];
+        for (const round of allRounds) {
+          const matches = await storage.getMatches(round.id);
+          allMatches.push(...matches);
+        }
+        res.json(allMatches);
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch matches" });
+    }
+  });
+
   app.get("/api/matches/:roundId", async (req, res) => {
     try {
       const matches = await storage.getMatches(parseInt(req.params.roundId));
