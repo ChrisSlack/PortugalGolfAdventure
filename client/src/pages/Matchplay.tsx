@@ -214,21 +214,7 @@ export default function Matchplay() {
                             </div>
                           )}
                           
-                          {/* Add new round option - only show courses not already used for this day */}
-                          <div className="pt-2 border-t">
-                            <p className="text-sm text-gray-500 mb-2">Add another round:</p>
-                            {courses
-                              .filter(course => !dayRounds.some(r => r.course === course.id))
-                              .map(course => (
-                              <div key={course.id} className="mb-2">
-                                <MatchplaySetup
-                                  course={course}
-                                  golfDay={selectedDay}
-                                  onMatchCreated={(roundId) => setSelectedRound(roundId)}
-                                />
-                              </div>
-                            ))}
-                          </div>
+                          {/* Add new round option - removed to prevent duplicate rounds */}
                         </div>
                       )}
                     </CardContent>

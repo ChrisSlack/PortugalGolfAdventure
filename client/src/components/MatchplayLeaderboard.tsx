@@ -12,30 +12,29 @@ interface MatchplayLeaderboardProps {
   rounds: Round[];
 }
 
-export default function MatchplayLeaderboard({ day, players, teams, rounds }: MatchplayLeaderboardProps) {
-  // Query data for matches
+export default function MatchplayLeaderboard({ day, players = [], teams = [], rounds = [] }: MatchplayLeaderboardProps) {
   const { data: allMatches = [] } = useQuery<Match[]>({
     queryKey: ["/api/matches"]
   });
 
-  // Filter data for the selected day
-  const dayRounds = rounds.filter(r => r.day === day);
-  const dayMatches = allMatches.filter(match => 
+  const dayRounds = rounds?.filter(r => r.day === day) || [];
+  const dayMatches = allMatches?.filter(match => 
     dayRounds.some(round => round.id === match.roundId)
-  );
+  ) || [];
 
-  // Get the main round for this day
   const mainRound = dayRounds[0];
   const selectedCourse = mainRound ? courses.find(c => c.id === mainRound.course) : null;
 
   const getTeamName = (teamId: number): string => {
+    if (!teams || !Array.isArray(teams)) return "Unknown Team";
     const team = teams.find(t => t.id === teamId);
     return team ? team.name : "Unknown Team";
   };
 
   const getPlayerName = (playerId: number): string => {
+    if (!players || !Array.isArray(players)) return "Unknown Player";
     const player = players.find(p => p.id === playerId);
-    return player ? `${player.firstName} ${player.lastName}` : "Unknown";
+    return player ? `${player.firstName} ${player.lastName}` : "Unknown Player";
   };
 
   if (!mainRound || !selectedCourse || dayMatches.length === 0) {
@@ -79,7 +78,6 @@ export default function MatchplayLeaderboard({ day, players, teams, rounds }: Ma
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Team A */}
                 <div className="p-3 bg-white rounded border">
                   <div className="font-medium text-golf-green mb-2">
                     {getTeamName(match.teamA)}
@@ -90,12 +88,6 @@ export default function MatchplayLeaderboard({ day, players, teams, rounds }: Ma
                   </div>
                 </div>
                 
-                {/* VS */}
-                <div className="flex items-center justify-center md:col-span-0">
-                  <span className="text-gray-400 font-bold">VS</span>
-                </div>
-                
-                {/* Team B */}
                 <div className="p-3 bg-white rounded border">
                   <div className="font-medium text-blue-600 mb-2">
                     {getTeamName(match.teamB)}

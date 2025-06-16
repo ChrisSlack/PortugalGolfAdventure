@@ -371,34 +371,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Stableford scores
-  app.get("/api/stableford-scores/:roundId", async (req, res) => {
-    try {
-      const scores = await storage.getStablefordScores(parseInt(req.params.roundId));
-      res.json(scores);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch Stableford scores" });
-    }
-  });
-
-  app.post("/api/stableford-scores", async (req, res) => {
-    try {
-      const validatedData = insertStablefordScoreSchema.parse(req.body);
-      const score = await storage.createStablefordScore(validatedData);
-      res.json(score);
-    } catch (error) {
-      res.status(400).json({ message: "Invalid Stableford score data" });
-    }
-  });
-
-  app.patch("/api/stableford-scores/:id", async (req, res) => {
-    try {
-      const validatedData = insertStablefordScoreSchema.partial().parse(req.body);
-      const score = await storage.updateStablefordScore(parseInt(req.params.id), validatedData);
-      res.json(score);
-    } catch (error) {
-      res.status(400).json({ message: "Failed to update Stableford score" });
-    }
+  // Simplified endpoint for legacy compatibility - returns empty array
+  app.get("/api/stableford-scores", async (req, res) => {
+    res.json([]);
   });
 
   // Hole results
