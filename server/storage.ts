@@ -288,6 +288,21 @@ export class MemStorage implements IStorage {
   async getVoteByActivity(activity: string): Promise<Vote | undefined> {
     return Array.from(this.votes.values()).find(vote => vote.activity === activity);
   }
+
+  // Matchplay functionality - Stub implementations for MemStorage
+  async getMatches(roundId: number): Promise<Match[]> { return []; }
+  async createMatch(match: InsertMatch): Promise<Match> { throw new Error('Matchplay not supported in MemStorage'); }
+  async updateMatch(id: number, match: Partial<InsertMatch>): Promise<Match> { throw new Error('Matchplay not supported in MemStorage'); }
+  async deleteMatch(id: number): Promise<void> { throw new Error('Matchplay not supported in MemStorage'); }
+  async getIndividualMatches(roundId: number): Promise<IndividualMatch[]> { return []; }
+  async createIndividualMatch(match: InsertIndividualMatch): Promise<IndividualMatch> { throw new Error('Matchplay not supported in MemStorage'); }
+  async updateIndividualMatch(id: number, match: Partial<InsertIndividualMatch>): Promise<IndividualMatch> { throw new Error('Matchplay not supported in MemStorage'); }
+  async getStablefordScores(roundId: number): Promise<StablefordScore[]> { return []; }
+  async createStablefordScore(score: InsertStablefordScore): Promise<StablefordScore> { throw new Error('Stableford not supported in MemStorage'); }
+  async updateStablefordScore(id: number, score: Partial<InsertStablefordScore>): Promise<StablefordScore> { throw new Error('Stableford not supported in MemStorage'); }
+  async getHoleResults(matchId: number): Promise<HoleResult[]> { return []; }
+  async createHoleResult(result: InsertHoleResult): Promise<HoleResult> { throw new Error('Hole results not supported in MemStorage'); }
+  async updateHoleResult(id: number, result: Partial<InsertHoleResult>): Promise<HoleResult> { throw new Error('Hole results not supported in MemStorage'); }
 }
 
 export class DatabaseStorage implements IStorage {
@@ -452,6 +467,87 @@ export class DatabaseStorage implements IStorage {
   async getVoteByActivity(activity: string): Promise<Vote | undefined> {
     const [vote] = await db.select().from(votes).where(eq(votes.activity, activity));
     return vote;
+  }
+
+  // Matchplay functionality
+  // Matches
+  async getMatches(roundId: number): Promise<Match[]> {
+    return await db.select().from(matches).where(eq(matches.roundId, roundId));
+  }
+
+  async createMatch(insertMatch: InsertMatch): Promise<Match> {
+    const [match] = await db.insert(matches).values(insertMatch).returning();
+    return match;
+  }
+
+  async updateMatch(id: number, matchData: Partial<InsertMatch>): Promise<Match> {
+    const [match] = await db
+      .update(matches)
+      .set(matchData)
+      .where(eq(matches.id, id))
+      .returning();
+    return match;
+  }
+
+  async deleteMatch(id: number): Promise<void> {
+    await db.delete(matches).where(eq(matches.id, id));
+  }
+
+  // Individual matches
+  async getIndividualMatches(roundId: number): Promise<IndividualMatch[]> {
+    return await db.select().from(individualMatches).where(eq(individualMatches.roundId, roundId));
+  }
+
+  async createIndividualMatch(insertMatch: InsertIndividualMatch): Promise<IndividualMatch> {
+    const [match] = await db.insert(individualMatches).values(insertMatch).returning();
+    return match;
+  }
+
+  async updateIndividualMatch(id: number, matchData: Partial<InsertIndividualMatch>): Promise<IndividualMatch> {
+    const [match] = await db
+      .update(individualMatches)
+      .set(matchData)
+      .where(eq(individualMatches.id, id))
+      .returning();
+    return match;
+  }
+
+  // Stableford scores
+  async getStablefordScores(roundId: number): Promise<StablefordScore[]> {
+    return await db.select().from(stablefordScores).where(eq(stablefordScores.roundId, roundId));
+  }
+
+  async createStablefordScore(insertScore: InsertStablefordScore): Promise<StablefordScore> {
+    const [score] = await db.insert(stablefordScores).values(insertScore).returning();
+    return score;
+  }
+
+  async updateStablefordScore(id: number, scoreData: Partial<InsertStablefordScore>): Promise<StablefordScore> {
+    const [score] = await db
+      .update(stablefordScores)
+      .set(scoreData)
+      .where(eq(stablefordScores.id, id))
+      .returning();
+    return score;
+  }
+
+  // Hole results
+  async getHoleResults(matchId: number): Promise<HoleResult[]> {
+    return await db.select().from(holeResults).where(eq(holeResults.matchId, matchId));
+  }
+
+  async createHoleResult(insertResult: InsertHoleResult): Promise<HoleResult> {
+    const [result] = await db.insert(holeResults).values(insertResult).returning();
+    return result;
+  }
+
+  async updateHoleResult(id: number, resultData: Partial<InsertHoleResult>): Promise<HoleResult> {
+    const [result] = await db
+      .update(holeResults)
+      .set(resultData)
+      .where(eq(holeResults.id, id))
+      .returning();
+    return result;
   }
 }
 

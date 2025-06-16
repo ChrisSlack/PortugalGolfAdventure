@@ -1,7 +1,10 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertPlayerSchema, insertTeamSchema, insertRoundSchema, insertScoreSchema, insertFineSchema, insertVoteSchema } from "@shared/schema";
+import { 
+  insertPlayerSchema, insertTeamSchema, insertRoundSchema, insertScoreSchema, insertFineSchema, insertVoteSchema,
+  insertMatchSchema, insertIndividualMatchSchema, insertStablefordScoreSchema, insertHoleResultSchema
+} from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Players
@@ -284,6 +287,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     } catch (error) {
       res.status(400).json({ message: "Invalid vote data" });
+    }
+  });
+
+  // Matchplay API routes
+  // Matches
+  app.get("/api/matches/:roundId", async (req, res) => {
+    try {
+      const matches = await storage.getMatches(parseInt(req.params.roundId));
+      res.json(matches);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch matches" });
+    }
+  });
+
+  app.post("/api/matches", async (req, res) => {
+    try {
+      const validatedData = insertMatchSchema.parse(req.body);
+      const match = await storage.createMatch(validatedData);
+      res.json(match);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid match data" });
+    }
+  });
+
+  app.patch("/api/matches/:id", async (req, res) => {
+    try {
+      const validatedData = insertMatchSchema.partial().parse(req.body);
+      const match = await storage.updateMatch(parseInt(req.params.id), validatedData);
+      res.json(match);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to update match" });
+    }
+  });
+
+  // Individual matches
+  app.get("/api/individual-matches/:roundId", async (req, res) => {
+    try {
+      const matches = await storage.getIndividualMatches(parseInt(req.params.roundId));
+      res.json(matches);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch individual matches" });
+    }
+  });
+
+  app.post("/api/individual-matches", async (req, res) => {
+    try {
+      const validatedData = insertIndividualMatchSchema.parse(req.body);
+      const match = await storage.createIndividualMatch(validatedData);
+      res.json(match);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid individual match data" });
+    }
+  });
+
+  // Stableford scores
+  app.get("/api/stableford-scores/:roundId", async (req, res) => {
+    try {
+      const scores = await storage.getStablefordScores(parseInt(req.params.roundId));
+      res.json(scores);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch Stableford scores" });
+    }
+  });
+
+  app.post("/api/stableford-scores", async (req, res) => {
+    try {
+      const validatedData = insertStablefordScoreSchema.parse(req.body);
+      const score = await storage.createStablefordScore(validatedData);
+      res.json(score);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid Stableford score data" });
+    }
+  });
+
+  // Hole results
+  app.get("/api/hole-results/:matchId", async (req, res) => {
+    try {
+      const results = await storage.getHoleResults(parseInt(req.params.matchId));
+      res.json(results);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch hole results" });
+    }
+  });
+
+  app.post("/api/hole-results", async (req, res) => {
+    try {
+      const validatedData = insertHoleResultSchema.parse(req.body);
+      const result = await storage.createHoleResult(validatedData);
+      res.json(result);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid hole result data" });
     }
   });
 
