@@ -70,6 +70,7 @@ export default function MatchplayLeaderboard({ players, teams }: MatchplayLeader
     });
 
     const course = courses.find(c => c.id === dayRounds[0].course);
+    if (!course) return null;
     return { matches, stablefordScores, course, round: dayRounds[0] };
   })();
 
@@ -89,6 +90,7 @@ export default function MatchplayLeaderboard({ players, teams }: MatchplayLeader
     });
 
     const course = courses.find(c => c.id === dayRounds[0].course);
+    if (!course) return null;
     return { matches, stablefordScores, course, round: dayRounds[0] };
   })();
 
@@ -108,6 +110,7 @@ export default function MatchplayLeaderboard({ players, teams }: MatchplayLeader
     });
 
     const course = courses.find(c => c.id === dayRounds[0].course);
+    if (!course) return null;
     return { matches, stablefordScores, course, round: dayRounds[0] };
   })();
 
@@ -120,10 +123,10 @@ export default function MatchplayLeaderboard({ players, teams }: MatchplayLeader
 
   const MatchDayResults = ({ day }: { day: 1 | 2 | 3 }) => {
     const data = getMatchplayData(day);
-    if (!data) {
+    if (!data || !data.course || data.matches.length === 0) {
       return (
         <div className="text-center py-8 text-gray-500">
-          No matchplay data for Day {day}
+          {!data ? `No matchplay rounds set up for Day ${day}` : 'No matches found for this round'}
         </div>
       );
     }
@@ -149,7 +152,7 @@ export default function MatchplayLeaderboard({ players, teams }: MatchplayLeader
           ].filter(Boolean) as Player[];
 
           // Calculate hole results
-          const holeResults = course.holes.map(hole => {
+          const holeResults = (course?.holes || []).map(hole => {
             const pairAScores = pairAPlayers.map(player => {
               const score = stablefordScores.find(s => s.playerId === player.id && s.hole === hole.hole);
               return score ? score.stablefordPoints : 0;
