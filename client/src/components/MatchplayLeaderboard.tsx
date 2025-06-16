@@ -51,7 +51,7 @@ export default function MatchplayLeaderboard({ players, teams }: MatchplayLeader
     queryKey: ["/api/rounds"]
   });
 
-  const matchplayRounds = rounds.filter(r => r.format === "betterball");
+  const matchplayRounds = rounds.filter(r => r.format === "betterball" && r.day);
   
   // Get round IDs for each day
   const day1Round = matchplayRounds.find(r => r.day === 1);

@@ -308,6 +308,50 @@ export class MemStorage implements IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  
+  async initializeSampleData() {
+    // Check if we already have players
+    const existingPlayers = await this.getPlayers();
+    if (existingPlayers.length >= 8) {
+      return; // Already initialized
+    }
+
+    // Create 8 players
+    const playerNames = [
+      ["John", "Doe"], ["Jane", "Smith"], ["Chris", "Slack"], ["Mike", "Johnson"],
+      ["Sarah", "Wilson"], ["David", "Brown"], ["Emma", "Davis"], ["Tom", "Miller"]
+    ];
+
+    const players = [];
+    for (const [firstName, lastName] of playerNames) {
+      const player = await this.createPlayer({
+        firstName,
+        lastName,
+        handicap: Math.floor(Math.random() * 28) + 1, // Random handicap 1-28
+        teamId: null
+      });
+      players.push(player);
+    }
+
+    // Create 2 teams with 4 players each
+    const team1 = await this.createTeam({
+      name: "Team A",
+      captainId: players[0].id
+    });
+
+    const team2 = await this.createTeam({
+      name: "Team B", 
+      captainId: players[4].id
+    });
+
+    // Assign players to teams
+    for (let i = 0; i < 4; i++) {
+      await this.updatePlayer(players[i].id, { teamId: team1.id });
+    }
+    for (let i = 4; i < 8; i++) {
+      await this.updatePlayer(players[i].id, { teamId: team2.id });
+    }
+  }
   // Players
   async getPlayers(): Promise<Player[]> {
     return await db.select().from(players);
@@ -555,4 +599,7 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+const dbStorage = new DatabaseStorage();
+// Initialize sample data on startup
+dbStorage.initializeSampleData().catch(console.error);
+export const storage = dbStorage;
