@@ -53,72 +53,65 @@ export default function MatchplayLeaderboard({ players, teams }: MatchplayLeader
 
   const matchplayRounds = rounds.filter(r => r.format === "betterball");
   
-  // Get all match data for each day
-  const day1Data = (() => {
-    const dayRounds = matchplayRounds.filter(r => r.day === 1);
-    if (dayRounds.length === 0) return null;
-    const roundId = dayRounds[0].id;
-    
-    const { data: matches = [] } = useQuery<Match[]>({
-      queryKey: ["/api/matches", roundId],
-      enabled: !!roundId
-    });
+  // Get round IDs for each day
+  const day1Round = matchplayRounds.find(r => r.day === 1);
+  const day2Round = matchplayRounds.find(r => r.day === 2);
+  const day3Round = matchplayRounds.find(r => r.day === 3);
 
-    const { data: stablefordScores = [] } = useQuery<StablefordScore[]>({
-      queryKey: ["/api/stableford-scores", roundId],
-      enabled: !!roundId
-    });
+  // Query data for all days (hooks must be called unconditionally)
+  const { data: day1Matches = [] } = useQuery<Match[]>({
+    queryKey: ["/api/matches", day1Round?.id],
+    enabled: !!day1Round?.id
+  });
 
-    const course = courses.find(c => c.id === dayRounds[0].course);
-    if (!course) return null;
-    return { matches, stablefordScores, course, round: dayRounds[0] };
-  })();
+  const { data: day1Scores = [] } = useQuery<StablefordScore[]>({
+    queryKey: ["/api/stableford-scores", day1Round?.id],
+    enabled: !!day1Round?.id
+  });
 
-  const day2Data = (() => {
-    const dayRounds = matchplayRounds.filter(r => r.day === 2);
-    if (dayRounds.length === 0) return null;
-    const roundId = dayRounds[0].id;
-    
-    const { data: matches = [] } = useQuery<Match[]>({
-      queryKey: ["/api/matches", roundId],
-      enabled: !!roundId
-    });
+  const { data: day2Matches = [] } = useQuery<Match[]>({
+    queryKey: ["/api/matches", day2Round?.id],
+    enabled: !!day2Round?.id
+  });
 
-    const { data: stablefordScores = [] } = useQuery<StablefordScore[]>({
-      queryKey: ["/api/stableford-scores", roundId],
-      enabled: !!roundId
-    });
+  const { data: day2Scores = [] } = useQuery<StablefordScore[]>({
+    queryKey: ["/api/stableford-scores", day2Round?.id],
+    enabled: !!day2Round?.id
+  });
 
-    const course = courses.find(c => c.id === dayRounds[0].course);
-    if (!course) return null;
-    return { matches, stablefordScores, course, round: dayRounds[0] };
-  })();
+  const { data: day3Matches = [] } = useQuery<Match[]>({
+    queryKey: ["/api/matches", day3Round?.id],
+    enabled: !!day3Round?.id
+  });
 
-  const day3Data = (() => {
-    const dayRounds = matchplayRounds.filter(r => r.day === 3);
-    if (dayRounds.length === 0) return null;
-    const roundId = dayRounds[0].id;
-    
-    const { data: matches = [] } = useQuery<Match[]>({
-      queryKey: ["/api/matches", roundId],
-      enabled: !!roundId
-    });
-
-    const { data: stablefordScores = [] } = useQuery<StablefordScore[]>({
-      queryKey: ["/api/stableford-scores", roundId],
-      enabled: !!roundId
-    });
-
-    const course = courses.find(c => c.id === dayRounds[0].course);
-    if (!course) return null;
-    return { matches, stablefordScores, course, round: dayRounds[0] };
-  })();
+  const { data: day3Scores = [] } = useQuery<StablefordScore[]>({
+    queryKey: ["/api/stableford-scores", day3Round?.id],
+    enabled: !!day3Round?.id
+  });
 
   const getMatchplayData = (day: 1 | 2 | 3) => {
-    if (day === 1) return day1Data;
-    if (day === 2) return day2Data;
-    if (day === 3) return day3Data;
-    return null;
+    let round, matches, stablefordScores;
+    
+    if (day === 1) {
+      round = day1Round;
+      matches = day1Matches;
+      stablefordScores = day1Scores;
+    } else if (day === 2) {
+      round = day2Round;
+      matches = day2Matches;
+      stablefordScores = day2Scores;
+    } else {
+      round = day3Round;
+      matches = day3Matches;
+      stablefordScores = day3Scores;
+    }
+
+    if (!round) return null;
+    
+    const course = courses.find(c => c.id === round.course);
+    if (!course) return null;
+    
+    return { matches, stablefordScores, course, round };
   };
 
   const MatchDayResults = ({ day }: { day: 1 | 2 | 3 }) => {
