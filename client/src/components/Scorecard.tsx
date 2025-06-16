@@ -241,13 +241,13 @@ export default function Scorecard({ course, players, scores, statistics, onScore
                       
                       <td className="px-2 py-2 text-center font-medium">
                         <div className="text-sm font-bold">{total || 0}</div>
-                        {toPar !== 0 && (
-                          <div className={`text-xs font-medium ${toPar > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                            {toPar > 0 ? '+' : ''}{toPar}
+                        {toPar !== null && toPar !== 0 && (
+                          <div className={`text-xs font-medium ${(toPar || 0) > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                            {(toPar || 0) > 0 ? '+' : ''}{toPar}
                           </div>
                         )}
                         <div className="text-xs text-gray-500 mt-1">
-                          {scoreMode === 'net' ? 'Net' : 'Gross'}
+                          {scoreMode === 'stableford' ? 'Points' : scoreMode === 'net' ? 'Net' : 'Gross'}
                         </div>
                       </td>
                     </tr>
