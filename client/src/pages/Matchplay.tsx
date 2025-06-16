@@ -43,6 +43,7 @@ export default function Matchplay() {
   });
 
   const matchplayRounds = rounds.filter(r => r.format === "betterball" && r.day === selectedDay);
+  const dayRounds = rounds.filter(r => r.day === selectedDay);
   const selectedRoundData = rounds.find(r => r.id === selectedRound);
   const course = selectedRoundData ? courses.find(c => c.id === selectedRoundData.course) : null;
 
