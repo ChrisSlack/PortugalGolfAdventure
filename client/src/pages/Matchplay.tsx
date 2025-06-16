@@ -202,6 +202,20 @@ export default function Matchplay() {
                             </div>
                           )}
                           
+                          {/* Edit existing fourballs */}
+                          {selectedRoundData && (
+                            <div className="pt-2 border-t">
+                              <p className="text-sm text-gray-500 mb-2">Edit fourballs:</p>
+                              <MatchplaySetup
+                                course={course!}
+                                golfDay={selectedDay}
+                                onMatchCreated={(roundId) => setSelectedRound(roundId)}
+                                existingRoundId={selectedRound}
+                                isEditing={true}
+                              />
+                            </div>
+                          )}
+                          
                           {/* Add new round option */}
                           <div className="pt-2 border-t">
                             <p className="text-sm text-gray-500 mb-2">Add another round:</p>

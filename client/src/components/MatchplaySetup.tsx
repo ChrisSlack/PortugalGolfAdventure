@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -15,6 +15,8 @@ interface MatchplaySetupProps {
   course: Course;
   golfDay: 1 | 2 | 3;
   onMatchCreated: (roundId: number) => void;
+  existingRoundId?: number;
+  isEditing?: boolean;
 }
 
 interface PairingSetup {
@@ -31,7 +33,7 @@ interface IndividualPairing {
   player2: number;
 }
 
-export default function MatchplaySetup({ course, golfDay, onMatchCreated }: MatchplaySetupProps) {
+export default function MatchplaySetup({ course, golfDay, onMatchCreated, existingRoundId, isEditing = false }: MatchplaySetupProps) {
   const [setupOpen, setSetupOpen] = useState(false);
   const [selectedTeamA, setSelectedTeamA] = useState<number>();
   const [selectedTeamB, setSelectedTeamB] = useState<number>();
@@ -48,6 +50,33 @@ export default function MatchplaySetup({ course, golfDay, onMatchCreated }: Matc
   const { data: players = [] } = useQuery<Player[]>({
     queryKey: ["/api/players"]
   });
+
+  // Load existing matches when editing
+  const { data: existingMatches = [] } = useQuery<any[]>({
+    queryKey: ["/api/matches", existingRoundId],
+    enabled: !!existingRoundId && isEditing
+  });
+
+  // Load existing fourball pairings when editing
+  useEffect(() => {
+    if (isEditing && existingMatches.length > 0) {
+      const loadedPairings = existingMatches.map((match: any) => ({
+        teamA: match.teamA,
+        teamB: match.teamB,
+        pairAPlayer1: match.pairAPlayer1,
+        pairAPlayer2: match.pairAPlayer2,
+        pairBPlayer1: match.pairBPlayer1,
+        pairBPlayer2: match.pairBPlayer2,
+      }));
+      setFourballPairings(loadedPairings);
+      
+      // Set teams from first match
+      if (loadedPairings.length > 0) {
+        setSelectedTeamA(loadedPairings[0].teamA);
+        setSelectedTeamB(loadedPairings[0].teamB);
+      }
+    }
+  }, [isEditing, existingMatches]);
 
   const createRoundMutation = useMutation({
     mutationFn: async (roundData: any) => {
@@ -161,21 +190,33 @@ export default function MatchplaySetup({ course, golfDay, onMatchCreated }: Matc
     }
 
     try {
-      // Create the round
-      const roundData = {
-        course: course.id,
-        date: `2025-07-0${golfDay === 3 ? 5 : golfDay + 1}`, // July 2, 3, 5
-        players: [],
-        format: "betterball",
-        day: golfDay
-      };
+      let roundId = existingRoundId;
+      
+      // Create new round if not editing
+      if (!isEditing) {
+        const roundData = {
+          course: course.id,
+          date: `2025-07-0${golfDay === 3 ? 5 : golfDay + 1}`, // July 2, 3, 5
+          players: [],
+          format: "betterball",
+          day: golfDay
+        };
 
-      const round = await createRoundMutation.mutateAsync(roundData);
+        const round = await createRoundMutation.mutateAsync(roundData);
+        roundId = round.id;
+      }
+
+      // Delete existing matches if editing
+      if (isEditing && existingMatches.length > 0) {
+        for (const match of existingMatches) {
+          await apiRequest("DELETE", `/api/matches/${match.id}`);
+        }
+      }
 
       // Create fourball matches
       for (const pairing of fourballPairings) {
         await createMatchMutation.mutateAsync({
-          roundId: round.id,
+          roundId: roundId!,
           teamA: pairing.teamA,
           teamB: pairing.teamB,
           pairAPlayer1: pairing.pairAPlayer1,
@@ -235,7 +276,7 @@ export default function MatchplaySetup({ course, golfDay, onMatchCreated }: Matc
       <DialogTrigger asChild>
         <Button className="golf-green text-white">
           <Calendar className="h-4 w-4 mr-2" />
-          Set Up Day {golfDay} Matchplay
+          {isEditing ? `Edit Day ${golfDay} Fourballs` : `Set Up Day ${golfDay} Matchplay`}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
