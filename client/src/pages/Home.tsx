@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Club, Users, Smartphone, CalendarDays, Flag, TrendingUp, Coins, Vote, Sun, ChevronLeft, ChevronRight, ExternalLink, Clock, Car, MapPin } from "lucide-react";
 import { scheduleData } from "@/lib/courseData";
-import CumulativeLeaderboard from "@/components/CumulativeLeaderboard";
+import MatchplayLeaderboard from "@/components/MatchplayLeaderboard";
 import { useQuery } from "@tanstack/react-query";
 import type { Player, Team, Round, Score } from "@shared/schema";
 
@@ -265,14 +265,11 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* Cumulative Leaderboards */}
+        {/* Live Matchplay Leaderboard */}
         <div className="mt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Tournament Standings</h2>
-          <CumulativeLeaderboard 
+          <MatchplayLeaderboard 
             players={players}
             teams={teams}
-            rounds={rounds}
-            scores={allScores}
           />
         </div>
       </div>

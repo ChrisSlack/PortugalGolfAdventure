@@ -170,6 +170,8 @@ export class MemStorage implements IStorage {
       course: insertRound.course,
       date: insertRound.date,
       players: insertRound.players as string[],
+      format: insertRound.format || "stroke",
+      day: insertRound.day || null,
       id,
       createdAt: new Date()
     };

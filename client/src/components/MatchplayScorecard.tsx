@@ -89,12 +89,12 @@ export default function MatchplayScorecard({
   const holeResults = course.holes.map(hole => {
     const pairAScores = pairAPlayers.map(player => {
       const score = stablefordScores.find(s => s.playerId === player.id && s.hole === hole.hole);
-      return score ? calculateStablefordPoints(score.grossScore, hole.par, player.handicap || 0, hole.handicap) : 0;
+      return score ? calculateStablefordPoints(score.grossScore, hole.par, parseFloat(player.handicap?.toString() || '0'), hole.handicap) : 0;
     });
     
     const pairBScores = pairBPlayers.map(player => {
       const score = stablefordScores.find(s => s.playerId === player.id && s.hole === hole.hole);
-      return score ? calculateStablefordPoints(score.grossScore, hole.par, player.handicap || 0, hole.handicap) : 0;
+      return score ? calculateStablefordPoints(score.grossScore, hole.par, parseFloat(player.handicap?.toString() || '0'), hole.handicap) : 0;
     });
     
     return {
