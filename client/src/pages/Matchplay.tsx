@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Trophy, Calendar, Users, Target, Crown, Flag } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import MatchplaySetup from "@/components/MatchplaySetup";
-import MatchplayScorecard from "@/components/MatchplayScorecard";
+import MatchplayLeaderboard from "@/components/MatchplayLeaderboard";
 import { courses } from "@/lib/courseData";
 import type { Round, Match, IndividualMatch, StablefordScore, Player, Team } from "@shared/schema";
 
@@ -287,32 +287,25 @@ export default function Matchplay() {
                   </Card>
                 </div>
 
-                {/* Matchplay Scorecard */}
-                {selectedRound && course && matches.length > 0 && (
+                {/* Matchplay Leaderboard */}
+                {selectedRound && matches.length > 0 && (
                   <div className="mt-8">
-                    <h2 className="text-2xl font-bold text-golf-green mb-4">Live Scoring</h2>
-                    {matches.map((match) => {
-                      const teamA = teams.find(t => t.id === match.teamA);
-                      const teamB = teams.find(t => t.id === match.teamB);
-                      if (!teamA || !teamB) return null;
-
-                      return (
-                        <div key={match.id} className="mb-8">
-                          <MatchplayScorecard
-                            course={course}
-                            match={match}
-                            teamA={teamA}
-                            teamB={teamB}
-                            players={players}
-                            stablefordScores={stablefordScores}
-                            onScoreUpdate={(playerId, hole, grossScore) => {
-                              // Handle score updates
-                              console.log("Score update:", { playerId, hole, grossScore });
-                            }}
-                          />
-                        </div>
-                      );
-                    })}
+                    <MatchplayLeaderboard 
+                      day={selectedDay}
+                      players={players}
+                      teams={teams}
+                      rounds={rounds}
+                    />
+                    <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex items-center space-x-2">
+                        <Flag className="h-5 w-5 text-blue-600" />
+                        <h3 className="font-medium text-blue-800">How to Enter Scores</h3>
+                      </div>
+                      <p className="text-blue-700 mt-2">
+                        Go to the <strong>Scoring</strong> page to enter individual scores for each player. 
+                        The scores will automatically appear in this matchplay leaderboard.
+                      </p>
+                    </div>
                   </div>
                 )}
               </TabsContent>
