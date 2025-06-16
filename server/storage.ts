@@ -327,7 +327,7 @@ export class DatabaseStorage implements IStorage {
       const player = await this.createPlayer({
         firstName,
         lastName,
-        handicap: Math.floor(Math.random() * 28) + 1, // Random handicap 1-28
+        handicap: `${Math.floor(Math.random() * 28) + 1}`, // Random handicap 1-28
         teamId: null
       });
       players.push(player);
