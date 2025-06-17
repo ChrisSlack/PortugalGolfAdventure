@@ -180,6 +180,15 @@ export class MemStorage implements IStorage {
     return round;
   }
 
+  async updateRound(id: number, updateData: Partial<InsertRound>): Promise<Round> {
+    const round = this.rounds.get(id);
+    if (!round) throw new Error('Round not found');
+    
+    const updatedRound = { ...round, ...updateData };
+    this.rounds.set(id, updatedRound);
+    return updatedRound;
+  }
+
   async deleteRound(id: number): Promise<void> {
     this.rounds.delete(id);
     // Also delete associated scores
