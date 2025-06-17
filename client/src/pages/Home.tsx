@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Club, Users, Smartphone, CalendarDays, Flag, TrendingUp, Coins, Vote, Sun, ChevronLeft, ChevronRight, ExternalLink, Clock, Car, MapPin } from "lucide-react";
 import { scheduleData } from "@/lib/courseData";
 import MatchplayLeaderboard from "@/components/MatchplayLeaderboard";
+import ActiveRoundSelector from "@/components/ActiveRoundSelector";
+import CumulativeLeaderboard from "@/components/CumulativeLeaderboard";
 import { useQuery } from "@tanstack/react-query";
 import type { Player, Team, Round, Score } from "@shared/schema";
 
@@ -29,6 +31,7 @@ const courseDetails = {
 
 export default function Home() {
   const [currentDayIndex, setCurrentDayIndex] = useState(1); // Default to July 2nd
+  const [activeRoundId, setActiveRoundId] = useState<number | null>(null);
   
   const navigateDay = (direction: 'prev' | 'next') => {
     if (direction === 'prev' && currentDayIndex > 0) {
@@ -58,6 +61,11 @@ export default function Home() {
     queryKey: ['/api/scores/all'],
     queryFn: () => fetch('/api/scores/all').then(res => res.json())
   });
+
+  // Filter scores for active round only
+  const activeRoundScores = activeRoundId 
+    ? allScores.filter(score => score.roundId === activeRoundId)
+    : [];
 
   return (
     <div className="py-8">
