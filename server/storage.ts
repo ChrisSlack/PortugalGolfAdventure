@@ -25,6 +25,7 @@ export interface IStorage {
   // Rounds
   getRounds(): Promise<Round[]>;
   createRound(round: InsertRound): Promise<Round>;
+  updateRound(id: number, round: Partial<InsertRound>): Promise<Round>;
   deleteRound(id: number): Promise<void>;
   
   // Scores
@@ -433,6 +434,20 @@ export class DatabaseStorage implements IStorage {
       console.error("Database round creation error:", error);
       throw error;
     }
+  }
+
+  async updateRound(id: number, updateData: Partial<InsertRound>): Promise<Round> {
+    const [updatedRound] = await db
+      .update(rounds)
+      .set(updateData)
+      .where(eq(rounds.id, id))
+      .returning();
+    
+    if (!updatedRound) {
+      throw new Error('Round not found');
+    }
+    
+    return updatedRound;
   }
 
   async deleteRound(id: number): Promise<void> {

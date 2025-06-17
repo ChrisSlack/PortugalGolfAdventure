@@ -148,6 +148,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/rounds/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertRoundSchema.partial().parse(req.body);
+      const updatedRound = await storage.updateRound(id, validatedData);
+      res.json(updatedRound);
+    } catch (error) {
+      console.error("Error updating round:", error);
+      res.status(500).json({ message: "Failed to update round" });
+    }
+  });
+
   app.delete("/api/rounds/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
