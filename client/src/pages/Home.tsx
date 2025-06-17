@@ -273,13 +273,29 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* Live Matchplay Leaderboard */}
-        <div className="mt-12">
-          <MatchplayLeaderboard 
-            players={players}
-            teams={teams}
-          />
-        </div>
+        {/* Active Round Selector */}
+        <ActiveRoundSelector onRoundChange={setActiveRoundId} />
+
+        {/* Live Leaderboards - Only show when round is selected */}
+        {activeRoundId && (
+          <div className="space-y-8">
+            {/* Current Round Leaderboard */}
+            <CumulativeLeaderboard 
+              players={players}
+              teams={teams}
+              rounds={rounds.filter(r => r.id === activeRoundId)}
+              scores={activeRoundScores}
+            />
+
+            {/* Matchplay Leaderboard */}
+            <MatchplayLeaderboard 
+              players={players}
+              teams={teams}
+              rounds={rounds}
+              day={(rounds.find(r => r.id === activeRoundId)?.day || 1) as 1 | 2 | 3}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ export default function ActiveRoundSelector({ onRoundChange }: ActiveRoundSelect
 
   const createRoundMutation = useMutation({
     mutationFn: async (roundData: any) => {
-      return await apiRequest('/api/rounds', 'POST', roundData);
+      return await apiRequest('POST', '/api/rounds', roundData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/rounds'] });

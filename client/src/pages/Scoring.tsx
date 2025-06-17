@@ -1,31 +1,11 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ScoreEntry from "@/components/ScoreEntry";
-import Leaderboard from "@/components/Leaderboard";
-import TeamLeaderboard from "@/components/TeamLeaderboard";
+import ActiveRoundSelector from "@/components/ActiveRoundSelector";
 import Scorecard from "@/components/Scorecard";
-import RoundHistory from "@/components/RoundHistory";
-import { courses } from "@/lib/courseData";
-import { Course } from "@/lib/types";
-import { useToast } from "@/hooks/use-toast";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { Play, Target, Users, Trophy, Loader2, History } from "lucide-react";
-import type { Player, Team, Round, Score } from "@shared/schema";
+import { useQuery } from "@tanstack/react-query";
+import type { Round } from "@shared/schema";
 
 export default function Scoring() {
-  const [selectedCourse, setSelectedCourse] = useState<string>('');
-  const [selectedDate, setSelectedDate] = useState<string>('');
-  const [currentRoundId, setCurrentRoundId] = useState<number | null>(null);
-  const [scoreEntryOpen, setScoreEntryOpen] = useState(false);
-  const [selectedPlayerId, setSelectedPlayerId] = useState<number>(0);
-  const [selectedHole, setSelectedHole] = useState<number>(0);
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const [activeRoundId, setActiveRoundId] = useState<number | null>(null);
 
   // Fetch players and teams
   const { data: players = [], isLoading: playersLoading } = useQuery<Player[]>({
