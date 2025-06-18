@@ -43,28 +43,13 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
   const calculatePlayerStats = (): PlayerStats[] => {
     const playerStats: PlayerStats[] = [];
     
-    // Debug logging
-    console.log('CumulativeLeaderboard - Processing data:', {
-      playersCount: players.length,
-      scoresCount: scores.length,
-      roundsCount: rounds.length,
-      players: players.map(p => ({ id: p.id, name: `${p.firstName} ${p.lastName}` })),
-      scoresByPlayer: scores.reduce((acc, score) => {
-        acc[score.playerId] = (acc[score.playerId] || 0) + 1;
-        return acc;
-      }, {} as Record<number, number>)
-    });
+    // Removed debug logging for production
     
     players.forEach(player => {
       const playerScores = scores.filter(s => s.playerId === player.id);
       const playerRounds = Array.from(new Set(playerScores.map(s => s.roundId)));
       
-      console.log(`Player ${player.firstName} ${player.lastName}:`, {
-        playerId: player.id,
-        scoresCount: playerScores.length,
-        rounds: playerRounds,
-        scores: playerScores.map(s => ({ hole: s.hole, score: s.score }))
-      });
+      // Player processing
       
       if (playerScores.length > 0) {
         let totalStrokes = playerScores.reduce((sum, score) => sum + score.score, 0);
