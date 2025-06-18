@@ -31,7 +31,6 @@ const courseDetails = {
 
 export default function Home() {
   const [currentDayIndex, setCurrentDayIndex] = useState(1); // Default to July 2nd
-  const [activeRoundId, setActiveRoundId] = useState<number | null>(null);
   
   const navigateDay = (direction: 'prev' | 'next') => {
     if (direction === 'prev' && currentDayIndex > 0) {
@@ -62,10 +61,8 @@ export default function Home() {
     queryFn: () => fetch('/api/scores/all').then(res => res.json())
   });
 
-  // Filter scores for active round only
-  const activeRoundScores = activeRoundId 
-    ? allScores.filter(score => score.roundId === activeRoundId)
-    : [];
+  // Get current day's round for scoring
+  const currentDayRound = rounds.find(r => r.day === currentDayIndex + 1) || rounds[0];
 
   return (
     <div className="py-8">
@@ -273,29 +270,24 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* Active Round Selector */}
-        <ActiveRoundSelector onRoundChange={setActiveRoundId} />
+        {/* Live Leaderboards - Show current day's data */}
+        <div className="space-y-8">
+          {/* Current Round Leaderboard */}
+          <CumulativeLeaderboard 
+            players={players}
+            teams={teams}
+            rounds={rounds}
+            scores={allScores}
+          />
 
-        {/* Live Leaderboards - Only show when round is selected */}
-        {activeRoundId && (
-          <div className="space-y-8">
-            {/* Current Round Leaderboard */}
-            <CumulativeLeaderboard 
-              players={players}
-              teams={teams}
-              rounds={rounds.filter(r => r.id === activeRoundId)}
-              scores={activeRoundScores}
-            />
-
-            {/* Matchplay Leaderboard */}
-            <MatchplayLeaderboard 
-              players={players}
-              teams={teams}
-              rounds={rounds}
-              day={(rounds.find(r => r.id === activeRoundId)?.day || 1) as 1 | 2 | 3}
-            />
-          </div>
-        )}
+          {/* Matchplay Leaderboard */}
+          <MatchplayLeaderboard 
+            players={players}
+            teams={teams}
+            rounds={rounds}
+            day={(currentDayIndex + 1) as 1 | 2 | 3}
+          />
+        </div>
       </div>
     </div>
   );

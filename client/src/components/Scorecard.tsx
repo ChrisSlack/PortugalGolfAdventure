@@ -13,9 +13,10 @@ interface ScorecardProps {
   onScoreEdit: (player: string, hole: number) => void;
   isEditable?: boolean;
   playerHandicaps?: { [player: string]: number };
+  roundId?: number;
 }
 
-export default function Scorecard({ course, players, scores, statistics, onScoreEdit, isEditable = true, playerHandicaps = {} }: ScorecardProps) {
+export default function Scorecard({ course, players, scores, statistics, onScoreEdit, isEditable = true, playerHandicaps = {}, roundId }: ScorecardProps) {
   const [viewMode, setViewMode] = useState<'scores' | 'stats'>('scores');
   const [scoreMode, setScoreMode] = useState<'gross' | 'net' | 'stableford'>('gross');
 
