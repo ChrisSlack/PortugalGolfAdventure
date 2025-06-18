@@ -24,7 +24,7 @@ interface ScoreEntryProps {
   };
 }
 
-export default function ScoreEntry({ 
+export default function ScoreEntryFixed({ 
   isOpen, 
   onClose, 
   player, 
@@ -56,7 +56,11 @@ export default function ScoreEntry({
         inBunker
       };
 
-      return apiRequest('/api/scores', 'POST', scoreData);
+      return fetch('/api/scores', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(scoreData)
+      }).then(res => res.json());
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/scores/all'] });

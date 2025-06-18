@@ -176,6 +176,12 @@ This is a comprehensive golf trip management application built for the Portugal 
   - Ensured maximum of 2 fourballs (matches) for 8 players following standard golf format
   - Team A: John Doe, Jane Smith, Chris Slack, Mike Johnson
   - Team B: Sarah Wilson, David Brown, Emma Davis, Tom Miller
+- June 18, 2025: Major system simplification and score entry fixes
+  - Eliminated complex round ID selection - system now has exactly 3 rounds (one per course per day)
+  - Fixed score entry functionality with proper dialog and API integration
+  - Added Stableford scoring mode to leaderboards with handicap-adjusted calculations
+  - Implemented delete round functionality for UX management
+  - Simplified data structure to eliminate user confusion around round selection
 
 ## User Preferences
 

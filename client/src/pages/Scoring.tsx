@@ -7,7 +7,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { courses } from "@/lib/courseData";
-import ScoreEntry from "@/components/ScoreEntry";
+import ScoreEntryFixed from "@/components/ScoreEntryFixed";
 import type { Round, Player, Score } from "@shared/schema";
 
 export default function Scoring() {
@@ -47,12 +47,16 @@ export default function Scoring() {
       
       const dayInfo = golfDays.find(d => d.course === courseId) || golfDays[0];
       
-      return apiRequest('/api/rounds', 'POST', {
-        course: courseId,
-        date: dayInfo.date,
-        day: dayInfo.day,
-        format: 'stroke'
-      });
+      return fetch('/api/rounds', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          course: courseId,
+          date: dayInfo.date,
+          day: dayInfo.day,
+          format: 'stroke'
+        })
+      }).then(res => res.json());
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/rounds'] });
@@ -73,7 +77,9 @@ export default function Scoring() {
   // Delete round mutation
   const deleteRound = useMutation({
     mutationFn: async (roundId: number) => {
-      return apiRequest(`/api/rounds/${roundId}`, 'DELETE');
+      return fetch(`/api/rounds/${roundId}`, {
+        method: 'DELETE'
+      }).then(res => res.json());
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/rounds'] });
@@ -365,7 +371,7 @@ export default function Scoring() {
 
         {/* Score Entry Dialog */}
         {selectedPlayer && (
-          <ScoreEntry
+          <ScoreEntryFixed
             isOpen={scoreEntryOpen}
             onClose={() => setScoreEntryOpen(false)}
             player={`${selectedPlayer.firstName} ${selectedPlayer.lastName}`}

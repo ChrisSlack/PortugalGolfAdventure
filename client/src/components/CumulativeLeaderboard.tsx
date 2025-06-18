@@ -22,6 +22,7 @@ interface PlayerStats {
   roundsPlayed: number;
   averageScore: number;
   bestRound: number | null;
+  stablefordPoints: number;
   team?: Team;
 }
 
@@ -37,7 +38,7 @@ interface TeamStats {
 
 export default function CumulativeLeaderboard({ players, teams, rounds, scores }: CumulativeLeaderboardProps) {
   const [viewMode, setViewMode] = useState<'scores' | 'stats'>('scores');
-  const [scoreMode, setScoreMode] = useState<'gross' | 'net'>('gross');
+  const [scoreMode, setScoreMode] = useState<'gross' | 'net' | 'stableford'>('gross');
   
   const calculatePlayerStats = (): PlayerStats[] => {
     const playerStats: PlayerStats[] = [];
