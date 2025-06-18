@@ -24,7 +24,7 @@ export default function MatchplayLeaderboard({ day, players = [], teams = [], ro
   const dayRounds = rounds?.filter(r => r.day === day) || [];
   const dayMatches = allMatches?.filter(match => 
     dayRounds.some(round => round.id === match.roundId)
-  ) || [];
+  ).slice(0, 2) || []; // Enforce maximum 2 fourballs
 
   const mainRound = dayRounds[0];
   const selectedCourse = mainRound ? courses.find(c => c.id === mainRound.course) : null;
