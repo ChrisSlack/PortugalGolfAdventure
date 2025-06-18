@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Club, Users, Smartphone, CalendarDays, Flag, TrendingUp, Coins, Vote, Sun, ChevronLeft, ChevronRight, ExternalLink, Clock, Car, MapPin } from "lucide-react";
+import { Calendar, Club, Users, Smartphone, CalendarDays, Flag, TrendingUp, Coins, Vote, Sun, ChevronLeft, ChevronRight, ExternalLink, Clock, Car, MapPin, Trophy } from "lucide-react";
 import { scheduleData } from "@/lib/courseData";
 import MatchplayLeaderboard from "@/components/MatchplayLeaderboard";
 
@@ -281,25 +281,12 @@ export default function Home() {
           />
 
           {/* Stroke Play Leaderboard - matches scorecard data */}
-          <div className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Trophy className="h-5 w-5" />
-                  <span>Leaderboard - NAU Morgado Course</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CumulativeLeaderboard 
-                  players={players}
-                  scores={allScores}
-                  rounds={rounds}
-                  teams={teams}
-                  scoreMode="stableford"
-                />
-              </CardContent>
-            </Card>
-          </div>
+          <CumulativeLeaderboard 
+            players={players}
+            scores={allScores}
+            rounds={rounds}
+            teams={teams}
+          />
         </div>
       </div>
     </div>
