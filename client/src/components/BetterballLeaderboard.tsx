@@ -76,17 +76,18 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
     return totalPoints;
   };
 
-  const calculateMatchResult = (match: Match): { teamAScore: number, teamBScore: number, winner: string } => {
-    if (!mainRound) return { teamAScore: 0, teamBScore: 0, winner: "TIE" };
+  const calculateMatchResult = (match: Match): { teamAScore: number, teamBScore: number, status: string } => {
+    if (!mainRound) return { teamAScore: 0, teamBScore: 0, status: "AS" };
 
     const teamAScore = calculateBetterballScore(match.pairAPlayer1, match.pairAPlayer2, mainRound.id);
     const teamBScore = calculateBetterballScore(match.pairBPlayer1, match.pairBPlayer2, mainRound.id);
 
-    let winner = "TIE";
-    if (teamAScore > teamBScore) winner = "TEAM A";
-    else if (teamBScore > teamAScore) winner = "TEAM B";
+    const diff = teamAScore - teamBScore;
+    let status = "AS";
+    if (diff > 0) status = `Team A ${diff}UP`;
+    else if (diff < 0) status = `Team B ${Math.abs(diff)}UP`;
 
-    return { teamAScore, teamBScore, winner };
+    return { teamAScore, teamBScore, status };
   };
 
   const overallTeamScores = () => {
@@ -160,7 +161,7 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
               <div className="text-2xl font-bold">{teamATotal}</div>
               {teamATotal > teamBTotal && <Crown className="h-5 w-5 mx-auto text-yellow-500 mt-1" />}
             </div>
-            <div className={`p-4 rounded-lg text-center ${teamBTotal > teamATotal ? 'bg-green-100 border-2 border-green-500' : 'bg-red-100 border-2 border-red-500'}`}>
+            <div className={`p-4 rounded-lg text-center ${teamBTotal > teamATotal ? 'bg-green-100 border-2 border-green-500' : teamBTotal === teamATotal ? 'bg-gray-100 border-2 border-gray-400' : 'bg-red-100 border-2 border-red-500'}`}>
               <div className="font-bold text-lg text-red-600">Team B</div>
               <div className="text-2xl font-bold">{teamBTotal}</div>
               {teamBTotal > teamATotal && <Crown className="h-5 w-5 mx-auto text-yellow-500 mt-1" />}
@@ -178,8 +179,8 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                       <Crown className="h-4 w-4 text-golf-green" />
                       <span className="font-medium">Fourball {index + 1}</span>
                     </div>
-                    <Badge variant="outline" className="text-golf-green border-golf-green">
-                      {result.winner === "TIE" ? "Tied" : `${result.winner} Wins`}
+                    <Badge variant="outline" className={result.status === "AS" ? "text-gray-600 border-gray-400" : "text-golf-green border-golf-green"}>
+                      {result.status}
                     </Badge>
                   </div>
                   
@@ -200,17 +201,17 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                       </div>
                     </div>
 
-                    <div className={`p-3 rounded border-l-4 ${result.teamBScore > result.teamAScore ? 'bg-green-50 border-l-green-500' : 'bg-white border-l-red-500'}`}>
+                    <div className={`p-3 rounded border-l-4 ${result.teamBScore > result.teamAScore ? 'bg-green-50 border-l-green-500' : result.teamBScore === result.teamAScore ? 'bg-gray-50 border-l-gray-400' : 'bg-white border-l-red-500'}`}>
                       <div className="font-medium text-red-600 mb-2">Team B</div>
                       <div className="space-y-1">
-                        <div className="flex justify-between">
+                        <div className="flex justify-start">
                           <span>{getPlayerName(match.pairBPlayer1)}</span>
                         </div>
-                        <div className="flex justify-between">
+                        <div className="flex justify-start">
                           <span>{getPlayerName(match.pairBPlayer2)}</span>
                         </div>
                       </div>
-                      <div className="mt-2 text-right">
+                      <div className="mt-2 text-left">
                         <span className="text-lg font-bold text-red-600">{result.teamBScore}</span>
                         <span className="text-sm text-gray-600 ml-1">points</span>
                       </div>
