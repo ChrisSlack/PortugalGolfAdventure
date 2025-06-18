@@ -24,9 +24,11 @@ export default function Scorecard({ course, players, scores, statistics, onScore
   const [viewMode, setViewMode] = useState<'scores' | 'stats'>('scores');
   const [scoreMode, setScoreMode] = useState<'gross' | 'net' | 'stableford'>('gross');
 
-  // Fetch matches to determine fourball assignments
+  // Fetch matches for this specific round to determine fourball assignments
   const { data: matches = [] } = useQuery<Match[]>({
-    queryKey: ["/api/matches"]
+    queryKey: ["/api/matches"],
+    queryFn: () => fetch(`/api/matches?roundId=${roundId}`).then(res => res.json()),
+    enabled: !!roundId
   });
 
   // Function to get fourball number for a player
