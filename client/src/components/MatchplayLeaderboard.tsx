@@ -59,7 +59,7 @@ export default function MatchplayLeaderboard({ day, players = [], teams = [], ro
       
       // Calculate handicap strokes for this hole
       const handicapStrokes = Math.floor((handicap * holeHandicap + 17) / 18);
-      const netScore = Math.max(score.score - handicapStrokes, 1);
+      const netScore = score.score - handicapStrokes;
       
       // Calculate Stableford points based on net score vs par
       const diff = netScore - hole.par;
