@@ -280,13 +280,26 @@ export default function Home() {
             scores={allScores}
           />
 
-          {/* Matchplay Leaderboard */}
-          <MatchplayLeaderboard 
-            players={players}
-            teams={teams}
-            rounds={rounds}
-            day={(currentDayIndex + 1) as 1 | 2 | 3}
-          />
+          {/* Stroke Play Leaderboard - matches scorecard data */}
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Trophy className="h-5 w-5" />
+                  <span>Leaderboard - NAU Morgado Course</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CumulativeLeaderboard 
+                  players={players}
+                  scores={allScores}
+                  rounds={rounds}
+                  teams={teams}
+                  scoreMode="stableford"
+                />
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
