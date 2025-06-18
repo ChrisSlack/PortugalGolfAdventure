@@ -73,6 +73,69 @@ export default function MatchplayLeaderboard({ day, players = [], teams = [], ro
     return totalPoints;
   };
 
+  const calculateMatchStatus = (match: Match): { teamAHoles: number, teamBHoles: number, status: string } => {
+    if (!selectedCourse || !mainRound) return { teamAHoles: 0, teamBHoles: 0, status: "AS" };
+
+    let teamAHoles = 0;
+    let teamBHoles = 0;
+
+    // Get all played holes
+    const playedHoles = new Set(allScores.filter(s => s.roundId === mainRound.id).map(s => s.hole));
+    
+    for (const hole of Array.from(playedHoles)) {
+      // Get best Stableford score for each team on this hole
+      const teamAPlayer1Score = calculatePlayerHoleStableford(match.pairAPlayer1, mainRound.id, hole);
+      const teamAPlayer2Score = calculatePlayerHoleStableford(match.pairAPlayer2, mainRound.id, hole);
+      const teamBPlayer1Score = calculatePlayerHoleStableford(match.pairBPlayer1, mainRound.id, hole);
+      const teamBPlayer2Score = calculatePlayerHoleStableford(match.pairBPlayer2, mainRound.id, hole);
+
+      const teamABest = Math.max(teamAPlayer1Score, teamAPlayer2Score);
+      const teamBBest = Math.max(teamBPlayer1Score, teamBPlayer2Score);
+
+      if (teamABest > teamBBest) teamAHoles++;
+      else if (teamBBest > teamABest) teamBHoles++;
+      // Tied holes don't count
+    }
+
+    const holesLeft = 18 - playedHoles.size;
+    const lead = Math.abs(teamAHoles - teamBHoles);
+    
+    let status = "AS";
+    if (lead > holesLeft) {
+      status = lead === 1 ? "1UP" : `${lead}UP`;
+    } else if (lead > 0 && lead === holesLeft) {
+      status = `${lead}&${holesLeft}`;
+    }
+
+    return { teamAHoles, teamBHoles, status };
+  };
+
+  const calculatePlayerHoleStableford = (playerId: number, roundId: number, hole: number): number => {
+    if (!selectedCourse) return 0;
+    
+    const player = players.find(p => p.id === playerId);
+    if (!player) return 0;
+
+    const score = allScores.find(s => s.playerId === playerId && s.roundId === roundId && s.hole === hole);
+    if (!score) return 0;
+
+    const holeData = selectedCourse.holes.find(h => h.hole === hole);
+    if (!holeData) return 0;
+
+    const handicap = player.handicap || 0;
+    const holeHandicap = holeData.handicap;
+    
+    const handicapStrokes = handicap >= holeHandicap ? Math.floor(handicap / 18) + (handicap % 18 >= holeHandicap ? 1 : 0) : 0;
+    const netScore = score.score - handicapStrokes;
+    
+    const diff = netScore - holeData.par;
+    if (diff <= -2) return 4;
+    else if (diff === -1) return 3;
+    else if (diff === 0) return 2;
+    else if (diff === 1) return 1;
+    return 0;
+  };
+
   if (!mainRound || !selectedCourse || dayMatches.length === 0) {
     return (
       <Card>
@@ -101,7 +164,9 @@ export default function MatchplayLeaderboard({ day, players = [], teams = [], ro
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {dayMatches.map((match, index) => (
+          {dayMatches.map((match, index) => {
+            const matchStatus = calculateMatchStatus(match);
+            return (
             <div key={match.id} className="p-4 border rounded-lg bg-gradient-to-r from-green-50 to-blue-50">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center space-x-2">
@@ -109,7 +174,7 @@ export default function MatchplayLeaderboard({ day, players = [], teams = [], ro
                   <span className="font-medium">Fourball {index + 1}</span>
                 </div>
                 <Badge variant="outline" className="text-golf-green border-golf-green">
-                  {match.status === 'active' ? 'In Progress' : match.status}
+                  In Progress
                 </Badge>
               </div>
               
@@ -156,12 +221,21 @@ export default function MatchplayLeaderboard({ day, players = [], teams = [], ro
               </div>
               
               <div className="mt-3 text-center">
+                <div className="flex justify-center space-x-4 mb-2">
+                  <span className="text-sm text-golf-green font-medium">
+                    Team A: {matchStatus.teamAHoles} holes
+                  </span>
+                  <span className="text-sm text-blue-600 font-medium">
+                    Team B: {matchStatus.teamBHoles} holes
+                  </span>
+                </div>
                 <Badge variant="secondary">
-                  Match Status: AS (All Square)
+                  Match Status: {matchStatus.status}
                 </Badge>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </CardContent>
     </Card>
