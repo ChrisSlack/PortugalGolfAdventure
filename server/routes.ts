@@ -337,9 +337,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/matches", async (req, res) => {
     try {
       const validatedData = insertMatchSchema.parse(req.body);
+      
+      // Check if round already has maximum 2 fourballs
+      const existingMatches = await storage.getMatches(validatedData.roundId);
+      if (existingMatches.length >= 2) {
+        return res.status(400).json({ 
+          message: "Maximum 2 fourballs allowed per day",
+          error: "FOURBALL_LIMIT_EXCEEDED"
+        });
+      }
+      
+      // Check for duplicate player assignments
+      const allPlayers = new Set();
+      existingMatches.forEach(match => {
+        allPlayers.add(match.pairAPlayer1);
+        allPlayers.add(match.pairAPlayer2);
+        allPlayers.add(match.pairBPlayer1);
+        allPlayers.add(match.pairBPlayer2);
+      });
+      
+      const newPlayers = [
+        validatedData.pairAPlayer1,
+        validatedData.pairAPlayer2,
+        validatedData.pairBPlayer1,
+        validatedData.pairBPlayer2
+      ];
+      
+      for (const playerId of newPlayers) {
+        if (allPlayers.has(playerId)) {
+          return res.status(400).json({
+            message: "Player already assigned to another fourball",
+            error: "PLAYER_ALREADY_ASSIGNED"
+          });
+        }
+      }
+      
       const match = await storage.createMatch(validatedData);
       res.json(match);
     } catch (error) {
+      console.error("Error creating match:", error);
       res.status(400).json({ message: "Invalid match data" });
     }
   });
