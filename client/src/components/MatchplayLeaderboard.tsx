@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Crown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import type { Round, Match, Player, Team } from "@shared/schema";
+import type { Round, Match, Player, Team, Score } from "@shared/schema";
 import { courses } from "@/lib/courseData";
 
 interface MatchplayLeaderboardProps {
@@ -15,6 +15,10 @@ interface MatchplayLeaderboardProps {
 export default function MatchplayLeaderboard({ day, players = [], teams = [], rounds = [] }: MatchplayLeaderboardProps) {
   const { data: allMatches = [] } = useQuery<Match[]>({
     queryKey: ["/api/matches"]
+  });
+
+  const { data: allScores = [] } = useQuery<Score[]>({
+    queryKey: ["/api/scores/all"]
   });
 
   const dayRounds = rounds?.filter(r => r.day === day) || [];
@@ -35,6 +39,38 @@ export default function MatchplayLeaderboard({ day, players = [], teams = [], ro
     if (!players || !Array.isArray(players)) return "Unknown Player";
     const player = players.find(p => p.id === playerId);
     return player ? `${player.firstName} ${player.lastName}` : "Unknown Player";
+  };
+
+  const calculateStablefordPoints = (playerId: number, roundId: number): number => {
+    if (!selectedCourse || !mainRound) return 0;
+    
+    const player = players.find(p => p.id === playerId);
+    if (!player) return 0;
+
+    const playerScores = allScores.filter(s => s.playerId === playerId && s.roundId === roundId);
+    let totalPoints = 0;
+
+    for (const score of playerScores) {
+      const hole = selectedCourse.holes.find(h => h.hole === score.hole);
+      if (!hole) continue;
+
+      const handicap = player.handicap || 0;
+      const holeHandicap = hole.handicap;
+      
+      // Calculate handicap strokes for this hole
+      const handicapStrokes = Math.floor((handicap * holeHandicap + 17) / 18);
+      const netScore = Math.max(score.score - handicapStrokes, 1);
+      
+      // Calculate Stableford points based on net score vs par
+      const diff = netScore - hole.par;
+      if (diff <= -2) totalPoints += 4;      // Eagle or better
+      else if (diff === -1) totalPoints += 3; // Birdie
+      else if (diff === 0) totalPoints += 2;  // Par
+      else if (diff === 1) totalPoints += 1;  // Bogey
+      // Double bogey or worse = 0 points
+    }
+
+    return totalPoints;
   };
 
   if (!mainRound || !selectedCourse || dayMatches.length === 0) {
@@ -83,8 +119,18 @@ export default function MatchplayLeaderboard({ day, players = [], teams = [], ro
                     {getTeamName(match.teamA)}
                   </div>
                   <div className="text-sm space-y-1">
-                    <div>{getPlayerName(match.pairAPlayer1)}</div>
-                    <div>{getPlayerName(match.pairAPlayer2)}</div>
+                    <div className="flex justify-between">
+                      <span>{getPlayerName(match.pairAPlayer1)}</span>
+                      <span className="font-bold text-golf-green">
+                        {calculateStablefordPoints(match.pairAPlayer1, mainRound.id)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>{getPlayerName(match.pairAPlayer2)}</span>
+                      <span className="font-bold text-golf-green">
+                        {calculateStablefordPoints(match.pairAPlayer2, mainRound.id)}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 
@@ -93,8 +139,18 @@ export default function MatchplayLeaderboard({ day, players = [], teams = [], ro
                     {getTeamName(match.teamB)}
                   </div>
                   <div className="text-sm space-y-1">
-                    <div>{getPlayerName(match.pairBPlayer1)}</div>
-                    <div>{getPlayerName(match.pairBPlayer2)}</div>
+                    <div className="flex justify-between">
+                      <span>{getPlayerName(match.pairBPlayer1)}</span>
+                      <span className="font-bold text-blue-600">
+                        {calculateStablefordPoints(match.pairBPlayer1, mainRound.id)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>{getPlayerName(match.pairBPlayer2)}</span>
+                      <span className="font-bold text-blue-600">
+                        {calculateStablefordPoints(match.pairBPlayer2, mainRound.id)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
