@@ -129,6 +129,16 @@ export default function MatchplaySetup({ course, golfDay, onMatchCreated, existi
       return;
     }
 
+    // Limit to maximum 2 fourballs (8 players total)
+    if (fourballPairings.length >= 2) {
+      toast({
+        title: "Maximum Reached",
+        description: "Only 2 fourballs allowed per day (8 players maximum)",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const teamAPlayers = getTeamPlayers(selectedTeamA);
     const teamBPlayers = getTeamPlayers(selectedTeamB);
 
@@ -141,14 +151,36 @@ export default function MatchplaySetup({ course, golfDay, onMatchCreated, existi
       return;
     }
 
+    // Get already assigned players to avoid duplicates
+    const assignedPlayers = new Set();
+    fourballPairings.forEach(pairing => {
+      assignedPlayers.add(pairing.pairAPlayer1);
+      assignedPlayers.add(pairing.pairAPlayer2);
+      assignedPlayers.add(pairing.pairBPlayer1);
+      assignedPlayers.add(pairing.pairBPlayer2);
+    });
+
+    // Find available players from each team
+    const availableTeamA = teamAPlayers.filter(p => !assignedPlayers.has(p.id));
+    const availableTeamB = teamBPlayers.filter(p => !assignedPlayers.has(p.id));
+
+    if (availableTeamA.length < 2 || availableTeamB.length < 2) {
+      toast({
+        title: "Not Enough Players",
+        description: "Need 2 available players from each team for a fourball",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Auto-select first available players for each team
     const newPairing: PairingSetup = {
       teamA: selectedTeamA,
       teamB: selectedTeamB,
-      pairAPlayer1: teamAPlayers[0].id,
-      pairAPlayer2: teamAPlayers[1].id,
-      pairBPlayer1: teamBPlayers[0].id,
-      pairBPlayer2: teamBPlayers[1].id,
+      pairAPlayer1: availableTeamA[0].id,
+      pairAPlayer2: availableTeamA[1].id,
+      pairBPlayer1: availableTeamB[0].id,
+      pairBPlayer2: availableTeamB[1].id,
     };
 
     setFourballPairings([...fourballPairings, newPairing]);
