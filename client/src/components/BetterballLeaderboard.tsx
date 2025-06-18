@@ -49,7 +49,8 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
     const handicap = player.handicap || 0;
     const holeHandicap = holeData.handicap;
     
-    const handicapStrokes = (handicap as number) >= holeHandicap ? Math.floor((handicap as number) / 18) + ((handicap as number) % 18 >= holeHandicap ? 1 : 0) : 0;
+    const numericHandicap = Number(handicap);
+    const handicapStrokes = numericHandicap >= holeHandicap ? Math.floor(numericHandicap / 18) + (numericHandicap % 18 >= holeHandicap ? 1 : 0) : 0;
     const netScore = score.score - handicapStrokes;
     
     const diff = netScore - holeData.par;

@@ -32,6 +32,8 @@ const courseDetails = {
 
 export default function Home() {
   const [currentDayIndex, setCurrentDayIndex] = useState(1); // Default to July 2nd
+  const [leaderboardMode, setLeaderboardMode] = useState<'individual' | 'team'>('individual');
+  const [scoreMode, setScoreMode] = useState<'gross' | 'net' | 'stableford'>('gross');
   
   const navigateDay = (direction: 'prev' | 'next') => {
     if (direction === 'prev' && currentDayIndex > 0) {
@@ -283,10 +285,20 @@ export default function Home() {
 
           {/* Stroke Play Leaderboard - matches scorecard data */}
           <CumulativeLeaderboard 
-            players={players}
-            scores={allScores}
-            rounds={rounds}
-            teams={teams}
+            players={players || []}
+            teams={teams || []}
+            scores={allScores || []}
+            rounds={rounds || []}
+            viewMode={leaderboardMode}
+            scoreMode={scoreMode}
+          />
+
+          {/* Betterball Leaderboard */}
+          <BetterballLeaderboard
+            players={players || []}
+            teams={teams || []}
+            rounds={rounds || []}
+            allScores={allScores || []}
           />
         </div>
       </div>
