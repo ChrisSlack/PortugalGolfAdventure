@@ -97,6 +97,34 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
         
         const playerTeam = teams.find(t => t.id === player.teamId);
         
+        // Calculate Stableford points
+        let stablefordPoints = 0;
+        if (scoreMode === 'stableford') {
+          playerScores.forEach(score => {
+            const round = rounds.find(r => r.id === score.roundId);
+            const course = round ? courses.find(c => c.id === round.course) : null;
+            const holeData = course?.holes.find(h => h.hole === score.hole);
+            const par = holeData?.par || 4;
+            const handicap = parseFloat(player.handicap || '0') || 0;
+            const holeHandicap = holeData?.handicap || 18;
+            
+            // Calculate net score for this hole
+            let netScore = score.score;
+            if (handicap >= holeHandicap) {
+              const strokesReceived = Math.floor(handicap / 18) + (handicap % 18 >= holeHandicap ? 1 : 0);
+              netScore = score.score - strokesReceived;
+            }
+            
+            // Calculate Stableford points
+            const scoreToPar = netScore - par;
+            if (scoreToPar <= -2) stablefordPoints += 4;
+            else if (scoreToPar === -1) stablefordPoints += 3;
+            else if (scoreToPar === 0) stablefordPoints += 2;
+            else if (scoreToPar === 1) stablefordPoints += 1;
+            // 2+ over par = 0 points
+          });
+        }
+        
         playerStats.push({
           playerId: player.id,
           name: `${player.firstName} ${player.lastName}`,
@@ -106,12 +134,18 @@ export default function CumulativeLeaderboard({ players, teams, rounds, scores }
           roundsPlayed: playerRounds.length,
           averageScore,
           bestRound,
+          stablefordPoints,
           team: playerTeam
         });
       }
     });
     
-    return playerStats.sort((a, b) => a.toPar - b.toPar);
+    // Sort by score mode
+    if (scoreMode === 'stableford') {
+      return playerStats.sort((a, b) => b.stablefordPoints - a.stablefordPoints);
+    } else {
+      return playerStats.sort((a, b) => a.toPar - b.toPar);
+    }
   };
   
   const calculateTeamStats = (): TeamStats[] => {
