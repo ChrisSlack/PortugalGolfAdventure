@@ -182,6 +182,13 @@ This is a comprehensive golf trip management application built for the Portugal 
   - Added Stableford scoring mode to leaderboards with handicap-adjusted calculations
   - Implemented delete round functionality for UX management
   - Simplified data structure to eliminate user confusion around round selection
+- June 18, 2025: Fixed scorecard/leaderboard data consistency and matchplay validation
+  - Resolved data mismatch between scorecard stroke play scores and matchplay leaderboard
+  - Added backend validation to enforce maximum 2 fourballs per day (8 players total)
+  - Implemented duplicate player assignment prevention across fourballs
+  - Cleaned up database inconsistencies (removed orphaned scores and duplicate rounds)
+  - Ensured one score per player per hole per course per day constraint is enforced
+  - System now has clean data structure: 1 round (NAU Day 1), 8 players, 9 scores total
 
 ## User Preferences
 
