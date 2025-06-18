@@ -289,9 +289,15 @@ export default function Scoring() {
                   </tr>
                 </thead>
                 <tbody>
-                  {players.map(player => (
+                  {players.map(player => {
+                    // Get player's team to determine color
+                    const playerTeam = teams.find(t => t.id === player.teamId);
+                    const teamIndex = teams.findIndex(t => t.id === player.teamId);
+                    const teamColor = teamIndex === 0 ? 'border-l-blue-500' : 'border-l-red-500';
+                    
+                    return (
                     <tr key={player.id}>
-                      <td className="p-2 border-b font-medium">
+                      <td className={`p-2 border-b font-medium border-l-4 ${teamColor}`}>
                         {player.firstName} {player.lastName}
                       </td>
                       {Array.from({ length: 18 }, (_, i) => i + 1).map(hole => {
@@ -362,7 +368,8 @@ export default function Scoring() {
                         }
                       </td>
                     </tr>
-                  ))}
+                  )
+                  })}
                 </tbody>
               </table>
             </div>
