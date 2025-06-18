@@ -7,6 +7,7 @@ import { scheduleData } from "@/lib/courseData";
 import MatchplayLeaderboard from "@/components/MatchplayLeaderboard";
 
 import CumulativeLeaderboard from "@/components/CumulativeLeaderboard";
+import BetterballLeaderboard from "@/components/BetterballLeaderboard";
 import { useQuery } from "@tanstack/react-query";
 import type { Player, Team, Round, Score } from "@shared/schema";
 
