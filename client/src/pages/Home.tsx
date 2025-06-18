@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Club, Users, Smartphone, CalendarDays, Flag, TrendingUp, Coins, Vote, Sun, ChevronLeft, ChevronRight, ExternalLink, Clock, Car, MapPin } from "lucide-react";
 import { scheduleData } from "@/lib/courseData";
 import MatchplayLeaderboard from "@/components/MatchplayLeaderboard";
-import ActiveRoundSelector from "@/components/ActiveRoundSelector";
+
 import CumulativeLeaderboard from "@/components/CumulativeLeaderboard";
 import { useQuery } from "@tanstack/react-query";
 import type { Player, Team, Round, Score } from "@shared/schema";
