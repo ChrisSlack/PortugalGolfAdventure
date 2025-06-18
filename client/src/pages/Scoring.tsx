@@ -47,15 +47,11 @@ export default function Scoring() {
       
       const dayInfo = golfDays.find(d => d.course === courseId) || golfDays[0];
       
-      return apiRequest('/api/rounds', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          course: courseId,
-          date: dayInfo.date,
-          day: dayInfo.day,
-          format: 'stroke'
-        })
+      return apiRequest('/api/rounds', 'POST', {
+        course: courseId,
+        date: dayInfo.date,
+        day: dayInfo.day,
+        format: 'stroke'
       });
     },
     onSuccess: () => {
@@ -77,9 +73,7 @@ export default function Scoring() {
   // Delete round mutation
   const deleteRound = useMutation({
     mutationFn: async (roundId: number) => {
-      return apiRequest(`/api/rounds/${roundId}`, {
-        method: 'DELETE'
-      });
+      return apiRequest(`/api/rounds/${roundId}`, 'DELETE');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/rounds'] });
