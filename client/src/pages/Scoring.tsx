@@ -8,7 +8,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { courses } from "@/lib/courseData";
 import ScoreEntryFixed from "@/components/ScoreEntryFixed";
-import type { Round, Player, Score } from "@shared/schema";
+import type { Round, Player, Score, Team } from "@shared/schema";
 
 export default function Scoring() {
   const [scoreEntryOpen, setScoreEntryOpen] = useState(false);
@@ -26,6 +26,10 @@ export default function Scoring() {
 
   const { data: players = [] } = useQuery<Player[]>({
     queryKey: ['/api/players']
+  });
+
+  const { data: teams = [] } = useQuery<Team[]>({
+    queryKey: ['/api/teams']
   });
 
   const { data: allScores = [] } = useQuery<Score[]>({
@@ -368,7 +372,7 @@ export default function Scoring() {
                         }
                       </td>
                     </tr>
-                  )
+                    );
                   })}
                 </tbody>
               </table>
