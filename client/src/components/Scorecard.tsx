@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Edit, BarChart3, Calculator, Trophy } from "lucide-react";
 import { Course } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import type { Match, Player } from "@shared/schema";
 
 interface ScorecardProps {
   course: Course;
@@ -14,11 +16,34 @@ interface ScorecardProps {
   isEditable?: boolean;
   playerHandicaps?: { [player: string]: number };
   roundId?: number;
+  allPlayers?: Player[];
 }
 
-export default function Scorecard({ course, players, scores, statistics, onScoreEdit, isEditable = true, playerHandicaps = {}, roundId }: ScorecardProps) {
+export default function Scorecard({ course, players, scores, statistics, onScoreEdit, isEditable = true, playerHandicaps = {}, roundId, allPlayers = [] }: ScorecardProps) {
   const [viewMode, setViewMode] = useState<'scores' | 'stats'>('scores');
   const [scoreMode, setScoreMode] = useState<'gross' | 'net' | 'stableford'>('gross');
+
+  // Fetch matches to determine fourball assignments
+  const { data: matches = [] } = useQuery<Match[]>({
+    queryKey: ["/api/matches"]
+  });
+
+  // Function to get fourball number for a player
+  const getFourballNumber = (playerName: string): number | null => {
+    const player = allPlayers.find(p => `${p.firstName} ${p.lastName}` === playerName);
+    if (!player) return null;
+
+    for (let i = 0; i < matches.length; i++) {
+      const match = matches[i];
+      if (match.pairAPlayer1 === player.id || 
+          match.pairAPlayer2 === player.id || 
+          match.pairBPlayer1 === player.id || 
+          match.pairBPlayer2 === player.id) {
+        return i + 1; // Return 1-indexed fourball number
+      }
+    }
+    return null;
+  };
 
   const getScoreClass = (score: number | undefined, par: number): string => {
     if (!score) return 'bg-gray-100 text-gray-400';
@@ -192,10 +217,18 @@ export default function Scorecard({ course, players, scores, statistics, onScore
               <tbody>
                 {players.map(player => {
                   const { total, toPar } = calculatePlayerTotal(player);
+                  const fourballNumber = getFourballNumber(player);
                   return (
                     <tr key={player} className="border-b hover:bg-gray-50">
                       <td className="px-2 py-2 font-medium text-sm">
-                        {player}
+                        <div className="flex items-center space-x-2">
+                          <span>{player}</span>
+                          {fourballNumber && (
+                            <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-blue-600 rounded-full">
+                              {fourballNumber}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       
                       {course.holes.map(hole => {
