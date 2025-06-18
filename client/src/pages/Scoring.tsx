@@ -343,7 +343,12 @@ export default function Scoring() {
                             onClick={() => handleScoreEdit(player, hole)}
                           >
                             {viewMode === 'scores' ? (
-                              displayValue
+                              <div className="relative">
+                                {displayValue}
+                                {score && (
+                                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full opacity-60"></div>
+                                )}
+                              </div>
                             ) : (
                               <div className="flex justify-center gap-1">
                                 {stats.threePutt && <Badge variant="secondary" className="text-xs">3P</Badge>}

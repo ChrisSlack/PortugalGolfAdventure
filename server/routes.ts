@@ -222,13 +222,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/scores", async (req, res) => {
     try {
-      console.log("Creating score with data:", req.body);
+      console.log("Creating/updating score with data:", req.body);
       const validatedData = insertScoreSchema.parse(req.body);
-      const score = await storage.createScore(validatedData);
-      console.log("Score created successfully:", score);
+      
+      // Check if score already exists for this player/hole/round
+      const existingScores = await storage.getScores(validatedData.roundId);
+      const existingScore = existingScores.find(s => 
+        s.playerId === validatedData.playerId && 
+        s.hole === validatedData.hole
+      );
+      
+      let score;
+      if (existingScore) {
+        // Update existing score
+        console.log("Updating existing score:", existingScore.id);
+        score = await storage.updateScore(existingScore.id, validatedData);
+        console.log("Score updated successfully:", score);
+      } else {
+        // Create new score
+        console.log("Creating new score");
+        score = await storage.createScore(validatedData);
+        console.log("Score created successfully:", score);
+      }
+      
       res.json(score);
     } catch (error) {
-      console.error("Error creating score:", error);
+      console.error("Error creating/updating score:", error);
       res.status(400).json({ message: "Invalid score data" });
     }
   });
