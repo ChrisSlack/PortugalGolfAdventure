@@ -17,9 +17,10 @@ interface ScorecardProps {
   playerHandicaps?: { [player: string]: number };
   roundId?: number;
   allPlayers?: Player[];
+  teams?: any[];
 }
 
-export default function Scorecard({ course, players, scores, statistics, onScoreEdit, isEditable = true, playerHandicaps = {}, roundId, allPlayers = [] }: ScorecardProps) {
+export default function Scorecard({ course, players, scores, statistics, onScoreEdit, isEditable = true, playerHandicaps = {}, roundId, allPlayers = [], teams = [] }: ScorecardProps) {
   const [viewMode, setViewMode] = useState<'scores' | 'stats'>('scores');
   const [scoreMode, setScoreMode] = useState<'gross' | 'net' | 'stableford'>('gross');
 
@@ -43,6 +44,15 @@ export default function Scorecard({ course, players, scores, statistics, onScore
       }
     }
     return null;
+  };
+
+  // Function to get team color for a player
+  const getTeamColor = (playerName: string): string => {
+    const player = allPlayers.find(p => `${p.firstName} ${p.lastName}` === playerName);
+    if (!player || !teams.length) return '';
+    
+    const teamIndex = teams.findIndex(t => t.id === player.teamId);
+    return teamIndex === 0 ? 'border-l-blue-500' : 'border-l-red-500';
   };
 
   const getScoreClass = (score: number | undefined, par: number): string => {
@@ -218,13 +228,14 @@ export default function Scorecard({ course, players, scores, statistics, onScore
                 {players.map(player => {
                   const { total, toPar } = calculatePlayerTotal(player);
                   const fourballNumber = getFourballNumber(player);
+                  const teamColor = getTeamColor(player);
                   return (
                     <tr key={player} className="border-b hover:bg-gray-50">
-                      <td className="px-2 py-2 font-medium text-sm">
+                      <td className={`px-2 py-2 font-medium text-sm border-l-4 ${teamColor}`}>
                         <div className="flex items-center space-x-2">
                           <span>{player}</span>
                           {fourballNumber && (
-                            <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-blue-600 rounded-full">
+                            <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-gray-600 rounded-full">
                               {fourballNumber}
                             </span>
                           )}

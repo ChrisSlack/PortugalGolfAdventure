@@ -302,7 +302,10 @@ export default function Scoring() {
                     return (
                     <tr key={player.id}>
                       <td className={`p-2 border-b font-medium border-l-4 ${teamColor}`}>
-                        {player.firstName} {player.lastName}
+                        <div className="flex items-center space-x-2">
+                          <span>{player.firstName} {player.lastName}</span>
+                          {/* Fourball indicator would go here when we implement it for the main scorecard */}
+                        </div>
                       </td>
                       {Array.from({ length: 18 }, (_, i) => i + 1).map(hole => {
                         const score = getPlayerScore(player.id, hole);
