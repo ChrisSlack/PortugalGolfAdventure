@@ -205,52 +205,66 @@ export default function ScoreEntryFixed({
             <Label className="text-sm font-medium text-gray-700">Additional Score Information</Label>
             
             <div className="space-y-3">
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50">
-                <Checkbox
-                  id="threePutt"
-                  checked={threePutt}
-                  onCheckedChange={(checked) => setThreePutt(checked === true)}
-                  className="data-[state=checked]:bg-golf-green data-[state=checked]:border-golf-green"
-                />
-                <Label htmlFor="threePutt" className="text-sm text-gray-700 cursor-pointer flex-1">
-                  3-Putt (Three putts on green)
-                </Label>
-              </div>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="threePutt"
+                    checked={threePutt}
+                    onCheckedChange={(checked) => setThreePutt(checked === true)}
+                    style={{
+                      backgroundColor: threePutt ? '#10b981' : 'white',
+                      borderColor: threePutt ? '#10b981' : '#d1d5db'
+                    }}
+                  />
+                  <label htmlFor="threePutt" className="text-sm text-gray-700">
+                    3-Putt (Three putts on green)
+                  </label>
+                </div>
 
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50">
-                <Checkbox
-                  id="pickedUp"
-                  checked={pickedUp}
-                  onCheckedChange={(checked) => setPickedUp(checked === true)}
-                  className="data-[state=checked]:bg-golf-green data-[state=checked]:border-golf-green"
-                />
-                <Label htmlFor="pickedUp" className="text-sm text-gray-700 cursor-pointer flex-1">
-                  Picked Up (Ball not holed out)
-                </Label>
-              </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="pickedUp"
+                    checked={pickedUp}
+                    onCheckedChange={(checked) => setPickedUp(checked === true)}
+                    style={{
+                      backgroundColor: pickedUp ? '#10b981' : 'white',
+                      borderColor: pickedUp ? '#10b981' : '#d1d5db'
+                    }}
+                  />
+                  <label htmlFor="pickedUp" className="text-sm text-gray-700">
+                    Picked Up (Ball not holed out)
+                  </label>
+                </div>
 
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50">
-                <Checkbox
-                  id="inWater"
-                  checked={inWater}
-                  onCheckedChange={(checked) => setInWater(checked === true)}
-                  className="data-[state=checked]:bg-golf-green data-[state=checked]:border-golf-green"
-                />
-                <Label htmlFor="inWater" className="text-sm text-gray-700 cursor-pointer flex-1">
-                  In Water (Ball went into water hazard)
-                </Label>
-              </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="inWater"
+                    checked={inWater}
+                    onCheckedChange={(checked) => setInWater(checked === true)}
+                    style={{
+                      backgroundColor: inWater ? '#10b981' : 'white',
+                      borderColor: inWater ? '#10b981' : '#d1d5db'
+                    }}
+                  />
+                  <label htmlFor="inWater" className="text-sm text-gray-700">
+                    In Water (Ball went into water hazard)
+                  </label>
+                </div>
 
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50">
-                <Checkbox
-                  id="inBunker"
-                  checked={inBunker}
-                  onCheckedChange={(checked) => setInBunker(checked === true)}
-                  className="data-[state=checked]:bg-golf-green data-[state=checked]:border-golf-green"
-                />
-                <Label htmlFor="inBunker" className="text-sm text-gray-700 cursor-pointer flex-1">
-                  In Bunker (Ball landed in sand bunker)
-                </Label>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="inBunker"
+                    checked={inBunker}
+                    onCheckedChange={(checked) => setInBunker(checked === true)}
+                    style={{
+                      backgroundColor: inBunker ? '#10b981' : 'white',
+                      borderColor: inBunker ? '#10b981' : '#d1d5db'
+                    }}
+                  />
+                  <label htmlFor="inBunker" className="text-sm text-gray-700">
+                    In Bunker (Ball landed in sand bunker)
+                  </label>
+                </div>
               </div>
             </div>
           </div>
