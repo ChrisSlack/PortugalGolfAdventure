@@ -114,6 +114,17 @@ This is a comprehensive golf trip management application built for the Portugal 
 - **Session Persistence**: PostgreSQL-backed sessions for multi-instance support
 - **Asset Optimization**: Vite builds optimized bundles with code splitting
 
+## Recent Changes
+
+- June 19, 2025: Added comprehensive documentation and development tools
+  - Created detailed README.md with setup and deployment instructions
+  - Added .env.example file for environment variable configuration
+  - Implemented ESLint and Prettier configurations for code quality
+  - Added Docker and docker-compose support for containerized deployment
+  - Created database seeding script for sample data initialization
+  - Added npm scripts for linting, formatting, and Docker operations
+  - Enhanced API with health check endpoint for monitoring
+
 ## Changelog
 
 - June 14, 2025: Initial setup with basic golf management features
