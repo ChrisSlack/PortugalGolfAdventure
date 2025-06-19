@@ -80,11 +80,7 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
       const betterScore = Math.max(player1Points, player2Points);
       totalPoints += betterScore;
       
-      // Debug logging
-      console.log(`Hole ${hole}: Player ${player1Id} = ${player1Points} points, Player ${player2Id} = ${player2Points} points, Better = ${betterScore}`);
     }
-    
-    console.log(`Betterball total for players ${player1Id} & ${player2Id}: ${totalPoints} points`);
 
     return totalPoints;
   };
@@ -240,7 +236,7 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
             <div className="bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700">
               Overall Match Score
             </div>
-            <div className="grid grid-cols-3 h-[60px] sm:grid-cols-1 sm:h-auto">
+            <div className="grid grid-cols-[1fr_80px_1fr] h-[60px] sm:grid-cols-1 sm:h-auto">
               <div className={`p-3 flex items-center justify-center border-r-4 ${
                 teamBTotal > teamATotal ? 'bg-red-50 border-r-red-500' : 'bg-gray-50 border-r-gray-300'
               }`}>
@@ -249,27 +245,27 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                   <div className="text-xl font-bold">{teamBTotal}</div>
                 </div>
               </div>
-              <div className="bg-white flex flex-col items-center justify-center relative min-h-[60px]">
-                <div className="text-center mb-2">
-                  <div className="text-sm font-semibold text-gray-600">
+              <div className="bg-white flex flex-col items-center justify-center relative min-h-[60px] w-[80px]">
+                <div className="text-center w-full">
+                  <div className="text-sm font-semibold text-gray-600 mb-1">
                     OVERALL
                   </div>
+                  
+                  {/* Score positioned below OVERALL text */}
+                  {overallLead.isAllSquare ? (
+                    <div className="text-xs font-semibold text-gray-600 bg-gray-100 px-1 py-1 rounded mx-auto w-fit">
+                      AS
+                    </div>
+                  ) : overallLead.teamBLeading ? (
+                    <div className="text-xs font-semibold text-red-700 bg-red-100 px-1 py-1 rounded mx-auto w-fit">
+                      {overallLead.leadAmount}UP
+                    </div>
+                  ) : (
+                    <div className="text-xs font-semibold text-blue-700 bg-blue-100 px-1 py-1 rounded mx-auto w-fit">
+                      {overallLead.leadAmount}UP
+                    </div>
+                  )}
                 </div>
-                
-                {/* Dynamic Overall Score Position - Below "OVERALL" text */}
-                {overallLead.isAllSquare ? (
-                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">
-                    AS
-                  </div>
-                ) : overallLead.teamBLeading ? (
-                  <div className="absolute bottom-2 right-2 text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded">
-                    {overallLead.leadAmount} UP
-                  </div>
-                ) : (
-                  <div className="absolute bottom-2 left-2 text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded">
-                    {overallLead.leadAmount} UP
-                  </div>
-                )}
               </div>
               <div className={`p-3 flex items-center justify-center border-l-4 ${
                 teamATotal > teamBTotal ? 'bg-blue-50 border-l-blue-500' : 'bg-gray-50 border-l-gray-300'
@@ -293,7 +289,7 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                     Fourball {index + 1}
                   </div>
                   {/* Matchplay Scorecard Style Row - Team B | Hole | Team A */}
-                  <div className="grid grid-cols-3 h-[70px] sm:grid-cols-1 sm:h-auto">
+                  <div className="grid grid-cols-[1fr_80px_1fr] h-[70px] sm:grid-cols-1 sm:h-auto">
                     {/* Team B Cell (Left) */}
                     <div className={`p-3 flex flex-col justify-center border-r-4 ${
                       result.isAllSquare 
@@ -312,8 +308,8 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                     </div>
 
                     {/* Hole Number Cell (Center) with Dynamic Score Positioning */}
-                    <div className="bg-white flex flex-col items-center justify-center relative min-h-[70px] px-2">
-                      <div className="text-center">
+                    <div className="bg-white flex flex-col items-center justify-center relative min-h-[70px] w-[80px]">
+                      <div className="text-center w-full">
                         <div className="text-lg font-semibold text-gray-800">
                           {result.lastHolePlayed > 0 ? result.lastHolePlayed : 4}
                         </div>
@@ -323,16 +319,16 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                         
                         {/* Score positioned below HOLE text with more spacing */}
                         {result.isAllSquare ? (
-                          <div className="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                          <div className="text-xs font-semibold text-gray-600 bg-gray-100 px-1 py-1 rounded mx-auto w-fit">
                             AS
                           </div>
                         ) : result.teamBUp > 0 ? (
-                          <div className="text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded">
-                            {result.teamBUp} UP
+                          <div className="text-xs font-semibold text-red-700 bg-red-100 px-1 py-1 rounded mx-auto w-fit">
+                            {result.teamBUp}UP
                           </div>
                         ) : (
-                          <div className="text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded">
-                            {result.teamAUp} UP
+                          <div className="text-xs font-semibold text-blue-700 bg-blue-100 px-1 py-1 rounded mx-auto w-fit">
+                            {result.teamAUp}UP
                           </div>
                         )}
                       </div>
