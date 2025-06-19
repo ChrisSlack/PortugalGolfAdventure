@@ -64,7 +64,14 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
   const calculateBetterballScore = (player1Id: number, player2Id: number, roundId: number): number => {
     if (!selectedCourse || !mainRound) return 0;
 
-    const playedHoles = new Set(allScores.filter(s => s.roundId === roundId).map(s => s.hole));
+    // Get holes where at least one of the pair has played
+    const pairScores = allScores.filter(s => 
+      s.roundId === roundId && (s.playerId === player1Id || s.playerId === player2Id)
+    );
+    
+    if (pairScores.length === 0) return 0;
+    
+    const playedHoles = new Set(pairScores.map(s => s.hole));
     let totalPoints = 0;
 
     for (const hole of Array.from(playedHoles)) {
@@ -100,12 +107,9 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
 
     // Get the actual holes played for this match
     const matchPlayers = [match.pairAPlayer1, match.pairAPlayer2, match.pairBPlayer1, match.pairBPlayer2];
-    const playedHoles = new Set(
-      allScores
-        .filter(s => s.roundId === mainRound.id && matchPlayers.includes(s.playerId))
-        .map(s => s.hole)
-    );
-    const lastHolePlayed = playedHoles.size > 0 ? Math.max(...Array.from(playedHoles)) : 0;
+    const matchScores = allScores.filter(s => s.roundId === mainRound.id && matchPlayers.includes(s.playerId));
+    const playedHoles = new Set(matchScores.map(s => s.hole));
+    const lastHolePlayed = playedHoles.size > 0 ? Math.max(...Array.from(playedHoles)) : 4;
     const holesPlayed = playedHoles.size;
     
     const scoreDiff = teamAScore - teamBScore;
@@ -305,10 +309,10 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                     <div className="bg-white flex flex-col items-center justify-center relative min-h-[70px]">
                       <div className="text-center mb-2">
                         <div className="text-lg font-semibold text-gray-800">
-                          {result.lastHolePlayed || '-'}
+                          {result.lastHolePlayed > 0 ? result.lastHolePlayed : '4'}
                         </div>
                         <div className="text-xs text-gray-500">
-                          {result.lastHolePlayed ? 'HOLE' : 'START'}
+                          HOLE
                         </div>
                       </div>
                       
