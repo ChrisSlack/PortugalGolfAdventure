@@ -98,18 +98,29 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
     const teamAScore = calculateBetterballScore(match.pairAPlayer1, match.pairAPlayer2, mainRound.id);
     const teamBScore = calculateBetterballScore(match.pairBPlayer1, match.pairBPlayer2, mainRound.id);
 
-    // Get the last hole played
-    const playedHoles = new Set(allScores.filter(s => s.roundId === mainRound.id).map(s => s.hole));
+    // Get the actual holes played for this match
+    const matchPlayers = [match.pairAPlayer1, match.pairAPlayer2, match.pairBPlayer1, match.pairBPlayer2];
+    const playedHoles = new Set(
+      allScores
+        .filter(s => s.roundId === mainRound.id && matchPlayers.includes(s.playerId))
+        .map(s => s.hole)
+    );
     const lastHolePlayed = playedHoles.size > 0 ? Math.max(...Array.from(playedHoles)) : 0;
+    const holesPlayed = playedHoles.size;
     
-    const diff = teamAScore - teamBScore;
-    const isAllSquare = diff === 0;
-    const teamAUp = diff > 0 ? diff : 0;
-    const teamBUp = diff < 0 ? Math.abs(diff) : 0;
+    const scoreDiff = teamAScore - teamBScore;
+    
+    // Limit the lead to realistic matchplay terms (can't be more UP than holes remaining)
+    // In matchplay, being "X UP" means you're X holes ahead with consideration for holes remaining
+    const maxPossibleLead = Math.min(Math.abs(scoreDiff), holesPlayed);
+    
+    const isAllSquare = scoreDiff === 0;
+    const teamAUp = scoreDiff > 0 ? maxPossibleLead : 0;
+    const teamBUp = scoreDiff < 0 ? maxPossibleLead : 0;
     
     let status = "AS";
-    if (diff > 0) status = `${diff}UP`;
-    else if (diff < 0) status = `${Math.abs(diff)}UP`;
+    if (scoreDiff > 0) status = `${maxPossibleLead}UP`;
+    else if (scoreDiff < 0) status = `${maxPossibleLead}UP`;
 
     return { 
       teamAScore, 
