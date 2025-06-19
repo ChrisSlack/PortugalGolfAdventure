@@ -147,6 +147,34 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
   };
 
   const { teamATotal, teamBTotal } = overallTeamScores();
+  
+  // Calculate realistic overall lead based on holes played
+  const getOverallLead = () => {
+    if (!mainRound) return { leadAmount: 0, isAllSquare: true };
+    
+    // Get total holes played across all matches
+    const allMatchPlayers = dayMatches.flatMap(match => [
+      match.pairAPlayer1, match.pairAPlayer2, match.pairBPlayer1, match.pairBPlayer2
+    ]);
+    const playedHoles = new Set(
+      allScores
+        .filter(s => s.roundId === mainRound.id && allMatchPlayers.includes(s.playerId))
+        .map(s => s.hole)
+    );
+    const holesPlayed = playedHoles.size;
+    
+    const scoreDiff = teamATotal - teamBTotal;
+    const maxPossibleLead = Math.min(Math.abs(scoreDiff), holesPlayed);
+    
+    return {
+      leadAmount: maxPossibleLead,
+      isAllSquare: scoreDiff === 0,
+      teamALeading: scoreDiff > 0,
+      teamBLeading: scoreDiff < 0
+    };
+  };
+
+  const overallLead = getOverallLead();
 
   if (!mainRound || !selectedCourse || dayMatches.length === 0) {
     return (
@@ -219,17 +247,17 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                 </div>
                 
                 {/* Dynamic Overall Score Position - Below "OVERALL" text */}
-                {teamATotal === teamBTotal ? (
+                {overallLead.isAllSquare ? (
                   <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">
                     AS
                   </div>
-                ) : teamBTotal > teamATotal ? (
+                ) : overallLead.teamBLeading ? (
                   <div className="absolute bottom-2 right-2 text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded">
-                    {teamBTotal - teamATotal} UP
+                    {overallLead.leadAmount} UP
                   </div>
                 ) : (
                   <div className="absolute bottom-2 left-2 text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded">
-                    {teamATotal - teamBTotal} UP
+                    {overallLead.leadAmount} UP
                   </div>
                 )}
               </div>
