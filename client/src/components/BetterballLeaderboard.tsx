@@ -238,7 +238,7 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                           ? 'bg-red-50 border-r-red-500' 
                           : 'bg-gray-50 border-r-gray-300'
                     }`}>
-                      <div className="text-sm font-normal text-red-600">
+                      <div className="text-sm font-normal text-red-600 text-right">
                         {getPlayerName(match.pairBPlayer1)}
                       </div>
                       <div className="text-sm font-normal text-red-600 text-right">
