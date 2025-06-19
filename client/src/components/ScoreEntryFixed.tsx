@@ -205,50 +205,50 @@ export default function ScoreEntryFixed({
             <Label className="text-sm font-medium text-gray-700">Additional Score Information</Label>
             
             <div className="space-y-3">
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer" onClick={() => setThreePutt(!threePutt)}>
                 <Checkbox
                   id="threePutt"
                   checked={threePutt}
                   onCheckedChange={(checked) => setThreePutt(checked === true)}
                   className="data-[state=checked]:bg-golf-green data-[state=checked]:border-golf-green"
                 />
-                <Label htmlFor="threePutt" className="text-sm text-gray-700">
+                <Label htmlFor="threePutt" className="text-sm text-gray-700 cursor-pointer flex-1">
                   3-Putt (Three putts on green)
                 </Label>
               </div>
 
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer" onClick={() => setPickedUp(!pickedUp)}>
                 <Checkbox
                   id="pickedUp"
                   checked={pickedUp}
                   onCheckedChange={(checked) => setPickedUp(checked === true)}
                   className="data-[state=checked]:bg-golf-green data-[state=checked]:border-golf-green"
                 />
-                <Label htmlFor="pickedUp" className="text-sm text-gray-700">
+                <Label htmlFor="pickedUp" className="text-sm text-gray-700 cursor-pointer flex-1">
                   Picked Up (Ball not holed out)
                 </Label>
               </div>
 
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer" onClick={() => setInWater(!inWater)}>
                 <Checkbox
                   id="inWater"
                   checked={inWater}
                   onCheckedChange={(checked) => setInWater(checked === true)}
                   className="data-[state=checked]:bg-golf-green data-[state=checked]:border-golf-green"
                 />
-                <Label htmlFor="inWater" className="text-sm text-gray-700">
+                <Label htmlFor="inWater" className="text-sm text-gray-700 cursor-pointer flex-1">
                   In Water (Ball went into water hazard)
                 </Label>
               </div>
 
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer" onClick={() => setInBunker(!inBunker)}>
                 <Checkbox
                   id="inBunker"
                   checked={inBunker}
                   onCheckedChange={(checked) => setInBunker(checked === true)}
                   className="data-[state=checked]:bg-golf-green data-[state=checked]:border-golf-green"
                 />
-                <Label htmlFor="inBunker" className="text-sm text-gray-700">
+                <Label htmlFor="inBunker" className="text-sm text-gray-700 cursor-pointer flex-1">
                   In Bunker (Ball landed in sand bunker)
                 </Label>
               </div>
