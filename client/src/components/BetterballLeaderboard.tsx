@@ -200,12 +200,27 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                   <div className="text-xl font-bold">{teamBTotal}</div>
                 </div>
               </div>
-              <div className="bg-white flex items-center justify-center">
+              <div className="bg-white flex items-center justify-center relative">
                 <div className="text-center">
                   <div className="text-sm font-semibold text-gray-600">
-                    {teamATotal === teamBTotal ? 'AS' : `${Math.abs(teamATotal - teamBTotal)} MATCH`}
+                    OVERALL
                   </div>
                 </div>
+                
+                {/* Dynamic Overall Score Position */}
+                {teamATotal === teamBTotal ? (
+                  <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                    AS
+                  </div>
+                ) : teamBTotal > teamATotal ? (
+                  <div className="absolute bottom-1 right-2 text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded">
+                    {teamBTotal - teamATotal} UP
+                  </div>
+                ) : (
+                  <div className="absolute bottom-1 left-2 text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded">
+                    {teamATotal - teamBTotal} UP
+                  </div>
+                )}
               </div>
               <div className={`p-3 flex items-center justify-center border-l-4 ${
                 teamATotal > teamBTotal ? 'bg-blue-50 border-l-blue-500' : 'bg-gray-50 border-l-gray-300'
@@ -244,15 +259,11 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                       <div className="text-sm font-normal text-red-600 text-right">
                         {getPlayerName(match.pairBPlayer2)}
                       </div>
-                      {result.teamBUp > 0 && (
-                        <div className="text-xs font-semibold text-red-700 mt-1">
-                          {result.teamBUp} Up
-                        </div>
-                      )}
+
                     </div>
 
-                    {/* Hole Number Cell (Center) */}
-                    <div className="bg-white flex items-center justify-center">
+                    {/* Hole Number Cell (Center) with Dynamic Score Positioning */}
+                    <div className="bg-white flex items-center justify-center relative">
                       <div className="text-center">
                         <div className="text-lg font-semibold text-gray-800">
                           {result.lastHolePlayed || '-'}
@@ -261,6 +272,21 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                           {result.lastHolePlayed ? 'HOLE' : 'START'}
                         </div>
                       </div>
+                      
+                      {/* Dynamic Score Position */}
+                      {result.isAllSquare ? (
+                        <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                          AS
+                        </div>
+                      ) : result.teamBUp > 0 ? (
+                        <div className="absolute bottom-1 right-2 text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded">
+                          {result.teamBUp} UP
+                        </div>
+                      ) : (
+                        <div className="absolute bottom-1 left-2 text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded">
+                          {result.teamAUp} UP
+                        </div>
+                      )}
                     </div>
 
                     {/* Team A Cell (Right) */}
@@ -277,11 +303,7 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                       <div className="text-sm font-normal text-blue-600">
                         {getPlayerName(match.pairAPlayer2)}
                       </div>
-                      {result.teamAUp > 0 && (
-                        <div className="text-xs font-semibold text-blue-700 mt-1">
-                          {result.teamAUp} Up
-                        </div>
-                      )}
+
                     </div>
                   </div>
                 </div>
