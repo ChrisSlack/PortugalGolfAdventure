@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Club, Users, Smartphone, CalendarDays, Flag, TrendingUp, Coins, Vote, Sun, ChevronLeft, ChevronRight, ExternalLink, Clock, Car, MapPin, Trophy } from "lucide-react";
 import { scheduleData } from "@/lib/courseData";
 import MatchplayLeaderboard from "@/components/MatchplayLeaderboard";
-
+import Leaderboard from "@/components/Leaderboard";
+import TeamLeaderboard from "@/components/TeamLeaderboard";
 import CumulativeLeaderboard from "@/components/CumulativeLeaderboard";
 import BetterballLeaderboard from "@/components/BetterballLeaderboard";
 import { useQuery } from "@tanstack/react-query";
@@ -275,30 +276,22 @@ export default function Home() {
 
         {/* Live Leaderboards - Show current day's data */}
         <div className="space-y-8">
-          {/* Current Round Leaderboard */}
-          <CumulativeLeaderboard 
-            players={players}
-            teams={teams}
-            rounds={rounds}
-            scores={allScores}
-          />
-
-          {/* Stroke Play Leaderboard - matches scorecard data */}
-          <CumulativeLeaderboard 
-            players={players || []}
-            teams={teams || []}
-            scores={allScores || []}
-            rounds={rounds || []}
-            viewMode={leaderboardMode}
-            scoreMode={scoreMode}
-          />
-
           {/* Betterball Leaderboard */}
           <BetterballLeaderboard
             players={players || []}
             teams={teams || []}
             rounds={rounds || []}
             allScores={allScores || []}
+          />
+
+          {/* Individual Leaderboard */}
+          <CumulativeLeaderboard
+            players={players || []}
+            teams={teams || []}
+            scores={allScores || []}
+            rounds={rounds || []}
+            viewMode={leaderboardMode}
+            scoreMode={scoreMode}
           />
         </div>
       </div>
