@@ -60,10 +60,19 @@ export default function ScoreEntryFixed({
       console.log("Saving score data:", scoreData);
       
       // Try to create/update score directly
-      return await apiRequest("/api/scores", {
+      const response = await fetch("/api/scores", {
         method: "POST",
-        body: scoreData
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(scoreData)
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
     },
     onSuccess: (data) => {
       console.log("Score saved successfully:", data);
@@ -176,10 +185,10 @@ export default function ScoreEntryFixed({
                 <Button
                   key={scoreValue}
                   type="button"
-                  variant={score === scoreValue.toString() ? "default" : "outline"}
+                  variant="outline"
                   className={`h-12 text-lg font-semibold transition-colors ${
                     score === scoreValue.toString() 
-                      ? "bg-golf-green text-white hover:bg-golf-green/90 border-golf-green shadow-md" 
+                      ? "bg-golf-green text-white hover:bg-golf-green/90 border-golf-green shadow-md !text-white" 
                       : "bg-white text-gray-900 border-gray-300 hover:border-golf-green hover:bg-golf-green/10"
                   }`}
                   onClick={() => handleScoreSelect(scoreValue)}
@@ -245,8 +254,8 @@ export default function ScoreEntryFixed({
             </div>
           </div>
 
-          {/* Action Buttons - Fixed at bottom */}
-          <div className="sticky bottom-0 bg-white pt-4 pb-2 border-t border-gray-200 -mx-6 px-6">
+          {/* Action Buttons - Always visible */}
+          <div className="mt-6 pt-4 border-t border-gray-200">
             <div className="flex space-x-3">
               <Button
                 type="button"
@@ -261,7 +270,7 @@ export default function ScoreEntryFixed({
                 disabled={!score || saveScore.isPending}
                 className="flex-1 h-12 text-base bg-golf-green hover:bg-golf-green/90 text-white"
               >
-                {saveScore.isPending ? "Saving..." : "💾 Save Score"}
+                {saveScore.isPending ? "Saving..." : "Save Score"}
               </Button>
             </div>
           </div>
