@@ -1,0 +1,61 @@
+Re-worded implementation brief (no code samples)
+
+1 . Goal
+
+Re-style each Fourball block so it looks like the Ryder-Cup TV graphic:
+
+| Team A pair | Hole last played | Team B pair |
+	•	If one side is leading, the whole cell (not just the text) uses that team’s brand colour (blue for A, red/green for B).
+	•	“A/S” rows stay neutral.
+	•	The centre cell shows the highest hole number that currently has a score (1-18, then wrap 1-9 if the match goes extra holes).
+
+⸻
+
+2 . Data considerations
+
+Each match should carry:
+	•	The two player names on Team A
+	•	The two player names on Team B
+	•	A chronological list of hole results, where each entry records the hole number and whether A won, B won, or it was all square.
+From that list you can compute both “hole last played” and match status (A up, B up, or A/S).
+
+⸻
+
+3 . Component restructuring
+	•	Retire the current “two stacked cards” design.
+	•	Replace it with a single horizontal row that has three equal columns (use CSS Grid or Flex).
+	•	Left cell – Team A: two names plus a small status line (“1 Up” if leading, blank otherwise).
+	•	Middle cell – a compact box showing the last hole number.
+	•	Right cell – Team B formatted the same as Team A.
+	•	Each cell applies conditional classes: neutral when A/S, highlighted when that side is leading.
+
+⸻
+
+4 . Visual details
+
+Aspect	Target behaviour
+Row height	~70 px to fit two-line names
+Borders	1 px separators between rows; no vertical lines
+Typography	Player names normal weight; status & hole number semibold
+Colours	Brand blue for Team A, brand red/green for Team B; neutral light background for A/S
+Responsive	On screens < 480 px, fall back to the original stacked (vertical) layout
+
+
+⸻
+
+5 . Logic for “hole last played”
+	•	Whenever the back-end receives a new hole result, append it to the list.
+	•	The UI merely looks at the last entry to display the hole number and status; no extra state required.
+	•	If a match is conceded early, push a final synthetic entry for hole 18 so the centre column still renders something sensible.
+
+⸻
+
+6 . Roll-out plan
+	1.	Rename the old Fourball component to a “Legacy” version so you can revert quickly.
+	2.	Introduce the new three-column row component and switch the leaderboard page to use it.
+	3.	Add unit tests that verify the helper functions for “last hole” and “match status.”
+	4.	QA on mobile and desktop, paying special attention to colour-blind accessibility and very narrow screens.
+
+⸻
+
+Hand the above description to the coding agent — it specifies what to build, how it should look, and the data/logic needed, without exposing any actual code.

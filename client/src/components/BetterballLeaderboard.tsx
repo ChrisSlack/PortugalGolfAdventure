@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Crown, Trophy } from "lucide-react";
+import { Trophy, Crown } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import type { Player, Team, Round, Score, Match } from "@shared/schema";
 import { courses } from "@/lib/courseData";
@@ -76,29 +76,50 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
     return totalPoints;
   };
 
-  const calculateMatchResult = (match: Match): { teamAScore: number, teamBScore: number, status: string } => {
-    if (!mainRound) return { teamAScore: 0, teamBScore: 0, status: "AS" };
+  const calculateMatchResult = (match: Match): { 
+    teamAScore: number, 
+    teamBScore: number, 
+    status: string,
+    lastHolePlayed: number,
+    teamAUp: number,
+    teamBUp: number,
+    isAllSquare: boolean
+  } => {
+    if (!mainRound) return { 
+      teamAScore: 0, 
+      teamBScore: 0, 
+      status: "AS", 
+      lastHolePlayed: 0,
+      teamAUp: 0,
+      teamBUp: 0,
+      isAllSquare: true
+    };
 
     const teamAScore = calculateBetterballScore(match.pairAPlayer1, match.pairAPlayer2, mainRound.id);
     const teamBScore = calculateBetterballScore(match.pairBPlayer1, match.pairBPlayer2, mainRound.id);
 
-    // Calculate holes played to ensure realistic status
+    // Get the last hole played
     const playedHoles = new Set(allScores.filter(s => s.roundId === mainRound.id).map(s => s.hole));
-    const holesPlayed = playedHoles.size;
+    const lastHolePlayed = playedHoles.size > 0 ? Math.max(...Array.from(playedHoles)) : 0;
     
     const diff = teamAScore - teamBScore;
-    let status = "AS";
+    const isAllSquare = diff === 0;
+    const teamAUp = diff > 0 ? diff : 0;
+    const teamBUp = diff < 0 ? Math.abs(diff) : 0;
     
-    // Ensure status doesn't exceed possible holes remaining
-    if (diff > 0) {
-      const lead = Math.min(diff, holesPlayed); // Can't be more UP than holes played
-      status = `Team A ${lead}UP`;
-    } else if (diff < 0) {
-      const lead = Math.min(Math.abs(diff), holesPlayed); // Can't be more UP than holes played
-      status = `Team B ${lead}UP`;
-    }
+    let status = "AS";
+    if (diff > 0) status = `${diff}UP`;
+    else if (diff < 0) status = `${Math.abs(diff)}UP`;
 
-    return { teamAScore, teamBScore, status };
+    return { 
+      teamAScore, 
+      teamBScore, 
+      status, 
+      lastHolePlayed,
+      teamAUp,
+      teamBUp,
+      isAllSquare
+    };
   };
 
   const overallTeamScores = () => {
@@ -165,66 +186,103 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
             </SelectContent>
           </Select>
 
-          {/* Overall Team Scores */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className={`p-4 rounded-lg text-center ${teamATotal > teamBTotal ? 'bg-green-100 border-2 border-green-500' : 'bg-blue-100 border-2 border-blue-500'}`}>
-              <div className="font-bold text-lg text-blue-600">Team A</div>
-              <div className="text-2xl font-bold">{teamATotal}</div>
-              {teamATotal > teamBTotal && <Crown className="h-5 w-5 mx-auto text-yellow-500 mt-1" />}
+          {/* Overall Team Scores - Ryder Cup Style */}
+          <div className="mb-6 border rounded-lg overflow-hidden">
+            <div className="bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700">
+              Overall Match Score
             </div>
-            <div className={`p-4 rounded-lg text-center ${teamBTotal > teamATotal ? 'bg-green-100 border-2 border-green-500' : teamBTotal === teamATotal ? 'bg-gray-100 border-2 border-gray-400' : 'bg-red-100 border-2 border-red-500'}`}>
-              <div className="font-bold text-lg text-red-600">Team B</div>
-              <div className="text-2xl font-bold">{teamBTotal}</div>
-              {teamBTotal > teamATotal && <Crown className="h-5 w-5 mx-auto text-yellow-500 mt-1" />}
+            <div className="grid grid-cols-3 h-[60px] sm:grid-cols-1 sm:h-auto">
+              <div className={`p-3 flex items-center justify-center ${
+                teamATotal > teamBTotal ? 'bg-blue-100' : 'bg-gray-50'
+              }`}>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-blue-600">Team A</div>
+                  <div className="text-xl font-bold">{teamATotal}</div>
+                </div>
+              </div>
+              <div className="bg-white border-l border-r border-gray-200 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="text-sm font-semibold text-gray-600">
+                    {teamATotal === teamBTotal ? 'AS' : `${Math.abs(teamATotal - teamBTotal)} MATCH`}
+                  </div>
+                </div>
+              </div>
+              <div className={`p-3 flex items-center justify-center ${
+                teamBTotal > teamATotal ? 'bg-red-100' : 'bg-gray-50'
+              }`}>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-red-600">Team B</div>
+                  <div className="text-xl font-bold">{teamBTotal}</div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Individual Fourball Results */}
-          <div className="space-y-4">
+          {/* Ryder Cup Style Fourball Results */}
+          <div className="space-y-2">
             {dayMatches.map((match, index) => {
               const result = calculateMatchResult(match);
               return (
-                <div key={match.id} className="p-4 border rounded-lg bg-gradient-to-r from-green-50 to-blue-50">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center space-x-2">
-                      <Crown className="h-4 w-4 text-golf-green" />
-                      <span className="font-medium">Fourball {index + 1}</span>
-                    </div>
-                    <Badge variant="outline" className={result.status === "AS" ? "text-gray-600 border-gray-400" : "text-golf-green border-golf-green"}>
-                      {result.status}
-                    </Badge>
+                <div key={match.id} className="border rounded-lg overflow-hidden">
+                  {/* Header */}
+                  <div className="bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700">
+                    Fourball {index + 1}
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className={`p-3 rounded border-l-4 ${result.teamAScore > result.teamBScore ? 'bg-green-50 border-l-green-500' : result.teamAScore === result.teamBScore ? 'bg-gray-50 border-l-gray-400' : 'bg-white border-l-blue-500'}`}>
-                      <div className="font-medium text-blue-600 mb-2">Team A</div>
-                      <div className="space-y-1">
-                        <div className="flex justify-between">
-                          <span>{getPlayerName(match.pairAPlayer1)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>{getPlayerName(match.pairAPlayer2)}</span>
-                        </div>
+                  
+                  {/* Ryder Cup Style Row */}
+                  <div className="grid grid-cols-3 h-[70px] sm:grid-cols-1 sm:h-auto">
+                    {/* Team A Cell */}
+                    <div className={`p-3 flex flex-col justify-center ${
+                      result.isAllSquare 
+                        ? 'bg-gray-50' 
+                        : result.teamAUp > 0 
+                          ? 'bg-blue-100 border-blue-500' 
+                          : 'bg-gray-50'
+                    }`}>
+                      <div className="text-sm font-normal text-blue-600">
+                        {getPlayerName(match.pairAPlayer1)}
                       </div>
-                      <div className="mt-2 text-right">
-                        <span className="text-lg font-bold text-blue-600">{result.teamAScore}</span>
-                        <span className="text-sm text-gray-600 ml-1">points</span>
+                      <div className="text-sm font-normal text-blue-600">
+                        {getPlayerName(match.pairAPlayer2)}
+                      </div>
+                      {result.teamAUp > 0 && (
+                        <div className="text-xs font-semibold text-blue-700 mt-1">
+                          {result.teamAUp} Up
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Hole Number Cell */}
+                    <div className="bg-white border-l border-r border-gray-200 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-lg font-semibold text-gray-800">
+                          {result.lastHolePlayed || '-'}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {result.lastHolePlayed ? 'HOLE' : 'START'}
+                        </div>
                       </div>
                     </div>
 
-                    <div className="p-3 rounded border-l-4 bg-gray-50 border-l-gray-400 text-right">
-                      <div className="font-medium text-red-600 mb-2">Team B</div>
-                      <div className="space-y-1">
-                        <div className="flex justify-start">
-                          <span>{getPlayerName(match.pairBPlayer1)}</span>
-                        </div>
-                        <div className="flex justify-start">
-                          <span>{getPlayerName(match.pairBPlayer2)}</span>
-                        </div>
+                    {/* Team B Cell */}
+                    <div className={`p-3 flex flex-col justify-center ${
+                      result.isAllSquare 
+                        ? 'bg-gray-50' 
+                        : result.teamBUp > 0 
+                          ? 'bg-red-100 border-red-500' 
+                          : 'bg-gray-50'
+                    }`}>
+                      <div className="text-sm font-normal text-red-600">
+                        {getPlayerName(match.pairBPlayer1)}
                       </div>
-                      <div className="mt-2 text-left">
-                        <span className="text-lg font-bold text-red-600">{result.teamBScore}</span>
-                        <span className="text-sm text-gray-600 ml-1">points</span>
+                      <div className="text-sm font-normal text-red-600">
+                        {getPlayerName(match.pairBPlayer2)}
                       </div>
+                      {result.teamBUp > 0 && (
+                        <div className="text-xs font-semibold text-red-700 mt-1">
+                          {result.teamBUp} Up
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -232,6 +290,8 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
             })}
           </div>
         </div>
+
+        {/* Mobile responsive handled by Tailwind classes */}
       </CardContent>
     </Card>
   );
