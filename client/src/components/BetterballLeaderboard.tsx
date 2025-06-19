@@ -194,7 +194,6 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                       {result.status}
                     </Badge>
                   </div>
-                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className={`p-3 rounded border-l-4 ${result.teamAScore > result.teamBScore ? 'bg-green-50 border-l-green-500' : result.teamAScore === result.teamBScore ? 'bg-gray-50 border-l-gray-400' : 'bg-white border-l-blue-500'}`}>
                       <div className="font-medium text-blue-600 mb-2">Team A</div>
@@ -212,7 +211,7 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                       </div>
                     </div>
 
-                    <div className={`p-3 rounded border-l-4 ${result.teamBScore > result.teamAScore ? 'bg-green-50 border-l-green-500' : result.teamBScore === result.teamAScore ? 'bg-gray-50 border-l-gray-400' : 'bg-white border-l-red-500'}`}>
+                    <div className="p-3 rounded border-l-4 bg-gray-50 border-l-gray-400 text-right">
                       <div className="font-medium text-red-600 mb-2">Team B</div>
                       <div className="space-y-1">
                         <div className="flex justify-start">
