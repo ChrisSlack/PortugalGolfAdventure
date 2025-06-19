@@ -228,7 +228,6 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                   <div className="bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700">
                     Fourball {index + 1}
                   </div>
-                  
                   {/* Matchplay Scorecard Style Row - Team B | Hole | Team A */}
                   <div className="grid grid-cols-3 h-[70px] sm:grid-cols-1 sm:h-auto">
                     {/* Team B Cell (Left) */}
@@ -242,7 +241,7 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                       <div className="text-sm font-normal text-red-600">
                         {getPlayerName(match.pairBPlayer1)}
                       </div>
-                      <div className="text-sm font-normal text-red-600">
+                      <div className="text-sm font-normal text-red-600 text-right">
                         {getPlayerName(match.pairBPlayer2)}
                       </div>
                       {result.teamBUp > 0 && (
