@@ -121,7 +121,7 @@ export default function ScoreEntryFixed({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-lg max-h-[95vh] overflow-y-auto"  data-dialog="score-entry">
         <DialogHeader className="space-y-1 pb-2">
           <DialogTitle className="text-center text-lg font-semibold">Portugal Golf 2025</DialogTitle>
           <DialogDescription className="text-center text-sm text-gray-600">
@@ -193,8 +193,8 @@ export default function ScoreEntryFixed({
                   variant={score === scoreValue.toString() ? "default" : "outline"}
                   className={`h-12 text-lg font-semibold ${
                     score === scoreValue.toString() 
-                      ? "bg-golf-green text-white hover:bg-golf-green/90" 
-                      : "border-gray-300 hover:border-golf-green"
+                      ? "bg-golf-green text-white hover:bg-golf-green/90 border-golf-green" 
+                      : "border-gray-300 hover:border-golf-green hover:bg-golf-green/10"
                   }`}
                   onClick={() => handleScoreSelect(scoreValue)}
                 >
@@ -259,23 +259,25 @@ export default function ScoreEntryFixed({
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex space-x-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              className="flex-1 h-12 text-base border-gray-300"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={!score || saveScore.isPending}
-              className="flex-1 h-12 text-base bg-golf-green hover:bg-golf-green/90"
-            >
-              {saveScore.isPending ? "Saving..." : "Save Score"}
-            </Button>
+          {/* Action Buttons - Fixed at bottom */}
+          <div className="sticky bottom-0 bg-white pt-4 pb-2 border-t border-gray-200 -mx-6 px-6">
+            <div className="flex space-x-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="flex-1 h-12 text-base border-gray-300"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={!score || saveScore.isPending}
+                className="flex-1 h-12 text-base bg-golf-green hover:bg-golf-green/90 text-white"
+              >
+                {saveScore.isPending ? "Saving..." : "💾 Save Score"}
+              </Button>
+            </div>
           </div>
         </form>
       </DialogContent>
