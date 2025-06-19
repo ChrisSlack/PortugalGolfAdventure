@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -35,11 +35,29 @@ export default function ScoreEntryFixed({
   currentScore = 0,
   currentStats = { threePutt: false, pickedUp: false, inWater: false, inBunker: false }
 }: ScoreEntryProps) {
-  const [score, setScore] = useState(currentScore > 0 ? currentScore.toString() : "");
-  const [threePutt, setThreePutt] = useState(currentStats.threePutt);
-  const [pickedUp, setPickedUp] = useState(currentStats.pickedUp);
-  const [inWater, setInWater] = useState(currentStats.inWater);
-  const [inBunker, setInBunker] = useState(currentStats.inBunker);
+  const [score, setScore] = useState("");
+  const [threePutt, setThreePutt] = useState(false);
+  const [pickedUp, setPickedUp] = useState(false);
+  const [inWater, setInWater] = useState(false);
+  const [inBunker, setInBunker] = useState(false);
+
+  // Reset form when dialog opens or player/hole changes
+  useEffect(() => {
+    if (isOpen) {
+      setScore(currentScore > 0 ? currentScore.toString() : "");
+      setThreePutt(currentStats.threePutt);
+      setPickedUp(currentStats.pickedUp);
+      setInWater(currentStats.inWater);
+      setInBunker(currentStats.inBunker);
+    } else {
+      // Clear form when dialog closes
+      setScore("");
+      setThreePutt(false);
+      setPickedUp(false);
+      setInWater(false);
+      setInBunker(false);
+    }
+  }, [isOpen, playerId, hole, currentScore, currentStats]);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
