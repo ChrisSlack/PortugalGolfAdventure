@@ -82,10 +82,21 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
     const teamAScore = calculateBetterballScore(match.pairAPlayer1, match.pairAPlayer2, mainRound.id);
     const teamBScore = calculateBetterballScore(match.pairBPlayer1, match.pairBPlayer2, mainRound.id);
 
+    // Calculate holes played to ensure realistic status
+    const playedHoles = new Set(allScores.filter(s => s.roundId === mainRound.id).map(s => s.hole));
+    const holesPlayed = playedHoles.size;
+    
     const diff = teamAScore - teamBScore;
     let status = "AS";
-    if (diff > 0) status = `Team A ${diff}UP`;
-    else if (diff < 0) status = `Team B ${Math.abs(diff)}UP`;
+    
+    // Ensure status doesn't exceed possible holes remaining
+    if (diff > 0) {
+      const lead = Math.min(diff, holesPlayed); // Can't be more UP than holes played
+      status = `Team A ${lead}UP`;
+    } else if (diff < 0) {
+      const lead = Math.min(Math.abs(diff), holesPlayed); // Can't be more UP than holes played
+      status = `Team B ${lead}UP`;
+    }
 
     return { teamAScore, teamBScore, status };
   };
@@ -185,7 +196,7 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className={`p-3 rounded border-l-4 ${result.teamAScore > result.teamBScore ? 'bg-green-50 border-l-green-500' : 'bg-white border-l-blue-500'}`}>
+                    <div className={`p-3 rounded border-l-4 ${result.teamAScore > result.teamBScore ? 'bg-green-50 border-l-green-500' : result.teamAScore === result.teamBScore ? 'bg-gray-50 border-l-gray-400' : 'bg-white border-l-blue-500'}`}>
                       <div className="font-medium text-blue-600 mb-2">Team A</div>
                       <div className="space-y-1">
                         <div className="flex justify-between">
