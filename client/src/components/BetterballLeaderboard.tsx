@@ -64,21 +64,27 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
   const calculateBetterballScore = (player1Id: number, player2Id: number, roundId: number): number => {
     if (!selectedCourse || !mainRound) return 0;
 
-    // Get holes where at least one of the pair has played
-    const pairScores = allScores.filter(s => 
-      s.roundId === roundId && (s.playerId === player1Id || s.playerId === player2Id)
-    );
+    // Get all holes that have been played by any player in this round
+    const allPlayedHoles = new Set(allScores.filter(s => s.roundId === roundId).map(s => s.hole));
     
-    if (pairScores.length === 0) return 0;
+    if (allPlayedHoles.size === 0) return 0;
     
-    const playedHoles = new Set(pairScores.map(s => s.hole));
     let totalPoints = 0;
 
-    for (const hole of Array.from(playedHoles)) {
+    // For each hole that's been played, calculate the better ball score for this pair
+    for (const hole of Array.from(allPlayedHoles)) {
       const player1Points = calculatePlayerHoleStableford(player1Id, roundId, hole);
       const player2Points = calculatePlayerHoleStableford(player2Id, roundId, hole);
-      totalPoints += Math.max(player1Points, player2Points);
+      
+      // Take the better of the two scores (higher Stableford points)
+      const betterScore = Math.max(player1Points, player2Points);
+      totalPoints += betterScore;
+      
+      // Debug logging
+      console.log(`Hole ${hole}: Player ${player1Id} = ${player1Points} points, Player ${player2Id} = ${player2Points} points, Better = ${betterScore}`);
     }
+    
+    console.log(`Betterball total for players ${player1Id} & ${player2Id}: ${totalPoints} points`);
 
     return totalPoints;
   };
@@ -306,30 +312,30 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                     </div>
 
                     {/* Hole Number Cell (Center) with Dynamic Score Positioning */}
-                    <div className="bg-white flex flex-col items-center justify-center relative min-h-[70px]">
-                      <div className="text-center mb-2">
+                    <div className="bg-white flex flex-col items-center justify-center relative min-h-[70px] px-2">
+                      <div className="text-center">
                         <div className="text-lg font-semibold text-gray-800">
-                          {result.lastHolePlayed > 0 ? result.lastHolePlayed : '4'}
+                          {result.lastHolePlayed > 0 ? result.lastHolePlayed : 4}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-gray-500 mb-1">
                           HOLE
                         </div>
+                        
+                        {/* Score positioned below HOLE text with more spacing */}
+                        {result.isAllSquare ? (
+                          <div className="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                            AS
+                          </div>
+                        ) : result.teamBUp > 0 ? (
+                          <div className="text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded">
+                            {result.teamBUp} UP
+                          </div>
+                        ) : (
+                          <div className="text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded">
+                            {result.teamAUp} UP
+                          </div>
+                        )}
                       </div>
-                      
-                      {/* Dynamic Score Position - Below hole info */}
-                      {result.isAllSquare ? (
-                        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">
-                          AS
-                        </div>
-                      ) : result.teamBUp > 0 ? (
-                        <div className="absolute bottom-2 right-2 text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded">
-                          {result.teamBUp} UP
-                        </div>
-                      ) : (
-                        <div className="absolute bottom-2 left-2 text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded">
-                          {result.teamAUp} UP
-                        </div>
-                      )}
                     </div>
 
                     {/* Team A Cell (Right) */}
