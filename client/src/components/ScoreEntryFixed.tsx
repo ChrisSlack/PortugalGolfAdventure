@@ -59,25 +59,11 @@ export default function ScoreEntryFixed({
 
       console.log("Saving score data:", scoreData);
       
-      // Check if score already exists
-      const existingScores = await apiRequest(`/api/scores/all`);
-      const existingScore = existingScores.find((s: any) => 
-        s.roundId === roundId && s.playerId === playerId && s.hole === hole
-      );
-
-      if (existingScore) {
-        console.log("Updating existing score:", existingScore.id);
-        return apiRequest(`/api/scores`, {
-          method: "POST", 
-          body: { ...scoreData, id: existingScore.id }
-        });
-      } else {
-        console.log("Creating new score");
-        return apiRequest("/api/scores", {
-          method: "POST",
-          body: scoreData
-        });
-      }
+      // Try to create/update score directly
+      return await apiRequest("/api/scores", {
+        method: "POST",
+        body: scoreData
+      });
     },
     onSuccess: (data) => {
       console.log("Score saved successfully:", data);
@@ -147,7 +133,7 @@ export default function ScoreEntryFixed({
                 <div className="text-lg font-bold">Hole {hole}</div>
                 {currentHoleData && (
                   <div className="text-sm text-gray-600">
-                    Par {currentHoleData.par} • Distance: {currentHoleData.distance}m • Handicap: {currentHoleData.handicap}
+                    Par {currentHoleData.par} • Handicap: {currentHoleData.handicap}
                   </div>
                 )}
               </div>
@@ -174,7 +160,7 @@ export default function ScoreEntryFixed({
             <div className="bg-blue-50 rounded-lg p-3">
               <div className="text-sm font-medium text-blue-900">Hole {hole}</div>
               <div className="text-sm text-blue-700">
-                Distance: {currentHoleData.distance}m • Handicap: {currentHoleData.handicap}
+                Handicap: {currentHoleData.handicap}
               </div>
               <div className="text-right">
                 <span className="text-lg font-bold text-blue-900">Par {currentHoleData.par}</span>
@@ -191,10 +177,10 @@ export default function ScoreEntryFixed({
                   key={scoreValue}
                   type="button"
                   variant={score === scoreValue.toString() ? "default" : "outline"}
-                  className={`h-12 text-lg font-semibold ${
+                  className={`h-12 text-lg font-semibold transition-colors ${
                     score === scoreValue.toString() 
-                      ? "bg-golf-green text-white hover:bg-golf-green/90 border-golf-green" 
-                      : "border-gray-300 hover:border-golf-green hover:bg-golf-green/10"
+                      ? "bg-golf-green text-white hover:bg-golf-green/90 border-golf-green shadow-md" 
+                      : "bg-white text-gray-900 border-gray-300 hover:border-golf-green hover:bg-golf-green/10"
                   }`}
                   onClick={() => handleScoreSelect(scoreValue)}
                 >
