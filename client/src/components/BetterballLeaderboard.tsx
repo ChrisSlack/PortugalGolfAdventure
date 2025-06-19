@@ -208,21 +208,19 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                 </div>
                 
                 {/* Dynamic Overall Score Position - Below "OVERALL" text */}
-                <div className="absolute bottom-2">
-                  {teamATotal === teamBTotal ? (
-                    <div className="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">
-                      AS
-                    </div>
-                  ) : teamBTotal > teamATotal ? (
-                    <div className="text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded">
-                      {teamBTotal - teamATotal} UP
-                    </div>
-                  ) : (
-                    <div className="text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded">
-                      {teamATotal - teamBTotal} UP
-                    </div>
-                  )}
-                </div>
+                {teamATotal === teamBTotal ? (
+                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                    AS
+                  </div>
+                ) : teamBTotal > teamATotal ? (
+                  <div className="absolute bottom-2 right-2 text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded">
+                    {teamBTotal - teamATotal} UP
+                  </div>
+                ) : (
+                  <div className="absolute bottom-2 left-2 text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded">
+                    {teamATotal - teamBTotal} UP
+                  </div>
+                )}
               </div>
               <div className={`p-3 flex items-center justify-center border-l-4 ${
                 teamATotal > teamBTotal ? 'bg-blue-50 border-l-blue-500' : 'bg-gray-50 border-l-gray-300'
@@ -276,21 +274,19 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                       </div>
                       
                       {/* Dynamic Score Position - Below hole info */}
-                      <div className="absolute bottom-2">
-                        {result.isAllSquare ? (
-                          <div className="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">
-                            AS
-                          </div>
-                        ) : result.teamBUp > 0 ? (
-                          <div className="text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded ml-auto">
-                            {result.teamBUp} UP
-                          </div>
-                        ) : (
-                          <div className="text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded mr-auto">
-                            {result.teamAUp} UP
-                          </div>
-                        )}
-                      </div>
+                      {result.isAllSquare ? (
+                        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                          AS
+                        </div>
+                      ) : result.teamBUp > 0 ? (
+                        <div className="absolute bottom-2 right-2 text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded">
+                          {result.teamBUp} UP
+                        </div>
+                      ) : (
+                        <div className="absolute bottom-2 left-2 text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded">
+                          {result.teamAUp} UP
+                        </div>
+                      )}
                     </div>
 
                     {/* Team A Cell (Right) */}
