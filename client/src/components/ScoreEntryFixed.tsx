@@ -116,7 +116,7 @@ export default function ScoreEntryFixed({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg max-h-[95vh] overflow-y-auto"  data-dialog="score-entry">
+      <DialogContent className="sm:max-w-lg h-[90vh] flex flex-col" data-dialog="score-entry">
         <DialogHeader className="space-y-1 pb-2">
           <DialogTitle className="text-center text-lg font-semibold">Portugal Golf 2025</DialogTitle>
           <DialogDescription className="text-center text-sm text-gray-600">
@@ -124,7 +124,7 @@ export default function ScoreEntryFixed({
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-6 overflow-y-auto">
           {/* Hole Navigation */}
           <div className="bg-gray-50 rounded-lg p-4 space-y-3">
             <div className="flex items-center justify-between">
@@ -186,11 +186,12 @@ export default function ScoreEntryFixed({
                   key={scoreValue}
                   type="button"
                   variant="outline"
-                  className={`h-12 text-lg font-semibold transition-colors ${
-                    score === scoreValue.toString() 
-                      ? "bg-golf-green text-white hover:bg-golf-green/90 border-golf-green shadow-md !text-white" 
-                      : "bg-white text-gray-900 border-gray-300 hover:border-golf-green hover:bg-golf-green/10"
-                  }`}
+                  style={{
+                    backgroundColor: score === scoreValue.toString() ? '#10b981' : 'white',
+                    color: score === scoreValue.toString() ? 'white' : '#1f2937',
+                    borderColor: score === scoreValue.toString() ? '#10b981' : '#d1d5db',
+                  }}
+                  className="h-12 text-lg font-semibold transition-all duration-200 border-2 hover:border-golf-green"
                   onClick={() => handleScoreSelect(scoreValue)}
                 >
                   {scoreValue}
@@ -254,8 +255,11 @@ export default function ScoreEntryFixed({
             </div>
           </div>
 
-          {/* Action Buttons - Always visible */}
-          <div className="mt-6 pt-4 border-t border-gray-200">
+          {/* Spacer to push buttons to bottom */}
+          <div className="flex-1"></div>
+          
+          {/* Action Buttons - Fixed at bottom */}
+          <div className="mt-auto pt-4 border-t border-gray-200 bg-white">
             <div className="flex space-x-3">
               <Button
                 type="button"
@@ -268,7 +272,8 @@ export default function ScoreEntryFixed({
               <Button
                 type="submit"
                 disabled={!score || saveScore.isPending}
-                className="flex-1 h-12 text-base bg-golf-green hover:bg-golf-green/90 text-white"
+                className="flex-1 h-12 text-base"
+                style={{ backgroundColor: '#10b981', color: 'white' }}
               >
                 {saveScore.isPending ? "Saving..." : "Save Score"}
               </Button>
