@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
 import { Menu, Club, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -77,9 +78,16 @@ export default function Navigation() {
                     className="w-8 h-8 rounded-full object-cover"
                   />
                 )}
-                <span className="text-white text-sm">
-                  {user.firstName || user.email}
-                </span>
+                <div className="flex items-center space-x-2">
+                  <span className="text-white text-sm">
+                    {user.firstName || user.email}
+                  </span>
+                  {user.isAdmin && (
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                      Admin
+                    </Badge>
+                  )}
+                </div>
               </div>
             )}
             <Button

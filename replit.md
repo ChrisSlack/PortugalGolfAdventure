@@ -116,6 +116,15 @@ This is a comprehensive golf trip management application built for the Portugal 
 
 ## Recent Changes
 
+- June 23, 2025: Implemented comprehensive admin user system
+  - Added admin role functionality with database schema updates
+  - Created admin-only user management interface for promoting/demoting users
+  - Added admin controls for clearing scorecards and deleting rounds
+  - Implemented role-based access control with middleware
+  - Set cslack815@gmail.com as the primary admin user
+  - Enhanced navigation with admin-only sections and user role badges
+  - Added admin panel with user management and scorecard management capabilities
+
 - June 20, 2025: Integrated Replit Auth for secure user authentication
   - Added complete OpenID Connect integration with Replit authentication
   - Implemented user session management with PostgreSQL session store
