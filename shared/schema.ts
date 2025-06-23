@@ -114,8 +114,9 @@ export const votes = pgTable("votes", {
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
   email: text("email").notNull(),
-  name: text("name").notNull(),
-  image: text("image"),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  profileImageUrl: text("profile_image_url"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
