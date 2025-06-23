@@ -150,6 +150,25 @@ export default function Players() {
     }
   });
 
+  const logoUploadMutation = useMutation({
+    mutationFn: ({ teamId, file }: { teamId: number; file: File }) => {
+      const formData = new FormData();
+      formData.append('logo', file);
+      return fetch(`/api/teams/${teamId}/logo`, {
+        method: 'POST',
+        body: formData,
+      }).then(res => res.json());
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/teams"] });
+      toast({ title: "Team logo uploaded successfully" });
+      setLogoUploadTeam(null);
+    },
+    onError: () => {
+      toast({ title: "Failed to upload logo", variant: "destructive" });
+    },
+  });
+
   const resetForm = () => {
     setFormData({ firstName: "", lastName: "", handicap: "", teamId: "none" });
   };
