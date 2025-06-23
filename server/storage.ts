@@ -1,6 +1,6 @@
 import { 
   players, teams, rounds, scores, fines, votes, matches, individualMatches, stablefordScores, holeResults, users,
-  type Player, type Team, type Round, type Score, type Fine, type Vote, type Match, type IndividualMatch, type StablefordScore, type HoleResult, type User, type UpsertUser,
+  type Player, type Team, type Round, type Score, type Fine, type Vote, type Match, type IndividualMatch, type StablefordScore, type HoleResult, type User, type UpsertUser, type UpdateUser,
   type InsertPlayer, type InsertTeam, type InsertRound, type InsertScore, type InsertFine, type InsertVote, type InsertMatch, type InsertIndividualMatch, type InsertStablefordScore, type InsertHoleResult
 } from "@shared/schema";
 import { db } from "./db";
@@ -11,6 +11,8 @@ export interface IStorage {
   // (IMPORTANT) these user operations are mandatory for Replit Auth.
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  getAllUsers(): Promise<User[]>;
+  updateUser(id: string, user: UpdateUser): Promise<User>;
   
   // Players
   getPlayers(): Promise<Player[]>;
@@ -351,17 +353,45 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
+    // Check if this is the first admin user (cslack815@gmail.com)
+    const isFirstAdmin = userData.email === "cslack815@gmail.com";
+    
     const [user] = await db
       .insert(users)
-      .values(userData)
+      .values({
+        ...userData,
+        isAdmin: isFirstAdmin || userData.isAdmin || false,
+      })
       .onConflictDoUpdate({
         target: users.id,
         set: {
           ...userData,
+          isAdmin: isFirstAdmin || userData.isAdmin || false,
           updatedAt: new Date(),
         },
       })
       .returning();
+    return user;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
+
+  async updateUser(id: string, userData: UpdateUser): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({
+        ...userData,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, id))
+      .returning();
+    
+    if (!user) {
+      throw new Error("User not found");
+    }
+    
     return user;
   }
 

@@ -117,6 +117,7 @@ export const users = pgTable("users", {
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   profileImageUrl: text("profile_image_url"),
+  isAdmin: boolean("is_admin").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -135,6 +136,7 @@ export const insertIndividualMatchSchema = createInsertSchema(individualMatches)
 export const insertStablefordScoreSchema = createInsertSchema(stablefordScores).omit({ id: true, createdAt: true });
 export const insertHoleResultSchema = createInsertSchema(holeResults).omit({ id: true, createdAt: true });
 export const insertUserSchema = createInsertSchema(users).omit({ createdAt: true, updatedAt: true });
+export const updateUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true }).partial();
 
 export type Player = typeof players.$inferSelect;
 export type Team = typeof teams.$inferSelect;
@@ -159,6 +161,7 @@ export type InsertIndividualMatch = z.infer<typeof insertIndividualMatchSchema>;
 export type InsertStablefordScore = z.infer<typeof insertStablefordScoreSchema>;
 export type InsertHoleResult = z.infer<typeof insertHoleResultSchema>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
+export type UpdateUser = z.infer<typeof updateUserSchema>;
 export type UpsertUser = typeof users.$inferInsert;
 
 
