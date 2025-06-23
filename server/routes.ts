@@ -2,6 +2,9 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 import { 
   insertPlayerSchema, insertTeamSchema, insertRoundSchema, insertScoreSchema, insertFineSchema, insertVoteSchema,
   insertMatchSchema, insertIndividualMatchSchema, insertStablefordScoreSchema, insertHoleResultSchema, updateUserSchema
@@ -10,6 +13,46 @@ import {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
+
+  // Create uploads directory if it doesn't exist
+  const uploadsDir = path.join(process.cwd(), 'uploads');
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+
+  // Configure multer for file uploads
+  const storage_config = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, uploadsDir);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, 'team-logo-' + uniqueSuffix + path.extname(file.originalname));
+    }
+  });
+
+  const upload = multer({
+    storage: storage_config,
+    limits: {
+      fileSize: 5 * 1024 * 1024, // 5MB limit
+    },
+    fileFilter: (req, file, cb) => {
+      if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+      } else {
+        cb(new Error('Only image files are allowed!'));
+      }
+    }
+  });
+
+  // Serve uploaded files
+  app.use('/uploads', (req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    next();
+  });
+  
+  const express = await import('express');
+  app.use('/uploads', express.default.static(uploadsDir));
 
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
@@ -163,6 +206,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(team);
     } catch (error) {
       res.status(400).json({ message: "Failed to update team" });
+    }
+  });
+
+  // Team logo upload endpoint
+  app.post("/api/teams/:id/logo", upload.single('logo'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const teamId = parseInt(req.params.id);
+      const logoUrl = `/uploads/${req.file.filename}`;
+      
+      // Update team with new logo URL
+      const team = await storage.updateTeam(teamId, { logoUrl });
+      
+      res.json({ 
+        success: true, 
+        logoUrl,
+        team 
+      });
+    } catch (error) {
+      console.error("Logo upload error:", error);
+      res.status(500).json({ message: "Failed to upload logo" });
     }
   });
 

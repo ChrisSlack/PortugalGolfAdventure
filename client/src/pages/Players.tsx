@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
-import { Users, UserPlus, Edit, Trash2, Trophy, Star } from "lucide-react";
+import { Users, UserPlus, Edit, Trash2, Trophy, Star, Upload, Image as ImageIcon } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +17,7 @@ export default function Players() {
   const [newTeamOpen, setNewTeamOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
+  const [logoUploadTeam, setLogoUploadTeam] = useState<Team | null>(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -27,6 +28,7 @@ export default function Players() {
     name: "",
     captainId: ""
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -370,10 +372,28 @@ export default function Players() {
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
+                      {team.logoUrl && (
+                        <img 
+                          src={team.logoUrl} 
+                          alt={`${team.name} logo`}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                      )}
                       <span>{team.name}</span>
                       {team.captainId && <Star className="h-4 w-4 text-golf-gold" />}
                     </div>
                     <div className="flex space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setLogoUploadTeam(team);
+                          fileInputRef.current?.click();
+                        }}
+                        title="Upload team logo"
+                      >
+                        <Upload className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -471,6 +491,50 @@ export default function Players() {
             ))}
           </div>
         </div>
+
+        {/* Hidden file input for logo upload */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleLogoUpload}
+          accept="image/*"
+          style={{ display: 'none' }}
+        />
+
+        {/* Logo Upload Dialog */}
+        <Dialog open={logoUploadTeam !== null} onOpenChange={() => setLogoUploadTeam(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Upload Team Logo</DialogTitle>
+              <DialogDescription>
+                Select an image file to use as the team logo. Maximum file size: 5MB.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6">
+                <div className="text-center">
+                  <ImageIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                  <p className="text-sm text-gray-600 mb-2">
+                    {logoUploadMutation.isPending ? "Uploading..." : "Click the upload button above to select an image"}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Supported formats: JPG, PNG, GIF (max 5MB)
+                  </p>
+                </div>
+              </div>
+              {logoUploadTeam?.logoUrl && (
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 mb-2">Current logo:</p>
+                  <img 
+                    src={logoUploadTeam.logoUrl} 
+                    alt="Current team logo"
+                    className="mx-auto w-16 h-16 rounded-full object-cover border"
+                  />
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

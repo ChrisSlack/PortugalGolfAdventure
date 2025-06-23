@@ -15,6 +15,7 @@ export const teams = pgTable("teams", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   captainId: integer("captain_id"),
+  logoUrl: text("logo_url"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
