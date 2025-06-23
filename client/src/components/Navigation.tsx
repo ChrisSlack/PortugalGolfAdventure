@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Club } from "lucide-react";
+import { Menu, Club, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
   { href: "/", label: "Home", icon: "fas fa-home" },
@@ -18,6 +19,7 @@ const navItems = [
 export default function Navigation() {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user } = useAuth();
 
   const NavLink = ({ href, label, icon, mobile = false }: { href: string; label: string; icon: string; mobile?: boolean }) => {
     const isActive = location === href;
@@ -57,6 +59,33 @@ export default function Navigation() {
             ))}
           </div>
 
+          {/* User info and logout for desktop */}
+          <div className="hidden md:flex items-center space-x-4">
+            {user && (
+              <div className="flex items-center space-x-3">
+                {user.profileImageUrl && (
+                  <img 
+                    src={user.profileImageUrl} 
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                )}
+                <span className="text-white text-sm">
+                  {user.firstName || user.email}
+                </span>
+              </div>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => window.location.href = '/api/logout'}
+              className="text-white hover:bg-white/10"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
+
           {/* Mobile Navigation */}
           <div className="md:hidden flex items-center">
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -70,6 +99,33 @@ export default function Navigation() {
                   {navItems.map((item) => (
                     <NavLink key={item.href} {...item} mobile />
                   ))}
+                  
+                  {/* User info and logout for mobile */}
+                  <div className="mt-8 pt-6 border-t border-gray-200">
+                    {user && (
+                      <div className="flex items-center space-x-3 mb-4">
+                        {user.profileImageUrl && (
+                          <img 
+                            src={user.profileImageUrl} 
+                            alt="Profile"
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                        )}
+                        <div>
+                          <p className="font-medium">{user.firstName || 'User'}</p>
+                          <p className="text-sm text-gray-500">{user.email}</p>
+                        </div>
+                      </div>
+                    )}
+                    <Button
+                      variant="outline"
+                      onClick={() => window.location.href = '/api/logout'}
+                      className="w-full"
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </Button>
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>
