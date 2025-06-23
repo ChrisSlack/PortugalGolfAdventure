@@ -16,6 +16,10 @@ const navItems = [
   { href: "/players", label: "Players", icon: "fas fa-users" }
 ];
 
+const adminNavItems = [
+  { href: "/admin", label: "Admin", icon: "fas fa-shield-alt" }
+];
+
 export default function Navigation() {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -55,6 +59,9 @@ export default function Navigation() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             {navItems.map((item) => (
+              <NavLink key={item.href} {...item} />
+            ))}
+            {user?.isAdmin && adminNavItems.map((item) => (
               <NavLink key={item.href} {...item} />
             ))}
           </div>
@@ -99,6 +106,9 @@ export default function Navigation() {
                   {navItems.map((item) => (
                     <NavLink key={item.href} {...item} mobile />
                   ))}
+                  {user?.isAdmin && adminNavItems.map((item) => (
+                    <NavLink key={item.href} {...item} mobile />
+                  ))}
                   
                   {/* User info and logout for mobile */}
                   <div className="mt-8 pt-6 border-t border-gray-200">
@@ -112,7 +122,14 @@ export default function Navigation() {
                           />
                         )}
                         <div>
-                          <p className="font-medium">{user.firstName || 'User'}</p>
+                          <div className="flex items-center space-x-2">
+                            <p className="font-medium">{user.firstName || 'User'}</p>
+                            {user.isAdmin && (
+                              <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                                Admin
+                              </Badge>
+                            )}
+                          </div>
                           <p className="text-sm text-gray-500">{user.email}</p>
                         </div>
                       </div>

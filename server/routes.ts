@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { 
   insertPlayerSchema, insertTeamSchema, insertRoundSchema, insertScoreSchema, insertFineSchema, insertVoteSchema,
-  insertMatchSchema, insertIndividualMatchSchema, insertStablefordScoreSchema, insertHoleResultSchema
+  insertMatchSchema, insertIndividualMatchSchema, insertStablefordScoreSchema, insertHoleResultSchema, updateUserSchema
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -20,6 +20,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // Admin middleware
+  const isAdmin = async (req: any, res: any, next: any) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      if (!user || !user.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      next();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to verify admin status" });
+    }
+  };
+
+  // User management routes (admin only)
+  app.get("/api/users", isAuthenticated, isAdmin, async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      res.json(users);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  app.patch("/api/users/:id", isAuthenticated, isAdmin, async (req, res) => {
+    try {
+      const validatedData = updateUserSchema.parse(req.body);
+      const user = await storage.updateUser(req.params.id, validatedData);
+      res.json(user);
+    } catch (error) {
+      console.error("User update error:", error);
+      res.status(400).json({ message: "Failed to update user" });
     }
   });
   // Players

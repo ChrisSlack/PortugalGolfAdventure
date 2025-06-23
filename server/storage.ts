@@ -92,13 +92,33 @@ export class MemStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
+    const isFirstAdmin = userData.email === "cslack815@gmail.com";
     const user: User = {
       ...userData,
+      isAdmin: isFirstAdmin || userData.isAdmin || false,
       createdAt: this.users.get(userData.id)?.createdAt || new Date(),
       updatedAt: new Date(),
     };
     this.users.set(userData.id, user);
     return user;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return Array.from(this.users.values());
+  }
+
+  async updateUser(id: string, userData: UpdateUser): Promise<User> {
+    const existingUser = this.users.get(id);
+    if (!existingUser) {
+      throw new Error("User not found");
+    }
+    const updatedUser: User = {
+      ...existingUser,
+      ...userData,
+      updatedAt: new Date(),
+    };
+    this.users.set(id, updatedUser);
+    return updatedUser;
   }
 
   // Players

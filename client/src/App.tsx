@@ -13,6 +13,7 @@ import Matchplay from "@/pages/Matchplay";
 import Fines from "@/pages/Fines";
 import Activities from "@/pages/Activities";
 import Players from "@/pages/Players";
+import Admin from "@/pages/Admin";
 import Landing from "@/components/Landing";
 import NotFound from "@/pages/not-found";
 
@@ -35,6 +36,7 @@ function Router() {
         <Route path="/fines" component={Fines} />
         <Route path="/activities" component={Activities} />
         <Route path="/players" component={Players} />
+        <Route path="/admin" component={Admin} />
         <Route component={NotFound} />
       </Switch>
     </div>
