@@ -1,6 +1,6 @@
 import { 
-  players, teams, rounds, scores, fines, votes, matches, individualMatches, stablefordScores, holeResults,
-  type Player, type Team, type Round, type Score, type Fine, type Vote, type Match, type IndividualMatch, type StablefordScore, type HoleResult,
+  players, teams, rounds, scores, fines, votes, matches, individualMatches, stablefordScores, holeResults, users,
+  type Player, type Team, type Round, type Score, type Fine, type Vote, type Match, type IndividualMatch, type StablefordScore, type HoleResult, type User, type UpsertUser,
   type InsertPlayer, type InsertTeam, type InsertRound, type InsertScore, type InsertFine, type InsertVote, type InsertMatch, type InsertIndividualMatch, type InsertStablefordScore, type InsertHoleResult
 } from "@shared/schema";
 import { db } from "./db";

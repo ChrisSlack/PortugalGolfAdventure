@@ -110,6 +110,16 @@ export const votes = pgTable("votes", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// User table for Replit Auth
+export const users = pgTable("users", {
+  id: text("id").primaryKey(),
+  email: text("email").notNull(),
+  name: text("name").notNull(),
+  image: text("image"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const insertPlayerSchema = createInsertSchema(players).omit({ id: true, createdAt: true }).extend({
   handicap: z.string().optional().transform((val) => val && val !== "" ? val : null),
   teamId: z.number().nullable().optional()
@@ -123,6 +133,7 @@ export const insertMatchSchema = createInsertSchema(matches).omit({ id: true, cr
 export const insertIndividualMatchSchema = createInsertSchema(individualMatches).omit({ id: true, createdAt: true });
 export const insertStablefordScoreSchema = createInsertSchema(stablefordScores).omit({ id: true, createdAt: true });
 export const insertHoleResultSchema = createInsertSchema(holeResults).omit({ id: true, createdAt: true });
+export const insertUserSchema = createInsertSchema(users).omit({ createdAt: true, updatedAt: true });
 
 export type Player = typeof players.$inferSelect;
 export type Team = typeof teams.$inferSelect;
@@ -134,6 +145,7 @@ export type Match = typeof matches.$inferSelect;
 export type IndividualMatch = typeof individualMatches.$inferSelect;
 export type StablefordScore = typeof stablefordScores.$inferSelect;
 export type HoleResult = typeof holeResults.$inferSelect;
+export type User = typeof users.$inferSelect;
 
 export type InsertPlayer = z.infer<typeof insertPlayerSchema>;
 export type InsertTeam = z.infer<typeof insertTeamSchema>;
@@ -145,9 +157,10 @@ export type InsertMatch = z.infer<typeof insertMatchSchema>;
 export type InsertIndividualMatch = z.infer<typeof insertIndividualMatchSchema>;
 export type InsertStablefordScore = z.infer<typeof insertStablefordScoreSchema>;
 export type InsertHoleResult = z.infer<typeof insertHoleResultSchema>;
-
-export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
 export type UpsertUser = typeof users.$inferInsert;
+
+
 
 // Session storage table.
 // (IMPORTANT) This table is mandatory for Replit Auth, don't drop it.
