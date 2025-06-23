@@ -145,3 +145,18 @@ export type InsertMatch = z.infer<typeof insertMatchSchema>;
 export type InsertIndividualMatch = z.infer<typeof insertIndividualMatchSchema>;
 export type InsertStablefordScore = z.infer<typeof insertStablefordScoreSchema>;
 export type InsertHoleResult = z.infer<typeof insertHoleResultSchema>;
+
+export type User = typeof users.$inferSelect;
+export type UpsertUser = typeof users.$inferInsert;
+
+// Session storage table.
+// (IMPORTANT) This table is mandatory for Replit Auth, don't drop it.
+export const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  },
+  (table) => [index("IDX_session_expire").on(table.expire)],
+);
