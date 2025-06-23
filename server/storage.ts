@@ -7,6 +7,11 @@ import { db } from "./db";
 import { eq, and } from "drizzle-orm";
 
 export interface IStorage {
+  // User operations
+  // (IMPORTANT) these user operations are mandatory for Replit Auth.
+  getUser(id: string): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
+  
   // Players
   getPlayers(): Promise<Player[]>;
   createPlayer(player: InsertPlayer): Promise<Player>;
@@ -70,6 +75,7 @@ export interface IStorage {
 }
 
 export class MemStorage implements IStorage {
+  private users: Map<string, User> = new Map();
   private players: Map<number, Player> = new Map();
   private teams: Map<number, Team> = new Map();
   private rounds: Map<number, Round> = new Map();
@@ -77,6 +83,21 @@ export class MemStorage implements IStorage {
   private fines: Map<number, Fine> = new Map();
   private votes: Map<number, Vote> = new Map();
   private currentId = 1;
+
+  // User operations for Replit Auth
+  async getUser(id: string): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const user: User = {
+      ...userData,
+      createdAt: this.users.get(userData.id)?.createdAt || new Date(),
+      updatedAt: new Date(),
+    };
+    this.users.set(userData.id, user);
+    return user;
+  }
 
   // Players
   async getPlayers(): Promise<Player[]> {

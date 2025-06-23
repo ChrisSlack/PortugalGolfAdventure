@@ -116,6 +116,15 @@ This is a comprehensive golf trip management application built for the Portugal 
 
 ## Recent Changes
 
+- June 20, 2025: Integrated Replit Auth for secure user authentication
+  - Added complete OpenID Connect integration with Replit authentication
+  - Implemented user session management with PostgreSQL session store
+  - Created landing page for unauthenticated users
+  - Added protected routes and authentication middleware
+  - Enhanced navbar with user profile and logout functionality
+  - Updated database schema with users and sessions tables
+  - Added authentication utilities and hooks for React components
+
 - June 19, 2025: Added comprehensive documentation and development tools
   - Created detailed README.md with setup and deployment instructions
   - Added .env.example file for environment variable configuration
