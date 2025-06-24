@@ -116,6 +116,12 @@ This is a comprehensive golf trip management application built for the Portugal 
 
 ## Recent Changes
 
+- June 24, 2025: Updated Day 3 schedule with new pickup and tee times
+  - Changed hotel pickup from 08:30 to 10:45
+  - Updated tee-off time from 10:24 to 12:40
+  - Extended final pickup from course from 17:00 to 19:30
+  - Adjusted total duration to 8.8 hours to reflect longer day
+
 - June 24, 2025: Fixed matchplay scorecard hole state persistence issue
   - Added useEffect hooks to reset hole selection when scores are cleared
   - Fixed issue where scorecard remained on previous hole after round deletion
