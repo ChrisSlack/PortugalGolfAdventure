@@ -111,7 +111,7 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
     const matchPlayers = [match.pairAPlayer1, match.pairAPlayer2, match.pairBPlayer1, match.pairBPlayer2];
     const matchScores = allScores.filter(s => s.roundId === mainRound.id && matchPlayers.includes(s.playerId));
     const playedHoles = new Set(matchScores.map(s => s.hole));
-    const lastHolePlayed = playedHoles.size > 0 ? Math.max(...Array.from(playedHoles)) : 4;
+    const lastHolePlayed = playedHoles.size > 0 ? Math.max(...Array.from(playedHoles)) : 1;
     const holesPlayed = playedHoles.size;
     
     const scoreDiff = teamAScore - teamBScore;
@@ -311,7 +311,7 @@ export default function BetterballLeaderboard({ players, teams, rounds, allScore
                     <div className="bg-white flex flex-col items-center justify-center relative min-h-[80px] w-[90px]">
                       <div className="text-center w-full">
                         <div className="text-lg font-semibold text-gray-800">
-                          {result.lastHolePlayed > 0 ? result.lastHolePlayed : 4}
+                          {result.lastHolePlayed > 0 ? result.lastHolePlayed : 1}
                         </div>
                         <div className="text-xs text-gray-500 mb-1">
                           HOLE

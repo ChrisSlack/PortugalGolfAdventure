@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash2, Edit, BarChart3, Calculator, Trophy } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -36,16 +37,27 @@ export default function Scoring() {
     queryKey: ['/api/scores/all']
   });
 
-  // Get the current round (only one should exist)
-  const currentRound = rounds[0];
+  // Add round selection state
+  const [selectedRoundId, setSelectedRoundId] = useState<number>();
+  
+  // Get the current round (selected or first available)
+  const currentRound = selectedRoundId ? rounds.find(r => r.id === selectedRoundId) : rounds[0];
   const currentCourse = currentRound ? courses.find(c => c.id === currentRound.course) : null;
 
   // Reset selected hole when no rounds exist
   useEffect(() => {
     if (rounds.length === 0) {
       setSelectedHole(1);
+      setSelectedRoundId(undefined);
     }
   }, [rounds.length]);
+
+  // Auto-select first round if none selected
+  useEffect(() => {
+    if (rounds.length > 0 && !selectedRoundId) {
+      setSelectedRoundId(rounds[0].id);
+    }
+  }, [rounds, selectedRoundId]);
 
   // Create new round mutation
   const createRound = useMutation({
@@ -158,7 +170,7 @@ export default function Scoring() {
     return 'bg-red-300 text-red-900'; // Triple bogey or worse
   };
 
-  if (!currentRound && rounds.length === 0) {
+  if (rounds.length === 0) {
     return (
       <div className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -205,15 +217,40 @@ export default function Scoring() {
               {currentCourse.name} - Day {currentRound.day}
             </p>
           </div>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => deleteRound.mutate(currentRound.id)}
-            disabled={deleteRound.isPending}
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Delete Round
-          </Button>
+          <div className="flex items-center gap-4">
+            {rounds.length > 1 && (
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700">Round:</label>
+                <Select 
+                  value={currentRound.id.toString()} 
+                  onValueChange={(value) => setSelectedRoundId(parseInt(value))}
+                >
+                  <SelectTrigger className="w-48">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {rounds.map((round) => {
+                      const roundCourse = courses.find(c => c.id === round.course);
+                      return (
+                        <SelectItem key={round.id} value={round.id.toString()}>
+                          {roundCourse?.name} - Day {round.day}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => deleteRound.mutate(currentRound.id)}
+              disabled={deleteRound.isPending}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete Round
+            </Button>
+          </div>
         </div>
 
         <Card>
