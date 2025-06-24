@@ -169,6 +169,17 @@ export default function Players() {
     },
   });
 
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && logoUploadTeam) {
+      logoUploadMutation.mutate({ teamId: logoUploadTeam.id, file });
+    }
+    // Reset file input to allow re-uploading the same file
+    if (event.target) {
+      event.target.value = '';
+    }
+  };
+
   const resetForm = () => {
     setFormData({ firstName: "", lastName: "", handicap: "", teamId: "none" });
   };
