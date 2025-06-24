@@ -218,29 +218,27 @@ export default function Scoring() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            {rounds.length > 1 && (
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700">Round:</label>
-                <Select 
-                  value={currentRound.id.toString()} 
-                  onValueChange={(value) => setSelectedRoundId(parseInt(value))}
-                >
-                  <SelectTrigger className="w-48">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {rounds.map((round) => {
-                      const roundCourse = courses.find(c => c.id === round.course);
-                      return (
-                        <SelectItem key={round.id} value={round.id.toString()}>
-                          {roundCourse?.name} - Day {round.day}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">Round:</label>
+              <Select 
+                value={currentRound.id.toString()} 
+                onValueChange={(value) => setSelectedRoundId(parseInt(value))}
+              >
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {rounds.map((round) => {
+                    const roundCourse = courses.find(c => c.id === round.course);
+                    return (
+                      <SelectItem key={round.id} value={round.id.toString()}>
+                        {roundCourse?.name} - Day {round.day}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
             <Button
               variant="destructive"
               size="sm"
