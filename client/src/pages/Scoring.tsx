@@ -59,6 +59,27 @@ export default function Scoring() {
     }
   }, [rounds, selectedRoundId]);
 
+  // Clear scores mutation (doesn't delete the round)
+  const clearScores = useMutation({
+    mutationFn: async (roundId: number) => {
+      return await apiRequest('POST', `/api/rounds/${roundId}/clear`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/scores/all'] });
+      toast({
+        title: "Success",
+        description: "Scores cleared successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to clear scores", 
+        variant: "destructive",
+      });
+    }
+  });
+
   // Create new round mutation
   const createRound = useMutation({
     mutationFn: async (courseId: string) => {
