@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +39,13 @@ export default function Scoring() {
   // Get the current round (only one should exist)
   const currentRound = rounds[0];
   const currentCourse = currentRound ? courses.find(c => c.id === currentRound.course) : null;
+
+  // Reset selected hole when no rounds exist
+  useEffect(() => {
+    if (rounds.length === 0) {
+      setSelectedHole(1);
+    }
+  }, [rounds.length]);
 
   // Create new round mutation
   const createRound = useMutation({
