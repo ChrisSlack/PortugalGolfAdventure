@@ -44,7 +44,8 @@ export default function Matchplay() {
       setSelectedRound(undefined);
       // Clear any persistent localStorage data when no rounds exist
       if (typeof window !== 'undefined' && window.localStorage) {
-        window.localStorage.clear();
+        const { storage } = require('@/lib/storage');
+        storage.clearAllData();
       }
     } else if (selectedRound && !dayRounds.find(r => r.id === selectedRound)) {
       setSelectedRound(dayRounds[0]?.id);

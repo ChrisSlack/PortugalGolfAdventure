@@ -47,5 +47,19 @@ export const storage = {
 
   clearCurrentRound: (): void => {
     localStorage.removeItem('golf-current-round');
+  },
+
+  clearAllData: (): void => {
+    localStorage.removeItem('golf-players');
+    localStorage.removeItem('golf-fines');
+    localStorage.removeItem('golf-votes');
+    localStorage.removeItem('golf-current-round');
+    // Clear all score data
+    const keys = Object.keys(localStorage);
+    keys.forEach(key => {
+      if (key.startsWith('golf-scores-')) {
+        localStorage.removeItem(key);
+      }
+    });
   }
 };
