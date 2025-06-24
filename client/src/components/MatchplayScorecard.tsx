@@ -74,12 +74,17 @@ export default function MatchplayScorecard({
   const [scoreEntryOpen, setScoreEntryOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<number>();
 
-  // Reset to hole 1 when there are no scores
+  // Reset to hole 1 when there are no scores or when match changes
   useEffect(() => {
     if (stablefordScores.length === 0) {
       setSelectedHole(1);
     }
   }, [stablefordScores.length]);
+
+  // Also reset when the match ID changes (new match setup)
+  useEffect(() => {
+    setSelectedHole(1);
+  }, [match.id]);
   
   // Get players for each pair
   const pairAPlayers = [

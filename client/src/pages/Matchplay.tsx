@@ -42,6 +42,10 @@ export default function Matchplay() {
     const dayRounds = rounds.filter(r => r.day === selectedDay);
     if (dayRounds.length === 0) {
       setSelectedRound(undefined);
+      // Clear any persistent localStorage data when no rounds exist
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.clear();
+      }
     } else if (selectedRound && !dayRounds.find(r => r.id === selectedRound)) {
       setSelectedRound(dayRounds[0]?.id);
     }
