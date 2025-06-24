@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -73,6 +73,13 @@ export default function MatchplayScorecard({
   const [selectedHole, setSelectedHole] = useState<number>(1);
   const [scoreEntryOpen, setScoreEntryOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<number>();
+
+  // Reset to hole 1 when there are no scores
+  useEffect(() => {
+    if (stablefordScores.length === 0) {
+      setSelectedHole(1);
+    }
+  }, [stablefordScores.length]);
   
   // Get players for each pair
   const pairAPlayers = [

@@ -116,6 +116,18 @@ This is a comprehensive golf trip management application built for the Portugal 
 
 ## Recent Changes
 
+- June 24, 2025: Fixed matchplay scorecard hole state persistence issue
+  - Added useEffect hooks to reset hole selection when scores are cleared
+  - Fixed issue where scorecard remained on previous hole after round deletion
+  - Improved state management for fresh starts after data cleanup
+  - Enhanced user experience by automatically returning to hole 1 on reset
+
+- June 23, 2025: Implemented team logo upload functionality
+  - Added database schema support for team logos with logoUrl field
+  - Created multer-based file upload endpoint with 5MB size limit and image validation
+  - Implemented team logo display across team cards and leaderboards
+  - Added intuitive upload interface with file picker and preview functionality
+
 - June 23, 2025: Implemented comprehensive admin user system
   - Added admin role functionality with database schema updates
   - Created admin-only user management interface for promoting/demoting users

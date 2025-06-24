@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -37,7 +37,15 @@ export default function Matchplay() {
     enabled: !!selectedRound && selectedDay === 3
   });
 
-
+  // Reset selected round when rounds are cleared or when switching days
+  useEffect(() => {
+    const dayRounds = rounds.filter(r => r.day === selectedDay);
+    if (dayRounds.length === 0) {
+      setSelectedRound(undefined);
+    } else if (selectedRound && !dayRounds.find(r => r.id === selectedRound)) {
+      setSelectedRound(dayRounds[0]?.id);
+    }
+  }, [rounds, selectedDay, selectedRound]);
 
   const matchplayRounds = rounds.filter(r => r.format === "betterball" && r.day === selectedDay);
   const dayRounds = rounds.filter(r => r.day === selectedDay);
