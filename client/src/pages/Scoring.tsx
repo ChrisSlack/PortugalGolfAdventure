@@ -242,11 +242,11 @@ export default function Scoring() {
             <Button
               variant="destructive"
               size="sm"
-              onClick={() => deleteRound.mutate(currentRound.id)}
-              disabled={deleteRound.isPending}
+              onClick={() => clearScores.mutate(currentRound.id)}
+              disabled={clearScores.isPending}
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              Delete Round
+              Clear Scores
             </Button>
           </div>
         </div>
