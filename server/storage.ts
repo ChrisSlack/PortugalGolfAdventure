@@ -419,6 +419,11 @@ export class DatabaseStorage implements IStorage {
     // Check if we already have players
     const existingPlayers = await this.getPlayers();
     if (existingPlayers.length >= 8) {
+      // Still check and create rounds if they don't exist
+      const existingRounds = await this.getRounds();
+      if (existingRounds.length < 3) {
+        await this.createPredefinedRounds();
+      }
       return; // Already initialized
     }
 
@@ -456,6 +461,28 @@ export class DatabaseStorage implements IStorage {
     }
     for (let i = 4; i < 8; i++) {
       await this.updatePlayer(players[i].id, { teamId: team2.id });
+    }
+
+    // Create the three predefined rounds
+    await this.createPredefinedRounds();
+  }
+
+  async createPredefinedRounds() {
+    const roundsData = [
+      { course: "nau", date: "2025-07-02", players: [], format: "betterball", day: 1 },
+      { course: "amendoeira", date: "2025-07-03", players: [], format: "betterball", day: 2 },
+      { course: "quinta", date: "2025-07-05", players: [], format: "betterball", day: 3 }
+    ];
+
+    for (const roundData of roundsData) {
+      // Check if round already exists for this course and day
+      const existingRounds = await this.getRounds();
+      const exists = existingRounds.some(r => r.course === roundData.course && r.day === roundData.day);
+      
+      if (!exists) {
+        await this.createRound(roundData);
+        console.log(`Created round for ${roundData.course} - Day ${roundData.day}`);
+      }
     }
   }
   // Players
